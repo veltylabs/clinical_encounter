@@ -13,8 +13,8 @@ var MedicalHistoryModel = model.Definition{
 		{Name: "patient_id", Type: model.Text(), NotNull: true},
 		{Name: "doctor_id", Type: model.Text(), NotNull: true},
 		{Name: "reservation_id", Type: model.Text()},
-		// status: valid values are ONLY the Status* constants in const.go — the literals live
-		// in those constants and nowhere else (anti magic-string rule; see item_catalog review).
+		// status: los valores válidos son ÚNICAMENTE las constantes Status* en const.go — los literales
+		// viven solo en esas constantes y en ningún otro lugar (regla anti magic-string; ver la revisión de item_catalog).
 		{Name: "status", Type: model.Text(), NotNull: true},
 		{Name: "attention_at", Type: model.Int(), NotNull: true},
 		{Name: "reason", Type: model.Text(), NotNull: true},
@@ -31,9 +31,9 @@ var MedicalHistoryModel = model.Definition{
 	},
 }
 
-// NotNull mirrors exactly the required-argument set CreateVisit enforces (visit.go) — the
-// Definition is the single place the contract is declared; the service's manual checks are a
-// defense-in-depth duplicate of the same set, never a different one.
+// NotNull refleja exactamente el conjunto de argumentos requeridos que CreateVisit exige (visit.go) —
+// el Definition es el único lugar donde se declara el contrato; las validaciones manuales del servicio
+// son un duplicado de defensa en profundidad del mismo conjunto, nunca uno distinto.
 var CreateVisitArgsModel = model.Definition{
 	Name: "create_visit_args",
 	Fields: model.Fields{
@@ -51,8 +51,8 @@ var CreateVisitArgsModel = model.Definition{
 	},
 }
 
-// GetVisitArgsModel and ListVisitsArgsModel are transport-only (Field.DB is nil throughout) —
-// see Stage 3 for the ops that consume them.
+// GetVisitArgsModel y ListVisitsArgsModel son solo de transporte (Field.DB es nil en todos los campos) —
+// ver ops.go para las operaciones que los consumen.
 var GetVisitArgsModel = model.Definition{
 	Name: "get_visit_args",
 	Fields: model.Fields{
@@ -72,8 +72,8 @@ var (
 	ErrMissingArgs = fmt.Err("missing required arguments")
 )
 
-// Domain event topics — <module>.<entity>.<past-tense-verb>, tenant/id data goes in the
-// payload, never in the topic name (n/a here — see "no TenantId field" note in ARCHITECTURE.md).
+// Topics de eventos de dominio — <módulo>.<entidad>.<verbo-en-pasado>, los datos de tenant/id van en
+// el payload, nunca en el nombre del topic (no aplica aquí — ver la nota "no TenantId field" en ARCHITECTURE.md).
 const (
 	TopicVisitCreated = "clinical_encounter.visit.created"
 )

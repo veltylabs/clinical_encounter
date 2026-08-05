@@ -13,6 +13,10 @@ import (
 
 func TestMountOps_CreateVisit(t *testing.T) {
 	m := setup(t)
+	if m.ModelName() != "clinical_encounter" {
+		t.Fatalf("expected ModelName %q, got %q", "clinical_encounter", m.ModelName())
+	}
+
 	reg := &mock.Router{}
 	m.MountOps(reg)
 	reg.Configure(mock.Config{
@@ -31,6 +35,67 @@ func TestMountOps_CreateVisit(t *testing.T) {
 	}
 	if len(ctx.ResponseBody()) == 0 {
 		t.Fatal("expected a non-empty response body")
+	}
+}
+
+func TestMountOps_CreateVisit_DecodeError(t *testing.T) {
+	m := setup(t)
+	reg := &mock.Router{}
+	m.MountOps(reg)
+	reg.Configure(mock.Config{
+		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
+		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
+	})
+
+	ctx := &mock.Context{InBody: []byte(`not valid json`)}
+	ctx.SetUserID("test-user")
+	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
+
+	if ctx.Status != 400 {
+		t.Fatalf("expected 400 for a malformed body, got %d", ctx.Status)
+	}
+}
+
+func TestMountOps_CreateVisit_MissingArgs(t *testing.T) {
+	m := setup(t)
+	reg := &mock.Router{}
+	m.MountOps(reg)
+	reg.Configure(mock.Config{
+		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
+		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
+	})
+
+	ctx := &mock.Context{InBody: []byte(`{"patient_id":"pat_1"}`)}
+	ctx.SetUserID("test-user")
+	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
+
+	if ctx.Status != 400 {
+		t.Fatalf("expected 400 for missing required args, got %d", ctx.Status)
+	}
+}
+
+func TestMountOps_GetVisit_NotFound(t *testing.T) {
+	m := setup(t)
+	reg := &mock.Router{}
+	m.MountOps(reg)
+	reg.Configure(mock.Config{
+		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
+		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
+	})
+
+	ctx := &mock.Context{InBody: []byte(`{"id":"does-not-exist"}`)}
+	ctx.SetUserID("test-user")
+	reg.Invoke("OP", "/"+clinicalencounter.OpGetVisit, ctx)
+
+	if ctx.Status != 404 {
+		t.Fatalf("expected 404 for a non-existent id, got %d", ctx.Status)
+	}
+}
+
+func TestNew_RequiresIDs(t *testing.T) {
+	db := orm.New(mem.New())
+	if _, err := clinicalencounter.New(db, clinicalencounter.Deps{}); err == nil {
+		t.Fatal("expected an error when Deps.IDs is nil")
 	}
 }
 

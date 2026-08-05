@@ -27,8 +27,8 @@ func (m *Module) opCreateVisit(ctx router.Context) {
 	}
 	record, err := m.CreateVisit(args)
 	if err != nil {
-		// Status convention (ecosystem-wide): 400 = invalid input, 404 = not found,
-		// 500 = genuine internal error only — never collapse client errors into 500.
+		// Convención de estado (en todo el ecosistema): 400 = entrada inválida, 404 = no encontrado,
+		// 500 = solo error interno genuino — nunca colapsar errores de cliente en 500.
 		if err == ErrMissingArgs {
 			ctx.WriteStatus(400)
 			return
