@@ -1,5 +1,7 @@
 ---
 PLAN: "feat: clinical_encounter joins the reusable-module harness (OpModule, IDGenerator, ddl, view.Presenter replaces web/, storage/mem tests)"
+STATUS: running
+SESSION: 17235482302738156541
 ---
 
 > This plan is dispatched via the CodeJob workflow. See skill: **agents-workflow**.
