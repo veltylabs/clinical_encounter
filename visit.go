@@ -16,7 +16,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 	}
 
 	record := &MedicalHistory{
-		ID:                      m.UID.GetNewID(),
+		ID:                      m.UID.NewID(),
 		PatientID:               args.PatientID,
 		DoctorID:                args.DoctorID,
 		ReservationID:           args.ReservationID,
