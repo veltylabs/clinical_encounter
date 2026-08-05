@@ -3,17 +3,20 @@ module github.com/veltylabs/clinical_encounter
 go 1.25.2
 
 require (
-	github.com/tinywasm/dom v0.10.1
-	github.com/tinywasm/fmt v0.24.0
-	github.com/tinywasm/layout v0.0.1
-	github.com/tinywasm/orm v0.8.0
+	github.com/tinywasm/ddl v0.0.7
+	github.com/tinywasm/events v0.0.2
+	github.com/tinywasm/fmt v0.25.5
+	github.com/tinywasm/form v0.3.10
+	github.com/tinywasm/model v0.1.2
+	github.com/tinywasm/orm v0.11.4
+	github.com/tinywasm/router v0.1.19
+	github.com/tinywasm/storage v0.0.2-0.20260717121821-7e528006807f
 	github.com/tinywasm/time v0.5.0
-	github.com/tinywasm/unixid v0.2.23
+	github.com/tinywasm/view v0.1.12
 )
 
 require (
-	github.com/tinywasm/css v0.1.2 // indirect
-	github.com/tinywasm/html v0.0.3 // indirect
+	github.com/tinywasm/dom v0.12.1 // indirect
+	github.com/tinywasm/json v0.5.17 // indirect
+	github.com/tinywasm/widget v0.5.1 // indirect
 )
-
-replace github.com/tinywasm/layout => /home/cesar/Dev/Project/tinywasm/layout
