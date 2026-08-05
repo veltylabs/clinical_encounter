@@ -13,7 +13,7 @@ func (it *MedicalHistory) Item() view.Item {
 }
 
 // NewView construye el Presenter del historial médico — el motor agnóstico de tecnología que envuelve
-// un renderer (tinywasm/layout/rightpanel, or any other). Este módulo lo construye (solo
+// un renderer (tinywasm/layout/rightpanel, o cualquier otro). Este módulo lo construye (solo
 // view+model+router); la app decide qué renderer lo dibuja.
 func NewView(caller router.Caller) view.Presenter {
 	record := &MedicalHistory{}
