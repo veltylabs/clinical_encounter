@@ -1,8 +1,5 @@
 ---
 PLAN: "feat: clinical_encounter joins the reusable-module harness (OpModule, IDGenerator, ddl, view.Presenter replaces web/, storage/mem tests)"
-TAG: v0.1.0
-EXECUTOR: jules
-REVIEWER: none
 ---
 
 > This plan is dispatched via the CodeJob workflow. See skill: **agents-workflow**.
