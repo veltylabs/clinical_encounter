@@ -8,10 +8,10 @@ import (
 	"github.com/tinywasm/orm"
 )
 
-// Deps are the module's infrastructure ports — never a concrete implementation.
+// Deps son los puertos de infraestructura del módulo — nunca una implementación concreta.
 type Deps struct {
-	IDs       model.IDGenerator // required — the module never builds its own
-	Publisher events.Publisher  // optional — nil disables publishing silently
+	IDs       model.IDGenerator // requerido — el módulo nunca lo construye por sí mismo
+	Publisher events.Publisher  // opcional — nil deshabilita la publicación silenciosamente
 }
 
 type Module struct {
@@ -24,9 +24,9 @@ func New(db *orm.DB, deps Deps) (*Module, error) {
 	if deps.IDs == nil {
 		return nil, fmt.Err("clinical_encounter: Deps.IDs is required")
 	}
-	// ddl.Compiler is an optional capability — only SQL backends (sqlt, postgres) implement it.
-	// storage/mem (this module's own tests, Stage 6) creates tables lazily and needs no DDL, so a
-	// type assertion — not an unconditional call — is how the module stays backend-agnostic here.
+	// ddl.Compiler es una capacidad opcional — solo los backends SQL (sqlt, postgres) la implementan.
+	// storage/mem (las pruebas propias de este módulo) crea tablas de forma perezosa y no necesita DDL,
+	// así que una aserción de tipo — no una llamada incondicional — es cómo el módulo se mantiene agnóstico aquí.
 	if ddlCompiler, ok := db.RawConn().(ddl.Compiler); ok {
 		if err := ddl.New(db.RawConn(), ddlCompiler).CreateTable(&MedicalHistory{}); err != nil {
 			return nil, err

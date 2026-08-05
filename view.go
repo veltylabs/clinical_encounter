@@ -6,15 +6,15 @@ import (
 	"github.com/tinywasm/view"
 )
 
-// Item implements view.Itemizer — the ONLY view-specific code this record carries. The
-// Presenter indexes rows by ID from this during Reload; there is no manual byID/WithFill lookup.
+// Item implementa view.Itemizer — el ÚNICO código específico de view que carga este registro. El
+// Presenter indexa las filas por ID a partir de esto durante Reload; no hay lookup manual byID/WithFill.
 func (it *MedicalHistory) Item() view.Item {
 	return view.Item{ID: it.Id, Label: it.Reason, Description: it.Status}
 }
 
-// NewView builds the medical-history Presenter — the tech-agnostic engine a renderer
-// (tinywasm/layout/rightpanel, or any other) wraps. This module builds it (view+model+router
-// only); the app decides which renderer draws it.
+// NewView construye el Presenter del historial médico — el motor agnóstico de tecnología que envuelve
+// un renderer (tinywasm/layout/rightpanel, or any other). Este módulo lo construye (solo
+// view+model+router); la app decide qué renderer lo dibuja.
 func NewView(caller router.Caller) view.Presenter {
 	record := &MedicalHistory{}
 
