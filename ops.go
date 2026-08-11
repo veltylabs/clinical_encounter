@@ -6,15 +6,17 @@ import (
 )
 
 const (
-	OpCreateVisit          = "create_visit"
-	OpGetVisit             = "get_medical_history"
-	OpListVisitsByPatient  = "list_medical_history"
+	OpCreateVisit         = "create_visit"
+	OpGetVisit            = "get_medical_history"
+	OpListVisitsByPatient = "list_medical_history"
+	OpListRecentPatients  = "list_recent_patients"
 )
 
 func (m *Module) MountOps(reg router.OpRegistry) {
 	reg.Op(OpCreateVisit, m.opCreateVisit).Requires("medical_history", model.Create).Accepts(&CreateVisitArgs{})
 	reg.Op(OpGetVisit, m.opGetVisit).Requires("medical_history", model.Read).Accepts(&GetVisitArgs{})
 	reg.Op(OpListVisitsByPatient, m.opListVisits).Requires("medical_history", model.Read).Accepts(&ListVisitsArgs{})
+	reg.Op(OpListRecentPatients, m.opListRecentPatients).Requires("medical_history", model.Read).Accepts(&ListRecentPatientsArgs{})
 }
 
 var _ router.OpModule = (*Module)(nil)
@@ -68,6 +70,26 @@ func (m *Module) opListVisits(ctx router.Context) {
 		return
 	}
 	records, err := m.ListVisitsByPatient(args.PatientId)
+	if err != nil {
+		ctx.WriteStatus(500)
+		return
+	}
+	list := make(MedicalHistoryList, len(records))
+	for i, r := range records {
+		list[i] = r
+	}
+	if err := ctx.Encode(&list); err != nil {
+		ctx.WriteStatus(500)
+	}
+}
+
+func (m *Module) opListRecentPatients(ctx router.Context) {
+	var args ListRecentPatientsArgs
+	if err := ctx.Decode(&args); err != nil {
+		ctx.WriteStatus(400)
+		return
+	}
+	records, err := m.ListRecentPatients(int(args.Limit))
 	if err != nil {
 		ctx.WriteStatus(500)
 		return

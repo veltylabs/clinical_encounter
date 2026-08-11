@@ -280,3 +280,38 @@ func (m *ListVisitsArgs) Validate(action byte) error {
 	return model.ValidateFields(action, m)
 }
 
+type ListRecentPatientsArgs struct {
+	Limit int64
+}
+
+func (m *ListRecentPatientsArgs) ModelName() string { return "list_recent_patients_args" }
+
+func (m *ListRecentPatientsArgs) Schema() []model.Field { return ListRecentPatientsArgsModel.Fields }
+
+func (m *ListRecentPatientsArgs) Pointers() []any { return []any{&m.Limit} }
+
+func (m *ListRecentPatientsArgs) IsNil() bool { return m == nil }
+
+func (m *ListRecentPatientsArgs) EncodeFields(w model.FieldWriter) {
+	w.Int("limit", m.Limit)
+}
+
+func (m *ListRecentPatientsArgs) DecodeFields(r model.FieldReader) {
+	if v, ok := r.Int("limit"); ok { m.Limit = v }
+}
+
+type ListRecentPatientsArgsList []*ListRecentPatientsArgs
+
+func (s *ListRecentPatientsArgsList) Schema() []model.Field { return nil }
+func (s *ListRecentPatientsArgsList) Pointers() []any     { return nil }
+func (s *ListRecentPatientsArgsList) Len() int             { return len(*s) }
+func (s *ListRecentPatientsArgsList) At(i int) model.Fielder { return (*s)[i] }
+func (s *ListRecentPatientsArgsList) Append() model.Fielder  { v := &ListRecentPatientsArgs{}; *s = append(*s, v); return v }
+func (s *ListRecentPatientsArgsList) IsNil() bool          { return s == nil }
+func (s *ListRecentPatientsArgsList) EncodeFields(_ model.FieldWriter) {}
+func (s *ListRecentPatientsArgsList) DecodeFields(_ model.FieldReader) {}
+
+func (m *ListRecentPatientsArgs) Validate(action byte) error {
+	return model.ValidateFields(action, m)
+}
+

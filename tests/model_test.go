@@ -17,7 +17,7 @@ var _ model.Model = (*clinicalencounter.CreateVisitArgs)(nil)
 // originally targeted the now-stale `v0.2.16`, where `form.New` returned a single `*Form`):
 // `form.New` now returns `(*Form, error)`.
 func TestCreateVisitArgsHasWidgets(t *testing.T) {
-	f, err := form.New("clinical_encounter", &clinicalencounter.CreateVisitArgs{})
+	f, err := form.New("clinical_encounter", &clinicalencounter.CreateVisitArgs{}, &mockIDGen{})
 	if err != nil {
 		t.Fatalf("form.New: %v", err)
 	}

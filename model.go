@@ -1,8 +1,8 @@
 package clinical_encounter
 
 import (
-	"github.com/tinywasm/form/input"
 	"github.com/tinywasm/fmt"
+	"github.com/tinywasm/input"
 	"github.com/tinywasm/model"
 )
 
@@ -64,6 +64,17 @@ var ListVisitsArgsModel = model.Definition{
 	Name: "list_visits_args",
 	Fields: model.Fields{
 		{Name: "patient_id", Type: model.Text()},
+	},
+}
+
+// ListRecentPatientsArgsModel is transport-only, no DB fields — the picker
+// that lists WHICH patients already have a ficha (see ListRecentPatients in
+// patients.go) takes no filter of its own today; Limit exists so a caller
+// can cap the scan without a schema change once volume calls for it.
+var ListRecentPatientsArgsModel = model.Definition{
+	Name: "list_recent_patients_args",
+	Fields: model.Fields{
+		{Name: "limit", Type: model.Int()},
 	},
 }
 
