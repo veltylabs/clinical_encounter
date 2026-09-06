@@ -20,7 +20,7 @@ other module reads or writes it today.
 - **`CreateVisitArgs`**: the transport-facing args to open a new `MedicalHistory` — same clinical
   fields minus `Id`/`Status`/`StartedAt`/`FinishedAt`/`Cie10Code`/`UpdatedAt` (server-assigned or not
   yet collected at creation time). Every field carries a UI widget (`input.Text()`/
-  `input.Number()`/`input.Textarea()` for `Diagnostic`/`Prescription`) so a `tinywasm/form`-rendered
+  `input.Number()`/`input.Textarea()` for `Diagnostic`/`Prescription`) so a `webtyp/form`-rendered
   form is never silently empty.
 
 ## The Visit FSM (`const.go` — not modified by this migration)
@@ -53,14 +53,14 @@ FSM states that have no corresponding business logic yet. Adding those is a futu
     - `ddl.CreateTable` (over `db.RawConn()`, guarded by a `ddl.Compiler` type assertion) for the
       module's own schema migration in `New()`.
     - `router.OpModule` (`ModelName()` + `MountOps(reg router.OpRegistry)`) for transport — the
-      module never imports `tinywasm/mcp` and never implements `router.Router`/`router.APIModule`.
+      module never imports `webtyp/mcp` and never implements `router.Router`/`router.APIModule`.
     - `model.IDGenerator` for identity (`Deps.IDs`, required).
     - `events.Publisher` for event-driven updates (`Deps.Publisher`, optional — `nil` disables
       publishing silently). This module's own `EventPublisher` interface (previously in
       `publish.go`) is retired in favor of this contract.
     - `view.Presenter` (`NewView(caller router.Caller) view.Presenter`) for UI, built with only
       `view`+`model`+`router` — the app chooses the renderer. Replaces the previous `web/` package,
-      which built a concrete `tinywasm/dom` + `tinywasm/layout/rightpanel` UI directly inside the
+      which built a concrete `webtyp/dom` + `webtyp/layout/rightpanel` UI directly inside the
       module and is removed — see `docs/PLAN.md` Stage 0/4 for the full reconciliation history.
     - Tests run against `storage/mem` (`orm.New(mem.New())`), never a concrete driver, and never a
       hand-rolled `orm.Executor`/`orm.Compiler` fake (the retired `web/mockdb` package did this

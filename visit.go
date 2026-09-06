@@ -1,9 +1,9 @@
 package clinical_encounter
 
 import (
-	"github.com/tinywasm/events"
-	"github.com/tinywasm/orm"
-	"github.com/tinywasm/time"
+	"webtyp.com/events"
+	"webtyp.com/orm"
+	"webtyp.com/time"
 )
 
 func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {

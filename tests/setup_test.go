@@ -4,11 +4,11 @@ import (
 	"testing"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
-	"github.com/tinywasm/events"
-	"github.com/tinywasm/fmt"
-	"github.com/tinywasm/model"
-	"github.com/tinywasm/orm"
-	"github.com/tinywasm/storage/mem"
+	"webtyp.com/events"
+	"webtyp.com/fmt"
+	"webtyp.com/model"
+	"webtyp.com/orm"
+	"webtyp.com/storage/mem"
 )
 
 type mockIDGen struct{ counter int }
@@ -23,7 +23,7 @@ var _ model.IDGenerator = (*mockIDGen)(nil)
 type mockPublisher struct{ Events []events.Event }
 
 // events.Publisher.Publish is fire-and-forget: NO error return (verified against
-// github.com/tinywasm/events@v0.0.2 — a `Publish(e Event) error` signature does not compile).
+// webtyp.com/events@v0.0.2 — a `Publish(e Event) error` signature does not compile).
 func (p *mockPublisher) Publish(e events.Event) {
 	p.Events = append(p.Events, e)
 }

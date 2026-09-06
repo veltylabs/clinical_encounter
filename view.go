@@ -1,10 +1,10 @@
 package clinical_encounter
 
 import (
-	"github.com/tinywasm/model"
-	"github.com/tinywasm/router"
-	"github.com/tinywasm/time"
-	"github.com/tinywasm/view"
+	"webtyp.com/model"
+	"webtyp.com/router"
+	"webtyp.com/time"
+	"webtyp.com/view"
 )
 
 // weekdayAbbr/monthAbbr back leadFromUnix's LeadTop/LeadBottom — Spanish,
@@ -59,18 +59,15 @@ func (it *MedicalHistory) Item() view.Item {
 	}
 }
 
-// NewView construye el Presenter del historial médico — el motor agnóstico de tecnología que envuelve
-// un renderer (tinywasm/layout/rightpanel, o cualquier otro). Este módulo lo construye (solo
-// view+model+router); la app decide qué renderer lo dibuja.
-func NewView(caller router.Caller) view.Presenter {
-	record := &MedicalHistory{}
+const titleMedicalHistory = "Historial clínico"
 
-	return view.New(
-		caller,
-		record,
-		OpListVisitsByPatient,
-		func() model.ModelSlice { return &MedicalHistoryList{} },
-		view.WithTitle("Historial clínico"),
-		view.WithSaveOp(OpCreateVisit),
-	)
+// NewView construye el Presenter del historial médico — el motor agnóstico de
+// tecnología que envuelve un renderer (rightpanel, o cualquier otro). Este
+// módulo lo construye (view + model + router); la app decide qué renderer lo
+// dibuja.
+func NewView(caller router.Caller) view.Presenter {
+	b := view.NewCallerLister(caller,
+		view.Ops{List: OpListVisitsByPatient, Save: OpCreateVisit},
+		func() model.ModelSlice { return &MedicalHistoryList{} })
+	return view.New(b, &MedicalHistory{}, view.WithTitle(titleMedicalHistory))
 }

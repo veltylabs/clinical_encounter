@@ -4,14 +4,31 @@ import (
 	"testing"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
-	"github.com/tinywasm/model"
-	"github.com/tinywasm/view"
-	"github.com/tinywasm/view/conformance"
+	"webtyp.com/model"
+	"webtyp.com/router"
+	"webtyp.com/view"
 )
 
+type fakeCaller struct {
+	reply func(op string, into model.Decodable)
+}
+
+func (f *fakeCaller) Call(op string, args model.Encodable, into model.Decodable, done func(err error)) {
+	if f.reply != nil {
+		f.reply(op, into)
+	}
+	if done != nil {
+		done(nil)
+	}
+}
+
+func (f *fakeCaller) Dispatch(op string, args model.Encodable) {}
+
+var _ router.Caller = (*fakeCaller)(nil)
+
 func TestView_ListPopulatesItems(t *testing.T) {
-	caller := &conformance.FakeCaller{
-		Reply: func(op string, into model.Decodable) {
+	caller := &fakeCaller{
+		reply: func(op string, into model.Decodable) {
 			if op != clinicalencounter.OpListVisitsByPatient {
 				return
 			}

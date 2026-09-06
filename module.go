@@ -1,11 +1,11 @@
 package clinical_encounter
 
 import (
-	"github.com/tinywasm/ddl"
-	"github.com/tinywasm/events"
-	"github.com/tinywasm/fmt"
-	"github.com/tinywasm/model"
-	"github.com/tinywasm/orm"
+	"webtyp.com/ddl"
+	"webtyp.com/events"
+	"webtyp.com/fmt"
+	"webtyp.com/model"
+	"webtyp.com/orm"
 )
 
 // Deps son los puertos de infraestructura del módulo — nunca una implementación concreta.
