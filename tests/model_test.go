@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
-	"github.com/tinywasm/form"
-	"github.com/tinywasm/model"
+	"webtyp.com/form"
+	"webtyp.com/model"
 )
 
 var _ model.Model = (*clinicalencounter.CreateVisitArgs)(nil)

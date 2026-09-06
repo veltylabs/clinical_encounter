@@ -1,8 +1,8 @@
 package clinical_encounter
 
 import (
-	"github.com/tinywasm/model"
-	"github.com/tinywasm/router"
+	"webtyp.com/model"
+	"webtyp.com/router"
 )
 
 const (

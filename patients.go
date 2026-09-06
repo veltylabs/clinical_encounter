@@ -1,6 +1,6 @@
 package clinical_encounter
 
-import "github.com/tinywasm/orm"
+import "webtyp.com/orm"
 
 // defaultRecentPatientsLimit caps the scan when the caller passes Limit<=0.
 // medical_history starts empty in production (see docs/PLAN_MODEL_MIGRATION.md
