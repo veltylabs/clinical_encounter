@@ -11,14 +11,14 @@ import (
 	"webtyp.com/storage/mem"
 )
 
-func TestMountOps_CreateVisit(t *testing.T) {
+func TestMountOperations_CreateVisit(t *testing.T) {
 	m := setup(t)
 	if m.ModelName() != "clinical_encounter" {
 		t.Fatalf("expected ModelName %q, got %q", "clinical_encounter", m.ModelName())
 	}
 
 	reg := &mock.Router{}
-	m.MountOps(reg)
+	m.MountOperations(reg)
 	reg.Configure(mock.Config{
 		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
@@ -38,10 +38,10 @@ func TestMountOps_CreateVisit(t *testing.T) {
 	}
 }
 
-func TestMountOps_CreateVisit_DecodeError(t *testing.T) {
+func TestMountOperations_CreateVisit_DecodeError(t *testing.T) {
 	m := setup(t)
 	reg := &mock.Router{}
-	m.MountOps(reg)
+	m.MountOperations(reg)
 	reg.Configure(mock.Config{
 		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
@@ -56,10 +56,10 @@ func TestMountOps_CreateVisit_DecodeError(t *testing.T) {
 	}
 }
 
-func TestMountOps_CreateVisit_MissingArgs(t *testing.T) {
+func TestMountOperations_CreateVisit_MissingArgs(t *testing.T) {
 	m := setup(t)
 	reg := &mock.Router{}
-	m.MountOps(reg)
+	m.MountOperations(reg)
 	reg.Configure(mock.Config{
 		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
@@ -74,10 +74,10 @@ func TestMountOps_CreateVisit_MissingArgs(t *testing.T) {
 	}
 }
 
-func TestMountOps_GetVisit_NotFound(t *testing.T) {
+func TestMountOperations_GetVisit_NotFound(t *testing.T) {
 	m := setup(t)
 	reg := &mock.Router{}
-	m.MountOps(reg)
+	m.MountOperations(reg)
 	reg.Configure(mock.Config{
 		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
@@ -99,10 +99,10 @@ func TestNew_RequiresIDs(t *testing.T) {
 	}
 }
 
-func TestMountOps_CreateVisit_RBACDenial(t *testing.T) {
+func TestMountOperations_CreateVisit_RBACDenial(t *testing.T) {
 	m := setup(t)
 	reg := &mock.Router{}
-	m.MountOps(reg)
+	m.MountOperations(reg)
 	reg.Configure(mock.Config{
 		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return false },
@@ -119,7 +119,7 @@ func TestMountOps_CreateVisit_RBACDenial(t *testing.T) {
 	}
 }
 
-func TestMountOps_GetVisit(t *testing.T) {
+func TestMountOperations_GetVisit(t *testing.T) {
 	m := setup(t)
 	// Seed a visit
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
@@ -136,7 +136,7 @@ func TestMountOps_GetVisit(t *testing.T) {
 	}
 
 	reg := &mock.Router{}
-	m.MountOps(reg)
+	m.MountOperations(reg)
 	reg.Configure(mock.Config{
 		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
@@ -153,7 +153,7 @@ func TestMountOps_GetVisit(t *testing.T) {
 	}
 }
 
-func TestMountOps_ListVisits(t *testing.T) {
+func TestMountOperations_ListVisits(t *testing.T) {
 	m := setup(t)
 	// Seed a visit
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
@@ -170,7 +170,7 @@ func TestMountOps_ListVisits(t *testing.T) {
 	}
 
 	reg := &mock.Router{}
-	m.MountOps(reg)
+	m.MountOperations(reg)
 	reg.Configure(mock.Config{
 		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },

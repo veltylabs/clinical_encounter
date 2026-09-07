@@ -12,14 +12,14 @@ const (
 	OpListRecentPatients  = "list_recent_patients"
 )
 
-func (m *Module) MountOps(reg router.OpRegistry) {
-	reg.Op(OpCreateVisit, m.opCreateVisit).Requires("medical_history", model.Create).Accepts(&CreateVisitArgs{})
-	reg.Op(OpGetVisit, m.opGetVisit).Requires("medical_history", model.Read).Accepts(&GetVisitArgs{})
-	reg.Op(OpListVisitsByPatient, m.opListVisits).Requires("medical_history", model.Read).Accepts(&ListVisitsArgs{})
-	reg.Op(OpListRecentPatients, m.opListRecentPatients).Requires("medical_history", model.Read).Accepts(&ListRecentPatientsArgs{})
+func (m *Module) MountOperations(reg router.OperationRegistry) {
+	reg.Operation(OpCreateVisit, m.opCreateVisit).Requires("medical_history", model.Create).Accepts(&CreateVisitArgs{})
+	reg.Operation(OpGetVisit, m.opGetVisit).Requires("medical_history", model.Read).Accepts(&GetVisitArgs{})
+	reg.Operation(OpListVisitsByPatient, m.opListVisits).Requires("medical_history", model.Read).Accepts(&ListVisitsArgs{})
+	reg.Operation(OpListRecentPatients, m.opListRecentPatients).Requires("medical_history", model.Read).Accepts(&ListRecentPatientsArgs{})
 }
 
-var _ router.OpModule = (*Module)(nil)
+var _ router.OperationModule = (*Module)(nil)
 
 func (m *Module) opCreateVisit(ctx router.Context) {
 	var args CreateVisitArgs
