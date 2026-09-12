@@ -1,7 +1,6 @@
 package clinical_encounter
 
 import (
-	"webtyp.com/ddl"
 	"webtyp.com/events"
 	"webtyp.com/fmt"
 	"webtyp.com/model"
@@ -23,14 +22,6 @@ type Module struct {
 func New(db *orm.DB, deps Deps) (*Module, error) {
 	if deps.IDs == nil {
 		return nil, fmt.Err("clinical_encounter: Deps.IDs is required")
-	}
-	// ddl.Compiler es una capacidad opcional — solo los backends SQL (sqlt, postgres) la implementan.
-	// storage/mem (las pruebas propias de este módulo) crea tablas de forma perezosa y no necesita DDL,
-	// así que una aserción de tipo — no una llamada incondicional — es cómo el módulo se mantiene agnóstico aquí.
-	if ddlCompiler, ok := db.RawConn().(ddl.Compiler); ok {
-		if err := ddl.New(db.RawConn(), ddlCompiler).CreateTable(&MedicalHistory{}); err != nil {
-			return nil, err
-		}
 	}
 	return &Module{db: db, ids: deps.IDs, pub: deps.Publisher}, nil
 }
