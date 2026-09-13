@@ -2,6 +2,8 @@
 PLAN: "fix: MedicalHistory declara widgets y su vista deja de fallar al construirse"
 EXECUTOR: jules
 REVIEWER: none
+STATUS: running
+SESSION: 13042852609281692566
 ---
 
 > This plan is dispatched via the CodeJob workflow. See skill: agents-workflow.
