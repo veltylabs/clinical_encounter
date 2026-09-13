@@ -2,8 +2,9 @@
 PLAN: "fix: MedicalHistory declara widgets y su vista deja de fallar al construirse"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 13042852609281692566
+PR: https://github.com/veltylabs/clinical_encounter/pull/4
 ---
 
 > This plan is dispatched via the CodeJob workflow. See skill: agents-workflow.
