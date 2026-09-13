@@ -77,6 +77,8 @@ func (m *MedicalHistory) DecodeFields(r model.FieldReader) {
 
 type MedicalHistoryList []*MedicalHistory
 
+func (s *MedicalHistoryList) Schema() []model.Field { return nil }
+func (s *MedicalHistoryList) Pointers() []any     { return nil }
 func (s *MedicalHistoryList) Len() int             { return len(*s) }
 func (s *MedicalHistoryList) At(i int) model.Fielder { return (*s)[i] }
 func (s *MedicalHistoryList) Append() model.Fielder  { v := &MedicalHistory{}; *s = append(*s, v); return v }
@@ -195,6 +197,8 @@ func (m *CreateVisitArgs) DecodeFields(r model.FieldReader) {
 
 type CreateVisitArgsList []*CreateVisitArgs
 
+func (s *CreateVisitArgsList) Schema() []model.Field { return nil }
+func (s *CreateVisitArgsList) Pointers() []any     { return nil }
 func (s *CreateVisitArgsList) Len() int             { return len(*s) }
 func (s *CreateVisitArgsList) At(i int) model.Fielder { return (*s)[i] }
 func (s *CreateVisitArgsList) Append() model.Fielder  { v := &CreateVisitArgs{}; *s = append(*s, v); return v }
@@ -228,6 +232,8 @@ func (m *GetVisitArgs) DecodeFields(r model.FieldReader) {
 
 type GetVisitArgsList []*GetVisitArgs
 
+func (s *GetVisitArgsList) Schema() []model.Field { return nil }
+func (s *GetVisitArgsList) Pointers() []any     { return nil }
 func (s *GetVisitArgsList) Len() int             { return len(*s) }
 func (s *GetVisitArgsList) At(i int) model.Fielder { return (*s)[i] }
 func (s *GetVisitArgsList) Append() model.Fielder  { v := &GetVisitArgs{}; *s = append(*s, v); return v }
@@ -261,6 +267,8 @@ func (m *ListVisitsArgs) DecodeFields(r model.FieldReader) {
 
 type ListVisitsArgsList []*ListVisitsArgs
 
+func (s *ListVisitsArgsList) Schema() []model.Field { return nil }
+func (s *ListVisitsArgsList) Pointers() []any     { return nil }
 func (s *ListVisitsArgsList) Len() int             { return len(*s) }
 func (s *ListVisitsArgsList) At(i int) model.Fielder { return (*s)[i] }
 func (s *ListVisitsArgsList) Append() model.Fielder  { v := &ListVisitsArgs{}; *s = append(*s, v); return v }
@@ -294,6 +302,8 @@ func (m *ListRecentPatientsArgs) DecodeFields(r model.FieldReader) {
 
 type ListRecentPatientsArgsList []*ListRecentPatientsArgs
 
+func (s *ListRecentPatientsArgsList) Schema() []model.Field { return nil }
+func (s *ListRecentPatientsArgsList) Pointers() []any     { return nil }
 func (s *ListRecentPatientsArgsList) Len() int             { return len(*s) }
 func (s *ListRecentPatientsArgsList) At(i int) model.Fielder { return (*s)[i] }
 func (s *ListRecentPatientsArgsList) Append() model.Fielder  { v := &ListRecentPatientsArgs{}; *s = append(*s, v); return v }
