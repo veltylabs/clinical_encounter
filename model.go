@@ -10,23 +10,23 @@ var MedicalHistoryModel = model.Definition{
 	Name: "medical_history",
 	Fields: model.Fields{
 		{Name: "id", Type: model.Text(), DB: &model.FieldDB{PK: true}},
-		{Name: "patient_id", Type: model.Text(), NotNull: true},
-		{Name: "doctor_id", Type: model.Text(), NotNull: true},
-		{Name: "reservation_id", Type: model.Text()},
+		{Name: "patient_id", Type: input.Text(), NotNull: true},
+		{Name: "doctor_id", Type: input.Text(), NotNull: true},
+		{Name: "reservation_id", Type: input.Text()},
 		// status: los valores válidos son ÚNICAMENTE las constantes Status* en const.go — los literales
 		// viven solo en esas constantes y en ningún otro lugar (regla anti magic-string; ver la revisión de item_catalog).
-		{Name: "status", Type: model.Text(), NotNull: true},
+		{Name: "status", Type: statusSelectInput(), NotNull: true},
 		{Name: "attention_at", Type: model.Int(), NotNull: true},
-		{Name: "reason", Type: model.Text(), NotNull: true},
-		{Name: "diagnostic", Type: model.Text()},
-		{Name: "prescription", Type: model.Text()},
-		{Name: "cie10_code", Type: model.Text()},
+		{Name: "reason", Type: input.Textarea(), NotNull: true},
+		{Name: "diagnostic", Type: input.Textarea()},
+		{Name: "prescription", Type: input.Textarea()},
+		{Name: "cie10_code", Type: input.Text()},
 		{Name: "started_at", Type: model.Int()},
 		{Name: "finished_at", Type: model.Int()},
-		{Name: "patient_name_snapshot", Type: model.Text(), NotNull: true},
-		{Name: "patient_rut_snapshot", Type: model.Text(), NotNull: true},
-		{Name: "doctor_name_snapshot", Type: model.Text(), NotNull: true},
-		{Name: "doctor_specialty_snapshot", Type: model.Text()},
+		{Name: "patient_name_snapshot", Type: input.Text(), NotNull: true},
+		{Name: "patient_rut_snapshot", Type: input.Rut(), NotNull: true},
+		{Name: "doctor_name_snapshot", Type: input.Text(), NotNull: true},
+		{Name: "doctor_specialty_snapshot", Type: input.Text()},
 		{Name: "updated_at", Type: model.Int(), NotNull: true},
 	},
 }
@@ -76,6 +76,21 @@ var ListRecentPatientsArgsModel = model.Definition{
 	Fields: model.Fields{
 		{Name: "limit", Type: model.Int()},
 	},
+}
+
+func statusSelectInput() input.Input {
+	inp := input.Select()
+	if s, ok := inp.(interface{ SetOptions(...fmt.KeyValue) }); ok {
+		s.SetOptions(
+			fmt.KeyValue{Key: StatusCreated, Value: "Agendada"},
+			fmt.KeyValue{Key: StatusArrived, Value: "En recepción"},
+			fmt.KeyValue{Key: StatusTriaged, Value: "En triage"},
+			fmt.KeyValue{Key: StatusInProgress, Value: "En atención"},
+			fmt.KeyValue{Key: StatusCompleted, Value: "Completada"},
+			fmt.KeyValue{Key: StatusCancelled, Value: "Cancelada"},
+		)
+	}
+	return inp
 }
 
 var (

@@ -25,3 +25,16 @@ func TestCreateVisitArgsHasWidgets(t *testing.T) {
 		t.Fatal("CreateVisitArgsModel has no widgets — form.New returned an empty form")
 	}
 }
+
+// MedicalHistory debe poder generar un formulario: crudview lo construye
+// con form.New sobre este Record, y form.New falla si NINGÚN campo
+// declara un widget (input.Input).
+func TestMedicalHistoryModel_HasRenderableWidgets(t *testing.T) {
+	f, err := form.New("clinical_encounter", &clinicalencounter.MedicalHistory{}, &mockIDGen{})
+	if err != nil {
+		t.Fatalf("form.New: %v", err)
+	}
+	if len(f.Inputs) == 0 {
+		t.Fatal("MedicalHistoryModel no declara ningún widget: crudview no podrá construir su formulario")
+	}
+}
