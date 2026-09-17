@@ -7,6 +7,12 @@ import (
 	"webtyp.com/orm"
 )
 
+// ModelName is this module's identity: mcp.HarvestOps qualifies every op
+// below as "clinical_encounter.<name>" on the wire, and view.go's NewView
+// passes this same constant as view.Ops.Module so the client composes the
+// identical qualified name.
+const ModelName = "clinical_encounter"
+
 // Deps son los puertos de infraestructura del módulo — nunca una implementación concreta.
 type Deps struct {
 	IDs       model.IDGenerator // requerido — el módulo nunca lo construye por sí mismo
@@ -27,5 +33,5 @@ func New(db *orm.DB, deps Deps) (*Module, error) {
 }
 
 func (m *Module) ModelName() string {
-	return "clinical_encounter"
+	return ModelName
 }

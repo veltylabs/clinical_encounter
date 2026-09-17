@@ -67,7 +67,7 @@ const titleMedicalHistory = "Historial clínico"
 // dibuja.
 func NewView(caller router.Caller) view.Presenter {
 	b := view.NewCallerLister(caller,
-		view.Ops{List: OpListVisitsByPatient, Save: OpCreateVisit},
+		view.Ops{Module: ModelName, List: OpListVisitsByPatient, Save: OpCreateVisit},
 		func() model.ModelSlice { return &MedicalHistoryList{} })
 	return view.New(b, &MedicalHistory{}, view.WithTitle(titleMedicalHistory))
 }

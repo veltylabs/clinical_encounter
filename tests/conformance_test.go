@@ -29,7 +29,7 @@ var _ router.Caller = (*fakeCaller)(nil)
 func TestView_ListPopulatesItems(t *testing.T) {
 	caller := &fakeCaller{
 		reply: func(op string, into model.Decodable) {
-			if op != clinicalencounter.OpListVisitsByPatient {
+			if op != clinicalencounter.ModelName+"."+clinicalencounter.OpListVisitsByPatient {
 				return
 			}
 			list := into.(*clinicalencounter.MedicalHistoryList)
@@ -38,8 +38,10 @@ func TestView_ListPopulatesItems(t *testing.T) {
 		},
 	}
 	p := clinicalencounter.NewView(caller)
-	if err := p.Reload(); err != nil {
-		t.Fatalf("Reload: %v", err)
+	var rerr error
+	p.Reload(func(err error) { rerr = err })
+	if rerr != nil {
+		t.Fatalf("Reload: %v", rerr)
 	}
 	items := p.Items()
 	if len(items) != 1 || items[0].ID != "mh_1" || items[0].Label != "Control" {
