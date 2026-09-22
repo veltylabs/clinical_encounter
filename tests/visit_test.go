@@ -28,6 +28,32 @@ func TestCreateVisit_HappyPath(t *testing.T) {
 	}
 }
 
+// TestCreateVisit_DefaultsAttentionAtToNow: attention_at is model.Int() in
+// MedicalHistoryModel (not an input.* widget — see model.go's own field
+// comment), so webtyp/form never renders it and every crudview-driven "new
+// ficha" submission reaches here with AttentionAt == 0. Rejecting that as
+// ErrMissingArgs (the pre-fix behavior) made the generic "+" create flow
+// permanently fail in production — a clinical encounter is created because
+// it is happening now, so a zero AttentionAt must default to time.Now(),
+// not error.
+func TestCreateVisit_DefaultsAttentionAtToNow(t *testing.T) {
+	m := setup(t)
+	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
+		PatientId:           "pat_1",
+		DoctorId:            "doc_1",
+		Reason:              "Control rutinario",
+		PatientNameSnapshot: "Juan Pérez",
+		PatientRutSnapshot:  "1-9",
+		DoctorNameSnapshot:  "Dr. Soto",
+	})
+	if err != nil {
+		t.Fatalf("CreateVisit: %v", err)
+	}
+	if rec.AttentionAt <= 0 {
+		t.Fatalf("expected AttentionAt to default to now, got %d", rec.AttentionAt)
+	}
+}
+
 func TestCreateVisit_MissingRequiredArgs(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{})

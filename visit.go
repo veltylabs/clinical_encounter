@@ -11,8 +11,15 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 		args.PatientNameSnapshot == "" || args.PatientRutSnapshot == "" || args.DoctorNameSnapshot == "" {
 		return nil, ErrMissingArgs
 	}
+	// attention_at is model.Int() in MedicalHistoryModel, not an input.*
+	// widget (see model.go's field comment: status changes through the FSM,
+	// attention time is machine-supplied, not typed by the doctor) — so
+	// webtyp/form never renders it and every crudview-driven "new ficha"
+	// submission reaches here with AttentionAt == 0. A clinical encounter is
+	// created because it is happening now, so this defaults instead of
+	// rejecting — rejecting made the generic create flow permanently fail.
 	if args.AttentionAt == 0 {
-		return nil, ErrMissingArgs
+		args.AttentionAt = time.Now()
 	}
 
 	record := &MedicalHistory{
