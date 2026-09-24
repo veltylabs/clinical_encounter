@@ -1,4 +1,4 @@
-package clinical_encounter
+package ui
 
 import (
 	clinicalencounter "github.com/veltylabs/clinical_encounter"

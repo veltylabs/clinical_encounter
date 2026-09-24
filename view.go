@@ -50,7 +50,7 @@ func leadFromUnix(sec int64) (top, main, bottom string) {
 // Presenter indexa las filas por ID a partir de esto durante Reload; no hay lookup manual byID/WithFill.
 // El badge lateral lleva la fecha (leadFromUnix); Label el motivo, Description el estado — el nombre
 // del doctor no aparece aquí porque, a diferencia de la demo, el consumidor decide qué snapshot mostrar
-// (ver modules/clinical_encounter/view.go de mjosefa-cms, que sí conoce DoctorNameSnapshot).
+// (ver ui/browser.go, que sí conoce DoctorNameSnapshot).
 func (it *MedicalHistory) Item() view.Item {
 	top, main, bottom := leadFromUnix(it.AttentionAt)
 	return view.Item{

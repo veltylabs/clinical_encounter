@@ -10,10 +10,10 @@ import (
 
 	ab "github.com/veltylabs/appointment_booking"
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
+	"github.com/veltylabs/clinical_encounter/ui"
 	patientdirectory "github.com/veltylabs/patient_directory"
 	staffmanager "github.com/veltylabs/staff_manager"
 
-	"github.com/veltylabs/mjosefa-cms/modules/clinical_encounter"
 	"webtyp.com/components/searchbar"
 	"webtyp.com/components/selectsearch"
 	"webtyp.com/layout/crudview"
@@ -28,7 +28,7 @@ func encodeInto(v model.Encodable, into model.Decodable) error {
 }
 
 // TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations pins the
-// design in modules/clinical_encounter/README.md: the doctor's picker is
+// design in docs/UI.md: the doctor's picker is
 // built from staff_manager + appointment_booking + patient_directory, shows
 // only CONFIRMED reservations, and Filter(patientID) resolves to that
 // patient's pre-fetched history without any further network call.
@@ -61,7 +61,7 @@ func TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations(t *testing.
 		},
 	}
 
-	m, err := clinical_encounter.Browser(mock, &testIDGen{}, "t1", "user1")
+	m, err := ui.Browser(mock, &testIDGen{}, "t1", "user1")
 	if err != nil {
 		t.Fatalf("Browser: %v", err)
 	}
@@ -114,7 +114,7 @@ func TestWASM_ClinicalEncounter_NoStaffRowFallsBackToPlainList(t *testing.T) {
 		},
 	}
 
-	m, err := clinical_encounter.Browser(mock, &testIDGen{}, "t1", "admin-with-no-staff-row")
+	m, err := ui.Browser(mock, &testIDGen{}, "t1", "admin-with-no-staff-row")
 	if err != nil {
 		t.Fatalf("Browser: %v", err)
 	}
@@ -159,7 +159,7 @@ func TestWASM_ClinicalEncounter_NewDraftIsSeededFromThePicker(t *testing.T) {
 		},
 	}
 
-	m, err := clinical_encounter.Browser(mock, &testIDGen{}, "t1", "user1")
+	m, err := ui.Browser(mock, &testIDGen{}, "t1", "user1")
 	if err != nil {
 		t.Fatalf("Browser: %v", err)
 	}

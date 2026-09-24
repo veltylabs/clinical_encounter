@@ -2,8 +2,9 @@
 PLAN: "feat(ui): el Historial Clínico con la agenda del día del doctor, su semilla y su demo viven en el módulo"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 6100775699553555915
+PR: https://github.com/veltylabs/clinical_encounter/pull/5
 ---
 
 > Este plan se despacha con el flujo CodeJob. Ver skill: agents-workflow.

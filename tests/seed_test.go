@@ -1,0 +1,59 @@
+package tests
+
+import (
+	"testing"
+	tinytime "webtyp.com/time"
+
+	clinicalencounter "github.com/veltylabs/clinical_encounter"
+	ceseed "github.com/veltylabs/clinical_encounter/seed"
+	patientdirectory "github.com/veltylabs/patient_directory"
+	patientseed "github.com/veltylabs/patient_directory/seed"
+	staffmanager "github.com/veltylabs/staff_manager"
+	staffseed "github.com/veltylabs/staff_manager/seed"
+	"webtyp.com/events/mock"
+	"webtyp.com/orm"
+	"webtyp.com/storage/mem"
+)
+
+func TestSeedLoad(t *testing.T) {
+	db := orm.New(mem.New())
+	broker := &mock.Broker{}
+	ids := &testIDGen{}
+
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{IDs: ids, Publisher: broker})
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+
+	up := ceseed.Upstream{
+		Patients: patientseed.Data{
+			Patients: []patientdirectory.Patient{
+				{Id: "p1", Name: "Patient One", Rut: "11111111-1"},
+				{Id: "p2", Name: "Patient Two", Rut: "22222222-2"},
+			},
+		},
+		Staff: staffseed.Data{
+			Staff: []staffmanager.StaffMember{
+				{Id: "s1", Name: "Doctor One", Specialty: "Medicina General"},
+			},
+		},
+	}
+
+	data, err := ceseed.Load(m, up)
+	if err != nil {
+		t.Fatalf("seed.Load: %v", err)
+	}
+
+	if len(data.Visits) != 2 {
+		t.Errorf("expected 2 visits sembradas, got %d", len(data.Visits))
+	}
+
+	// Las fichas de demo son de hace ~30 días: AttentionAt va en nanosegundos,
+	// así que debe quedar al menos 29 días antes de ahora (no "hoy").
+	limit := tinytime.Now() - 29*86400*1_000_000_000
+	for _, v := range data.Visits {
+		if v.AttentionAt > limit {
+			t.Errorf("visit %s: AttentionAt %d no está ~30 días atrás (límite %d)", v.Id, v.AttentionAt, limit)
+		}
+	}
+}

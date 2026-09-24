@@ -93,7 +93,7 @@ documentado arriba.
 - [x] Resolución de identidad del doctor vía `staff_manager` + `auth.OpMe`.
 - [x] Pre-llenado del borrador nuevo (`crudview.Config.NewRecord`,
       layout v0.2.52), fijado por
-      `tests/clinical_encounter_agenda_wasm_test.go`.
+      `tests/ui_agenda_wasm_test.go`.
 
 Lo único que este módulo NO valida todavía es que el picker se vea con datos
 reales en el navegador: la base de desarrollo no tiene reservas confirmadas
