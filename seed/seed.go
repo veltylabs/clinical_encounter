@@ -8,6 +8,9 @@ import (
 	"webtyp.com/time"
 )
 
+// seedVisitAgeDays es la antigüedad de las fichas de demo.
+const seedVisitAgeDays = 30
+
 type Upstream struct {
 	Patients patientseed.Data
 	Staff    staffseed.Data
@@ -29,7 +32,9 @@ func Load(m *clinicalencounter.Module, up Upstream) (Data, error) {
 	patients := up.Patients.Patients[:2]
 	visits := make([]*clinicalencounter.MedicalHistory, 0, len(patients))
 
-	thirtyDaysAgo := time.Now() - (30 * 86400)
+	// time.Now() está en NANOsegundos (igual que AttentionAt, que visit.go
+	// rellena con time.Now()): 30 días = 30*86400 segundos * 1e9.
+	thirtyDaysAgo := time.Now() - seedVisitAgeDays*86400*1_000_000_000
 
 	for _, p := range patients {
 		v, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{

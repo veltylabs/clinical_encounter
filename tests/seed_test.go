@@ -2,13 +2,14 @@ package tests
 
 import (
 	"testing"
+	tinytime "webtyp.com/time"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 	ceseed "github.com/veltylabs/clinical_encounter/seed"
-	patientseed "github.com/veltylabs/patient_directory/seed"
 	patientdirectory "github.com/veltylabs/patient_directory"
-	staffseed "github.com/veltylabs/staff_manager/seed"
+	patientseed "github.com/veltylabs/patient_directory/seed"
 	staffmanager "github.com/veltylabs/staff_manager"
+	staffseed "github.com/veltylabs/staff_manager/seed"
 	"webtyp.com/events/mock"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
@@ -45,5 +46,14 @@ func TestSeedLoad(t *testing.T) {
 
 	if len(data.Visits) != 2 {
 		t.Errorf("expected 2 visits sembradas, got %d", len(data.Visits))
+	}
+
+	// Las fichas de demo son de hace ~30 días: AttentionAt va en nanosegundos,
+	// así que debe quedar al menos 29 días antes de ahora (no "hoy").
+	limit := tinytime.Now() - 29*86400*1_000_000_000
+	for _, v := range data.Visits {
+		if v.AttentionAt > limit {
+			t.Errorf("visit %s: AttentionAt %d no está ~30 días atrás (límite %d)", v.Id, v.AttentionAt, limit)
+		}
 	}
 }
