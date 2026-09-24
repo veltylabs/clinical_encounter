@@ -1,6 +1,6 @@
 //go:build !wasm
 
-package clinical_encounter
+package ui
 
 import (
 	"webtyp.com/svg"

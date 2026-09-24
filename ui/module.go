@@ -1,4 +1,4 @@
-package clinical_encounter
+package ui
 
 // ID is this module's identity: RBAC resource prefix on the server, nav
 // route on the client.
