@@ -2,6 +2,8 @@
 PLAN: "feat(ui): el Historial Clínico con la agenda del día del doctor, su semilla y su demo viven en el módulo"
 EXECUTOR: jules
 REVIEWER: none
+STATUS: running
+SESSION: 6100775699553555915
 ---
 
 > Este plan se despacha con el flujo CodeJob. Ver skill: agents-workflow.
