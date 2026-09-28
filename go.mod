@@ -15,7 +15,7 @@ require (
 	webtyp.com/dom v0.13.17
 	webtyp.com/events v0.0.5
 	webtyp.com/fmt v1.0.0
-	webtyp.com/form v0.4.17
+	webtyp.com/form v0.4.19
 	webtyp.com/input v0.0.9
 	webtyp.com/json v0.5.26
 	webtyp.com/layout v0.3.0
