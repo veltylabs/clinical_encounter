@@ -9,14 +9,14 @@ require (
 	github.com/veltylabs/item_catalog v0.3.9
 	github.com/veltylabs/patient_directory v0.0.5
 	github.com/veltylabs/staff_manager v0.1.10
-	webtyp.com/auth v0.0.56
+	webtyp.com/auth v0.0.58
 	webtyp.com/components v0.7.0
 	webtyp.com/ddl v0.0.17
 	webtyp.com/dom v0.13.17
 	webtyp.com/events v0.0.5
 	webtyp.com/fmt v1.0.0
 	webtyp.com/form v0.4.19
-	webtyp.com/input v0.0.9
+	webtyp.com/input v0.0.10
 	webtyp.com/json v0.5.26
 	webtyp.com/layout v0.3.3
 	webtyp.com/model v0.2.0
