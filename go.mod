@@ -3,7 +3,7 @@ module github.com/veltylabs/clinical_encounter
 go 1.25.2
 
 require (
-	github.com/veltylabs/appointment_booking v0.1.14
+	github.com/veltylabs/appointment_booking v0.1.22
 	github.com/veltylabs/business_calendar v0.0.9
 	github.com/veltylabs/device_manager v0.1.8
 	github.com/veltylabs/item_catalog v0.3.9
