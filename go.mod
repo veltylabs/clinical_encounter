@@ -10,7 +10,7 @@ require (
 	github.com/veltylabs/patient_directory v0.0.5
 	github.com/veltylabs/staff_manager v0.1.10
 	webtyp.com/auth v0.0.60
-	webtyp.com/components v0.7.6
+	webtyp.com/components v0.7.7
 	webtyp.com/ddl v0.0.17
 	webtyp.com/dom v0.13.17
 	webtyp.com/events v0.0.5
@@ -31,7 +31,7 @@ require (
 
 require (
 	webtyp.com/color v0.1.2 // indirect
-	webtyp.com/css v0.4.23 // indirect
+	webtyp.com/css v0.4.24 // indirect
 	webtyp.com/date v0.0.7 // indirect
 	webtyp.com/font v0.0.5 // indirect
 	webtyp.com/html v0.0.24 // indirect
