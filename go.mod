@@ -10,15 +10,15 @@ require (
 	github.com/veltylabs/patient_directory v0.0.21
 	github.com/veltylabs/staff_manager v0.1.10
 	webtyp.com/auth v0.0.60
-	webtyp.com/components v0.8.7
+	webtyp.com/components v0.8.8
 	webtyp.com/ddl v0.0.17
 	webtyp.com/dom v0.13.21
 	webtyp.com/events v0.0.5
 	webtyp.com/fmt v1.0.0
-	webtyp.com/form v0.4.22
-	webtyp.com/input v0.0.10
+	webtyp.com/form v0.4.23
+	webtyp.com/input v0.0.11
 	webtyp.com/json v0.5.29
-	webtyp.com/layout v0.3.24
+	webtyp.com/layout v0.3.28
 	webtyp.com/model v0.2.2
 	webtyp.com/orm v0.12.4
 	webtyp.com/router v0.3.2
@@ -37,6 +37,7 @@ require (
 	webtyp.com/font v0.0.5 // indirect
 	webtyp.com/html v0.0.24 // indirect
 	webtyp.com/icons v0.0.7 // indirect
+	webtyp.com/msgtype v0.1.0 // indirect
 	webtyp.com/user v0.3.13 // indirect
 	webtyp.com/widget v0.6.36 // indirect
 )
