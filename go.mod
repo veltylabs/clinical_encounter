@@ -4,7 +4,7 @@ go 1.26.8
 
 require (
 	github.com/veltylabs/appointment_booking v0.1.22
-	github.com/veltylabs/business_calendar v0.4.0
+	github.com/veltylabs/business_calendar v0.4.23
 	github.com/veltylabs/device_manager v0.1.30
 	github.com/veltylabs/item_catalog v0.3.30
 	github.com/veltylabs/patient_directory v0.0.21
