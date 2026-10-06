@@ -16,7 +16,7 @@ require (
 	webtyp.com/events v0.0.5
 	webtyp.com/fmt v1.0.0
 	webtyp.com/form v0.4.23
-	webtyp.com/input v0.0.11
+	webtyp.com/input v0.0.13
 	webtyp.com/json v0.5.29
 	webtyp.com/layout v0.3.28
 	webtyp.com/model v0.2.2
@@ -37,6 +37,7 @@ require (
 	webtyp.com/font v0.0.5 // indirect
 	webtyp.com/html v0.0.24 // indirect
 	webtyp.com/icons v0.0.7 // indirect
+	webtyp.com/lang v0.1.0 // indirect
 	webtyp.com/msgtype v0.1.0 // indirect
 	webtyp.com/user v0.3.13 // indirect
 	webtyp.com/widget v0.6.36 // indirect
