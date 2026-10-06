@@ -31,11 +31,11 @@ require (
 
 require (
 	webtyp.com/color v0.1.2 // indirect
-	webtyp.com/css v0.4.27 // indirect
+	webtyp.com/css v0.4.28 // indirect
 	webtyp.com/date v0.0.7 // indirect
 	webtyp.com/font v0.0.5 // indirect
 	webtyp.com/html v0.0.24 // indirect
 	webtyp.com/icons v0.0.7 // indirect
 	webtyp.com/user v0.3.13 // indirect
-	webtyp.com/widget v0.6.34 // indirect
+	webtyp.com/widget v0.6.36 // indirect
 )
