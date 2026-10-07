@@ -5,7 +5,7 @@ go 1.26.8
 require (
 	github.com/veltylabs/appointment_booking v0.1.22
 	github.com/veltylabs/business_calendar v0.4.23
-	github.com/veltylabs/device_manager v0.1.30
+	github.com/veltylabs/device_manager v0.2.0
 	github.com/veltylabs/item_catalog v0.3.49
 	github.com/veltylabs/patient_directory v0.0.21
 	github.com/veltylabs/staff_manager v0.1.10
@@ -39,6 +39,7 @@ require (
 	webtyp.com/icons v0.0.7 // indirect
 	webtyp.com/lang v0.1.3 // indirect
 	webtyp.com/msgtype v0.1.0 // indirect
+	webtyp.com/network v0.1.0 // indirect
 	webtyp.com/user v0.3.13 // indirect
 	webtyp.com/widget v0.6.36 // indirect
 )
