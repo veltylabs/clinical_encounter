@@ -93,9 +93,17 @@ func statusSelectInput() input.Input {
 	return inp
 }
 
-var (
-	ErrNotFound    = fmt.Err("visit not found")
-	ErrMissingArgs = fmt.Err("missing required arguments")
+// domainError is the concrete type of this package's sentinel errors. Code
+// compares them by asserting this type and comparing the value: == between two
+// error values compiles, under TinyGo, to runtime.interfaceEqual, which pulls
+// internal/reflectlite into the wasm binary.
+type domainError string
+
+func (e domainError) Error() string { return string(e) }
+
+const (
+	ErrNotFound    domainError = "visit not found"
+	ErrMissingArgs domainError = "missing required arguments"
 )
 
 // Topics de eventos de dominio — <módulo>.<entidad>.<verbo-en-pasado>, los datos de tenant/id van en

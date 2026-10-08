@@ -31,7 +31,7 @@ func (m *Module) opCreateVisit(ctx router.Context) {
 	if err != nil {
 		// Convención de estado (en todo el ecosistema): 400 = entrada inválida, 404 = no encontrado,
 		// 500 = solo error interno genuino — nunca colapsar errores de cliente en 500.
-		if err == ErrMissingArgs {
+		if e, ok := err.(domainError); ok && e == ErrMissingArgs {
 			ctx.WriteStatus(400)
 			return
 		}
@@ -51,7 +51,7 @@ func (m *Module) opGetVisit(ctx router.Context) {
 	}
 	record, err := m.GetVisit(args.Id)
 	if err != nil {
-		if err == ErrNotFound {
+		if e, ok := err.(domainError); ok && e == ErrNotFound {
 			ctx.WriteStatus(404)
 			return
 		}

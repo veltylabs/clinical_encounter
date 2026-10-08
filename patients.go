@@ -24,7 +24,7 @@ func (m *Module) ListRecentPatients(limit int) ([]*MedicalHistory, error) {
 	qb := m.db.Query(&rec).OrderBy(MedicalHistory_.AttentionAt).Desc()
 	rows, err := ReadAllMedicalHistory(qb)
 	if err != nil {
-		if err == orm.ErrNotFound {
+		if orm.IsNotFound(err) {
 			return nil, nil
 		}
 		return nil, err
