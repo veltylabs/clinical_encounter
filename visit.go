@@ -53,7 +53,7 @@ func (m *Module) GetVisit(id string) (*MedicalHistory, error) {
 	qb := m.db.Query(&rec).Where(MedicalHistory_.Id).Eq(id)
 	_, err := ReadOneMedicalHistory(qb, &rec)
 	if err != nil {
-		if err == orm.ErrNotFound {
+		if orm.IsNotFound(err) {
 			return nil, ErrNotFound
 		}
 		return nil, err

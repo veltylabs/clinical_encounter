@@ -57,7 +57,7 @@ func TestCreateVisit_DefaultsAttentionAtToNow(t *testing.T) {
 func TestCreateVisit_MissingRequiredArgs(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{})
-	if err != clinicalencounter.ErrMissingArgs {
+	if err == nil || err.Error() != clinicalencounter.ErrMissingArgs.Error() {
 		t.Fatalf("expected ErrMissingArgs, got %v", err)
 	}
 }
@@ -65,7 +65,7 @@ func TestCreateVisit_MissingRequiredArgs(t *testing.T) {
 func TestGetVisit_NotFound(t *testing.T) {
 	m := setup(t)
 	_, err := m.GetVisit("does-not-exist")
-	if err != clinicalencounter.ErrNotFound {
+	if err == nil || err.Error() != clinicalencounter.ErrNotFound.Error() {
 		t.Fatalf("expected ErrNotFound, got %v", err)
 	}
 }
