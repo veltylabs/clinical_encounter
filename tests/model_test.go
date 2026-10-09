@@ -17,7 +17,7 @@ var _ model.Model = (*clinicalencounter.CreateVisitArgs)(nil)
 // originally targeted the now-stale `v0.2.16`, where `form.New` returned a single `*Form`):
 // `form.New` now returns `(*Form, error)`.
 func TestCreateVisitArgsHasWidgets(t *testing.T) {
-	f, err := form.New("clinical_encounter", &clinicalencounter.CreateVisitArgs{}, &mockIDGen{})
+	f, err := form.New("clinical_encounter", &clinicalencounter.CreateVisitArgs{}, &testIDGen{})
 	if err != nil {
 		t.Fatalf("form.New: %v", err)
 	}
@@ -30,7 +30,7 @@ func TestCreateVisitArgsHasWidgets(t *testing.T) {
 // con form.New sobre este Record, y form.New falla si NINGÚN campo
 // declara un widget (input.Input).
 func TestMedicalHistoryModel_HasRenderableWidgets(t *testing.T) {
-	f, err := form.New("clinical_encounter", &clinicalencounter.MedicalHistory{}, &mockIDGen{})
+	f, err := form.New("clinical_encounter", &clinicalencounter.MedicalHistory{}, &testIDGen{})
 	if err != nil {
 		t.Fatalf("form.New: %v", err)
 	}

@@ -18,9 +18,8 @@ import (
 func TestSeedLoad(t *testing.T) {
 	db := orm.New(mem.New())
 	broker := &mock.Broker{}
-	ids := &testIDGen{}
 
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{IDs: ids, Publisher: broker})
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{Publisher: broker})
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}
@@ -55,5 +54,35 @@ func TestSeedLoad(t *testing.T) {
 		if v.AttentionAt > limit {
 			t.Errorf("visit %s: AttentionAt %d no está ~30 días atrás (límite %d)", v.Id, v.AttentionAt, limit)
 		}
+	}
+}
+
+func TestSeedLoadTwice(t *testing.T) {
+	db := orm.New(mem.New())
+	m, _ := clinicalencounter.New(db, clinicalencounter.Deps{})
+	up := ceseed.Upstream{
+		Patients: patientseed.Data{
+			Patients: []patientdirectory.Patient{
+				{Id: "p1", Name: "Patient One", Rut: "11111111-1"},
+				{Id: "p2", Name: "Patient Two", Rut: "22222222-2"},
+			},
+		},
+		Staff: staffseed.Data{
+			Staff: []staffmanager.StaffMember{
+				{Id: "s1", Name: "Doctor One", Specialty: "Medicina General"},
+			},
+		},
+	}
+	data1, err := ceseed.Load(m, up)
+	if err != nil {
+		t.Fatalf("first seed.Load: %v", err)
+	}
+	data2, err := ceseed.Load(m, up)
+	if err != nil {
+		t.Fatalf("second seed.Load: %v", err)
+	}
+
+	if len(data1.Visits) != len(data2.Visits) {
+		t.Fatalf("expected same number of visits, got %d and %d", len(data1.Visits), len(data2.Visits))
 	}
 }

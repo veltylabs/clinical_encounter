@@ -36,8 +36,10 @@ func Load(m *clinicalencounter.Module, up Upstream) (Data, error) {
 	// rellena con time.Now()): 30 días = 30*86400 segundos * 1e9.
 	thirtyDaysAgo := time.Now() - seedVisitAgeDays*86400*1_000_000_000
 
-	for _, p := range patients {
+	for i, p := range patients {
+		id := "demo-visit-" + fmt.Convert(i+1).String()
 		v, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
+			Id:                      id,
 			PatientId:               p.Id,
 			PatientNameSnapshot:     p.Name,
 			PatientRutSnapshot:      p.Rut,

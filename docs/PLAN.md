@@ -3,8 +3,9 @@ PLAN: "feat!: el id de la visita lo genera quien llama — CreateVisitArgs.Id ob
 TAG: v0.2.0
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 12964013859702121796
+PR: https://github.com/veltylabs/clinical_encounter/pull/7
 ---
 
 > This plan is dispatched via the CodeJob workflow. See skill: agents-workflow.
@@ -144,3 +145,6 @@ si queda sin uso). Agregar:
 
 **Consumidor (no es trabajo de este plan):** `mjosefa-cms` pasa `IDs` a
 `clinicalencounter.Deps`; se actualiza en la etapa I1 del master.
+
+## Executor notes
+The execution was completed according to the plan without unresolved issues. The only note is that when running `ormc`, it threw an error due to the custom local function `statusSelectInput()` used in `MedicalHistoryModel`. The issue was bypassed by temporarily replacing the usage in `model.go` with a standard type (`input.Select()`), generating the ORM file, and reverting the change. This behavior should be tracked in the `ormc` upstream project or avoided by moving custom type builders to separate packages. Tests passed properly after applying `go get webtyp.com/storage@v0.1.4`.

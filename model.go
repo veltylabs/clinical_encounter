@@ -36,7 +36,9 @@ var MedicalHistoryModel = model.Definition{
 // son un duplicado de defensa en profundidad del mismo conjunto, nunca uno distinto.
 var CreateVisitArgsModel = model.Definition{
 	Name: "create_visit_args",
+	// id lo genera quien llama.
 	Fields: model.Fields{
+		{Name: "id", Type: model.Text(), DB: &model.FieldDB{PK: true}, NotNull: true},
 		{Name: "patient_id", Type: input.Text(), NotNull: true},
 		{Name: "doctor_id", Type: input.Text(), NotNull: true},
 		{Name: "attention_at", Type: input.Number(), NotNull: true},
@@ -104,6 +106,7 @@ func (e domainError) Error() string { return string(e) }
 const (
 	ErrNotFound    domainError = "visit not found"
 	ErrMissingArgs domainError = "missing required arguments"
+	ErrIdTaken     domainError = "visit id already used by another patient"
 )
 
 // Topics de eventos de dominio — <módulo>.<entidad>.<verbo-en-pasado>, los datos de tenant/id van en

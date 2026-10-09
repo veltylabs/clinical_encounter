@@ -13,9 +13,9 @@ func TestListRecentPatients_DedupesByPatientMostRecentFirst(t *testing.T) {
 	// Expect: [pat_1, pat_2] — one row per patient, ordered by the LATEST
 	// attention_at each has, not by creation order.
 	for _, v := range []clinicalencounter.CreateVisitArgs{
-		{PatientId: "pat_1", DoctorId: "doc_1", Reason: "r1", AttentionAt: 1, PatientNameSnapshot: "Juan", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D"},
-		{PatientId: "pat_2", DoctorId: "doc_1", Reason: "r2", AttentionAt: 2, PatientNameSnapshot: "Ana", PatientRutSnapshot: "2-7", DoctorNameSnapshot: "D"},
-		{PatientId: "pat_1", DoctorId: "doc_1", Reason: "r3", AttentionAt: 3, PatientNameSnapshot: "Juan", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D"},
+		{Id: "v1", PatientId: "pat_1", DoctorId: "doc_1", Reason: "r1", AttentionAt: 1, PatientNameSnapshot: "Juan", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D"},
+		{Id: "v2", PatientId: "pat_2", DoctorId: "doc_1", Reason: "r2", AttentionAt: 2, PatientNameSnapshot: "Ana", PatientRutSnapshot: "2-7", DoctorNameSnapshot: "D"},
+		{Id: "v3", PatientId: "pat_1", DoctorId: "doc_1", Reason: "r3", AttentionAt: 3, PatientNameSnapshot: "Juan", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D"},
 	} {
 		if _, err := m.CreateVisit(v); err != nil {
 			t.Fatalf("CreateVisit: %v", err)
@@ -41,6 +41,7 @@ func TestListRecentPatients_RespectsLimit(t *testing.T) {
 	m := setup(t)
 	for i, id := range []string{"pat_1", "pat_2", "pat_3"} {
 		_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
+			Id: "v" + string(rune(i+65)),
 			PatientId: id, DoctorId: "doc_1", Reason: "r", AttentionAt: int64(i + 1),
 			PatientNameSnapshot: id, PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D",
 		})

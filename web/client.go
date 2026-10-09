@@ -86,7 +86,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ceMod, err := clinicalencounter.New(db, clinicalencounter.Deps{IDs: ids, Publisher: broker})
+	ceMod, err := clinicalencounter.New(db, clinicalencounter.Deps{Publisher: broker})
 	if err != nil {
 		panic(err)
 	}

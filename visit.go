@@ -7,10 +7,20 @@ import (
 )
 
 func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
-	if args.PatientId == "" || args.DoctorId == "" || args.Reason == "" ||
+	if args.Id == "" || args.PatientId == "" || args.DoctorId == "" || args.Reason == "" ||
 		args.PatientNameSnapshot == "" || args.PatientRutSnapshot == "" || args.DoctorNameSnapshot == "" {
 		return nil, ErrMissingArgs
 	}
+
+	if existing, err := m.GetVisit(args.Id); err == nil {
+		if existing.PatientId == args.PatientId {
+			return existing, nil
+		}
+		return nil, ErrIdTaken
+	} else if e, ok := err.(domainError); !ok || e != ErrNotFound {
+		return nil, err
+	}
+
 	// attention_at is model.Int() in MedicalHistoryModel, not an input.*
 	// widget (see model.go's field comment: status changes through the FSM,
 	// attention time is machine-supplied, not typed by the doctor) — so
@@ -23,7 +33,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 	}
 
 	record := &MedicalHistory{
-		Id:                      m.ids.NewID(),
+		Id:                      args.Id,
 		PatientId:               args.PatientId,
 		DoctorId:                args.DoctorId,
 		ReservationId:           args.ReservationId,
