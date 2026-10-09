@@ -25,7 +25,7 @@ func TestMountOperations_CreateVisit(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"id":"visit_123","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
+		InBody: []byte(`{"patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
@@ -92,6 +92,13 @@ func TestMountOperations_GetVisit_NotFound(t *testing.T) {
 	}
 }
 
+func TestNew_RequiresIDs(t *testing.T) {
+	db := orm.New(mem.New())
+	if _, err := clinicalencounter.New(db, clinicalencounter.Deps{}); err == nil {
+		t.Fatal("expected an error when Deps.IDs is nil")
+	}
+}
+
 func TestMountOperations_CreateVisit_RBACDenial(t *testing.T) {
 	m := setup(t)
 	reg := &mock.Router{}
@@ -102,7 +109,7 @@ func TestMountOperations_CreateVisit_RBACDenial(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"id":"visit_123","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
+		InBody: []byte(`{"patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
@@ -116,7 +123,6 @@ func TestMountOperations_GetVisit(t *testing.T) {
 	m := setup(t)
 	// Seed a visit
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control",
@@ -151,7 +157,6 @@ func TestMountOperations_ListVisits(t *testing.T) {
 	m := setup(t)
 	// Seed a visit
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control",
@@ -185,13 +190,12 @@ func TestMountOperations_ListVisits(t *testing.T) {
 func TestCreateVisit_PublishesEvent(t *testing.T) {
 	db := orm.New(mem.New())
 	pub := &mockPublisher{}
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{Publisher: pub})
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{IDs: &mockIDGen{}, Publisher: pub})
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}
 
 	_, err = m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -217,39 +221,5 @@ func TestCreateVisit_PublishesEvent(t *testing.T) {
 	}
 	if payload.Reason != "Control rutinario" {
 		t.Fatalf("expected payload reason to be 'Control rutinario', got %q", payload.Reason)
-	}
-}
-
-func TestMountOperations_CreateVisit_Collision(t *testing.T) {
-	m := setup(t)
-	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_1",
-		PatientId:           "pat_1",
-		DoctorId:            "doc_1",
-		Reason:              "Control",
-		AttentionAt:         1700000000,
-		PatientNameSnapshot: "Juan",
-		PatientRutSnapshot:  "1-9",
-		DoctorNameSnapshot:  "Dr. Soto",
-	})
-	if err != nil {
-		t.Fatalf("first CreateVisit: %v", err)
-	}
-
-	reg := &mock.Router{}
-	m.MountOperations(reg)
-	reg.Configure(mock.Config{
-		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
-		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
-	})
-
-	ctx := &mock.Context{
-		InBody: []byte(`{"id":"visit_1","patient_id":"pat_2","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Pedro","patient_rut_snapshot":"2-9","doctor_name_snapshot":"Dr. Soto"}`),
-	}
-	ctx.SetUserID("test-user")
-	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
-
-	if ctx.Status != 409 {
-		t.Fatalf("expected 409 for id collision, got %d", ctx.Status)
 	}
 }

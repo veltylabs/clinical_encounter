@@ -5,20 +5,9 @@ import (
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 	"webtyp.com/events"
-	"webtyp.com/fmt"
-	"webtyp.com/model"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
 )
-
-type mockIDGen struct{ counter int }
-
-func (g *mockIDGen) NewID() string {
-	g.counter++
-	return "test-id-" + fmt.Convert(g.counter).String() // tinywasm/fmt — stdlib strconv is banned, tests included
-}
-
-var _ model.IDGenerator = (*mockIDGen)(nil)
 
 type mockPublisher struct{ Events []events.Event }
 
@@ -33,7 +22,7 @@ var _ events.Publisher = (*mockPublisher)(nil)
 func setup(t *testing.T) *clinicalencounter.Module {
 	t.Helper()
 	db := orm.New(mem.New())
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{IDs: &mockIDGen{}})
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{})
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}

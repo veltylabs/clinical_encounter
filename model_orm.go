@@ -77,8 +77,6 @@ func (m *MedicalHistory) DecodeFields(r model.FieldReader) {
 
 type MedicalHistoryList []*MedicalHistory
 
-func (s *MedicalHistoryList) Schema() []model.Field { return nil }
-func (s *MedicalHistoryList) Pointers() []any     { return nil }
 func (s *MedicalHistoryList) Len() int             { return len(*s) }
 func (s *MedicalHistoryList) At(i int) model.Fielder { return (*s)[i] }
 func (s *MedicalHistoryList) Append() model.Fielder  { v := &MedicalHistory{}; *s = append(*s, v); return v }
@@ -146,6 +144,7 @@ func ReadAllMedicalHistory(qb *orm.QB) (MedicalHistoryList, error) {
 }
 
 type CreateVisitArgs struct {
+	Id string
 	PatientId string
 	DoctorId string
 	AttentionAt int64
@@ -163,11 +162,12 @@ func (m *CreateVisitArgs) ModelName() string { return "create_visit_args" }
 
 func (m *CreateVisitArgs) Schema() []model.Field { return CreateVisitArgsModel.Fields }
 
-func (m *CreateVisitArgs) Pointers() []any { return []any{&m.PatientId, &m.DoctorId, &m.AttentionAt, &m.Reason, &m.PatientNameSnapshot, &m.PatientRutSnapshot, &m.DoctorNameSnapshot, &m.ReservationId, &m.Diagnostic, &m.Prescription, &m.DoctorSpecialtySnapshot} }
+func (m *CreateVisitArgs) Pointers() []any { return []any{&m.Id, &m.PatientId, &m.DoctorId, &m.AttentionAt, &m.Reason, &m.PatientNameSnapshot, &m.PatientRutSnapshot, &m.DoctorNameSnapshot, &m.ReservationId, &m.Diagnostic, &m.Prescription, &m.DoctorSpecialtySnapshot} }
 
 func (m *CreateVisitArgs) IsNil() bool { return m == nil }
 
 func (m *CreateVisitArgs) EncodeFields(w model.FieldWriter) {
+	w.String("id", m.Id)
 	w.String("patient_id", m.PatientId)
 	w.String("doctor_id", m.DoctorId)
 	w.Int("attention_at", m.AttentionAt)
@@ -182,6 +182,7 @@ func (m *CreateVisitArgs) EncodeFields(w model.FieldWriter) {
 }
 
 func (m *CreateVisitArgs) DecodeFields(r model.FieldReader) {
+	if v, ok := r.String("id"); ok { m.Id = v }
 	if v, ok := r.String("patient_id"); ok { m.PatientId = v }
 	if v, ok := r.String("doctor_id"); ok { m.DoctorId = v }
 	if v, ok := r.Int("attention_at"); ok { m.AttentionAt = v }
@@ -197,8 +198,6 @@ func (m *CreateVisitArgs) DecodeFields(r model.FieldReader) {
 
 type CreateVisitArgsList []*CreateVisitArgs
 
-func (s *CreateVisitArgsList) Schema() []model.Field { return nil }
-func (s *CreateVisitArgsList) Pointers() []any     { return nil }
 func (s *CreateVisitArgsList) Len() int             { return len(*s) }
 func (s *CreateVisitArgsList) At(i int) model.Fielder { return (*s)[i] }
 func (s *CreateVisitArgsList) Append() model.Fielder  { v := &CreateVisitArgs{}; *s = append(*s, v); return v }
@@ -208,6 +207,51 @@ func (s *CreateVisitArgsList) DecodeFields(_ model.FieldReader) {}
 
 func (m *CreateVisitArgs) Validate(action byte) error {
 	return model.ValidateFields(action, m)
+}
+
+var CreateVisitArgs_ = struct {
+	Id string
+	PatientId string
+	DoctorId string
+	AttentionAt string
+	Reason string
+	PatientNameSnapshot string
+	PatientRutSnapshot string
+	DoctorNameSnapshot string
+	ReservationId string
+	Diagnostic string
+	Prescription string
+	DoctorSpecialtySnapshot string
+}{
+	Id: "id",
+	PatientId: "patient_id",
+	DoctorId: "doctor_id",
+	AttentionAt: "attention_at",
+	Reason: "reason",
+	PatientNameSnapshot: "patient_name_snapshot",
+	PatientRutSnapshot: "patient_rut_snapshot",
+	DoctorNameSnapshot: "doctor_name_snapshot",
+	ReservationId: "reservation_id",
+	Diagnostic: "diagnostic",
+	Prescription: "prescription",
+	DoctorSpecialtySnapshot: "doctor_specialty_snapshot",
+}
+
+func ReadOneCreateVisitArgs(qb *orm.QB, model *CreateVisitArgs) (*CreateVisitArgs, error) {
+	err := qb.ReadOne()
+	if err != nil {
+		return nil, err
+	}
+	return model, nil
+}
+
+func ReadAllCreateVisitArgs(qb *orm.QB) (CreateVisitArgsList, error) {
+	var results CreateVisitArgsList
+	err := qb.ReadAll(
+		func() model.Model { return &CreateVisitArgs{} },
+		func(m model.Model) { results = append(results, m.(*CreateVisitArgs)) },
+	)
+	return results, err
 }
 
 type GetVisitArgs struct {
@@ -232,8 +276,6 @@ func (m *GetVisitArgs) DecodeFields(r model.FieldReader) {
 
 type GetVisitArgsList []*GetVisitArgs
 
-func (s *GetVisitArgsList) Schema() []model.Field { return nil }
-func (s *GetVisitArgsList) Pointers() []any     { return nil }
 func (s *GetVisitArgsList) Len() int             { return len(*s) }
 func (s *GetVisitArgsList) At(i int) model.Fielder { return (*s)[i] }
 func (s *GetVisitArgsList) Append() model.Fielder  { v := &GetVisitArgs{}; *s = append(*s, v); return v }
@@ -267,8 +309,6 @@ func (m *ListVisitsArgs) DecodeFields(r model.FieldReader) {
 
 type ListVisitsArgsList []*ListVisitsArgs
 
-func (s *ListVisitsArgsList) Schema() []model.Field { return nil }
-func (s *ListVisitsArgsList) Pointers() []any     { return nil }
 func (s *ListVisitsArgsList) Len() int             { return len(*s) }
 func (s *ListVisitsArgsList) At(i int) model.Fielder { return (*s)[i] }
 func (s *ListVisitsArgsList) Append() model.Fielder  { v := &ListVisitsArgs{}; *s = append(*s, v); return v }
@@ -302,8 +342,6 @@ func (m *ListRecentPatientsArgs) DecodeFields(r model.FieldReader) {
 
 type ListRecentPatientsArgsList []*ListRecentPatientsArgs
 
-func (s *ListRecentPatientsArgsList) Schema() []model.Field { return nil }
-func (s *ListRecentPatientsArgsList) Pointers() []any     { return nil }
 func (s *ListRecentPatientsArgsList) Len() int             { return len(*s) }
 func (s *ListRecentPatientsArgsList) At(i int) model.Fielder { return (*s)[i] }
 func (s *ListRecentPatientsArgsList) Append() model.Fielder  { v := &ListRecentPatientsArgs{}; *s = append(*s, v); return v }

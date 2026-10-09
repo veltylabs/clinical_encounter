@@ -2,8 +2,6 @@ package tests
 
 import (
 	"testing"
-	"webtyp.com/orm"
-	"webtyp.com/storage/mem"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 )
@@ -11,7 +9,6 @@ import (
 func TestCreateVisit_HappyPath(t *testing.T) {
 	m := setup(t)
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -42,7 +39,6 @@ func TestCreateVisit_HappyPath(t *testing.T) {
 func TestCreateVisit_DefaultsAttentionAtToNow(t *testing.T) {
 	m := setup(t)
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -77,7 +73,6 @@ func TestGetVisit_NotFound(t *testing.T) {
 func TestListVisitsByPatient(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id: "visit_1",
 		PatientId: "pat_1", DoctorId: "doc_1", Reason: "r", AttentionAt: 1,
 		PatientNameSnapshot: "P", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D",
 	})
@@ -90,65 +85,5 @@ func TestListVisitsByPatient(t *testing.T) {
 	}
 	if len(list) != 1 {
 		t.Fatalf("expected 1 record, got %d", len(list))
-	}
-}
-
-func TestCreateVisit_RetryIdempotency(t *testing.T) {
-	db := orm.New(mem.New())
-	pub := &mockPublisher{}
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{Publisher: pub})
-	if err != nil {
-		t.Fatalf("New: %v", err)
-	}
-
-	args := clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_1",
-		PatientId:           "pat_1",
-		DoctorId:            "doc_1",
-		Reason:              "Initial",
-		PatientNameSnapshot: "P", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D",
-	}
-
-	rec1, err := m.CreateVisit(args)
-	if err != nil {
-		t.Fatalf("first CreateVisit: %v", err)
-	}
-
-	rec2, err := m.CreateVisit(args)
-	if err != nil {
-		t.Fatalf("second CreateVisit: %v", err)
-	}
-
-	if rec1.Id != rec2.Id {
-		t.Fatalf("expected second CreateVisit to return the same visit id, got %q and %q", rec1.Id, rec2.Id)
-	}
-
-	if len(pub.Events) != 1 {
-		t.Fatalf("expected 1 published event, got %d", len(pub.Events))
-	}
-}
-
-func TestCreateVisit_RetryCollision(t *testing.T) {
-	m := setup(t)
-	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_1",
-		PatientId:           "pat_1",
-		DoctorId:            "doc_1",
-		Reason:              "Initial",
-		PatientNameSnapshot: "P", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D",
-	})
-	if err != nil {
-		t.Fatalf("first CreateVisit: %v", err)
-	}
-
-	_, err = m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_1",
-		PatientId:           "pat_2",
-		DoctorId:            "doc_1",
-		Reason:              "Initial",
-		PatientNameSnapshot: "P2", PatientRutSnapshot: "2-9", DoctorNameSnapshot: "D",
-	})
-	if err == nil || err.Error() != clinicalencounter.ErrIdTaken.Error() {
-		t.Fatalf("expected ErrIdTaken, got %v", err)
 	}
 }
