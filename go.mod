@@ -8,7 +8,7 @@ require (
 	github.com/veltylabs/device_manager v0.2.9
 	github.com/veltylabs/item_catalog v0.3.58
 	github.com/veltylabs/patient_directory v0.0.50
-	github.com/veltylabs/staff_manager v0.1.10
+	github.com/veltylabs/staff_manager v0.1.85
 	webtyp.com/auth v0.0.68
 	webtyp.com/components v0.8.23
 	webtyp.com/ddl v0.0.17
@@ -25,7 +25,7 @@ require (
 	webtyp.com/storage v0.1.4
 	webtyp.com/svg v0.3.14
 	webtyp.com/time v0.5.7
-	webtyp.com/unixid v0.2.28
+	webtyp.com/unixid v0.3.0
 	webtyp.com/view v0.6.27
 )
 
