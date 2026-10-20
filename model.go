@@ -14,7 +14,7 @@ var MedicalHistoryModel = model.Definition{
 		{Name: "doctor_id", Type: input.Text(), NotNull: true},
 		{Name: "reservation_id", Type: input.Text()},
 		// status: los valores válidos son ÚNICAMENTE las constantes Status* en const.go — los literales
-		// viven solo en esas constantes y en ningún otro lugar (regla anti magic-string; ver la revisión de item_catalog).
+		// viven solo en esas constantes y en ningún otro lugar (regla anti magic-string; ver la revisión de service_catalog).
 		{Name: "status", Type: statusSelectInput(), NotNull: true},
 		{Name: "attention_at", Type: model.Int(), NotNull: true},
 		{Name: "reason", Type: input.Textarea(), NotNull: true},

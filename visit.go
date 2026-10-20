@@ -80,5 +80,5 @@ func (m *Module) ListVisitsByPatient(patientId string) ([]*MedicalHistory, error
 	if err != nil {
 		return nil, err
 	}
-	return results, nil // ReadAllX returns []*MedicalHistory directly (same as item_catalog) — never dereference it
+	return results, nil // ReadAllX returns []*MedicalHistory directly (same as service_catalog) — never dereference it
 }

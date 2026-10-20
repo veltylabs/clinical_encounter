@@ -8,7 +8,7 @@ exception in one module's copy.
 
 Master plan (cross-repo status, whitelist rationale, dispatch order):
 [`app-releases/docs/REUSABLE_MODULES_MASTER_PLAN.md`](https://github.com/webtyp/app/blob/main/docs/REUSABLE_MODULES_MASTER_PLAN.md).
-Reference implementation (the pattern every module replicates): `github.com/veltylabs/item_catalog`.
+Reference implementation (the pattern every module replicates): `github.com/veltylabs/service_catalog`.
 
 ## Mission of a `veltylabs/modules/*` repo
 
@@ -90,7 +90,7 @@ reflection-free and TinyGo-sized. A module targets `wasm`/TinyGo first, so it fo
 - **No Go `map[K]V` anywhere**, test code included — and **no exceptions for "private state"**: a
   map inside a closure or unexported field ships TinyGo's map runtime in the wasm binary exactly the
   same. Use `fmt.KeyValue{Key, Value string}` for a string→string pair, or a small slice-of-structs
-  scanned linearly for anything else (the `byID []*X` linear-scan cache in `item_catalog/view.go` is
+  scanned linearly for anything else (the `byID []*X` linear-scan cache in `service_catalog/view.go` is
   the reference) — module collections (a tenant's items, a schema's fields) are always small enough
   that a linear scan costs nothing measurable.
 - **No `reflect`.** Struct introspection is a build-time (`ormc`) concern; the module consumes
@@ -223,9 +223,9 @@ exempt, and only them:
 **Dependencies between modules form a DAG.** The root domain package still imports
 no sibling module. `ui/`, `seed/` and `web/` may import the domain, `ui/` and
 `seed/` packages of **upstream** modules only. Current graph: `device_manager`,
-`item_catalog`, `patient_directory`, `business_calendar` (leaves) ←
+`service_catalog`, `patient_directory`, `business_calendar`, `payment_manager` (leaves) ←
 `staff_manager` ← `appointment_booking` ← `clinical_encounter`
-(`appointment_booking` also depends on `item_catalog`, `patient_directory`,
+(`appointment_booking` also depends on `service_catalog`, `patient_directory`,
 `business_calendar`; `clinical_encounter` also on `patient_directory` and
 `staff_manager`). A screen that mixes modules lives in the most-downstream module
 it touches.
@@ -294,7 +294,7 @@ never runs `codejob` or `gopush` itself — dispatch and close are the human's c
   violate this file's blacklist (a module may never import a concrete renderer, and never hand-rolls
   a port `storage/mem` already provides upstream) and are removed by `docs/PLAN.md`. The equivalent
   UI is rebuilt as `NewView(caller router.Caller) view.Presenter` at the module root, per the pattern
-  in `veltylabs/item_catalog/view.go` — the app, not this module, will choose the concrete renderer
+  in `veltylabs/service_catalog/view.go` — the app, not this module, will choose the concrete renderer
   (possibly still `webtyp/layout`) that draws it. This discards in-browser-verified work (the old
   plan's "Estado de ejecución" checklist had 5 of 7 steps checked done, including a verified WASM
   build) — it is not a pure rename, see `docs/PLAN.md` Stage 0 for the full accounting.

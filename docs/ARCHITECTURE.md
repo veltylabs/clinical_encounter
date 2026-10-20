@@ -68,7 +68,7 @@ FSM states that have no corresponding business logic yet. Adding those is a futu
 - **Snapshot fields, not live joins**: `*Snapshot` fields on `MedicalHistory` freeze patient/doctor
   identity at visit-creation time. This module never queries a `patient`/`doctor` table — those
   belong to other modules this one does not import.
-- **No multi-tenancy field today**: unlike `item_catalog`, `MedicalHistory`/`CreateVisitArgs` carry
+- **No multi-tenancy field today**: unlike `service_catalog`, `MedicalHistory`/`CreateVisitArgs` carry
   no `TenantId` field in the current schema. This migration ports the existing columns mechanically
   (same table, same columns, same behavior) and does not add one — see `docs/PLAN.md` Stage 1. If
   this module needs tenant isolation later, that is a separate, explicit schema change, not a
