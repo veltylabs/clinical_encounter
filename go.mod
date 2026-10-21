@@ -3,14 +3,14 @@ module github.com/veltylabs/clinical_encounter
 go 1.26.8
 
 require (
-	github.com/veltylabs/appointment_booking v0.3.6
-	github.com/veltylabs/business_calendar v0.4.80
-	github.com/veltylabs/device_manager v0.2.22
-	github.com/veltylabs/patient_directory v0.1.12
-	github.com/veltylabs/service_catalog v0.5.0
-	github.com/veltylabs/staff_manager v0.1.116
-	webtyp.com/auth v0.0.75
-	webtyp.com/components v0.8.35
+	github.com/veltylabs/appointment_booking v0.3.11
+	github.com/veltylabs/business_calendar v0.4.93
+	github.com/veltylabs/device_manager v0.2.60
+	github.com/veltylabs/patient_directory v0.1.38
+	github.com/veltylabs/service_catalog v0.5.9
+	github.com/veltylabs/staff_manager v0.1.126
+	webtyp.com/auth v0.0.76
+	webtyp.com/components v0.8.38
 	webtyp.com/ddl v0.0.24
 	webtyp.com/dom v0.13.26
 	webtyp.com/events v0.1.0
@@ -18,21 +18,21 @@ require (
 	webtyp.com/form v0.4.44
 	webtyp.com/input v0.0.21
 	webtyp.com/json v0.5.30
-	webtyp.com/layout v0.3.52
+	webtyp.com/layout v0.3.60
 	webtyp.com/model v0.2.4
 	webtyp.com/orm v0.12.10
 	webtyp.com/router v0.4.3
 	webtyp.com/storage v0.1.8
 	webtyp.com/svg v0.3.30
-	webtyp.com/time v0.5.8
-	webtyp.com/unixid v0.3.0
-	webtyp.com/view v0.6.37
+	webtyp.com/time v0.6.2
+	webtyp.com/unixid v0.3.1
+	webtyp.com/view v0.6.40
 )
 
 require (
+	webtyp.com/calendar v0.1.0 // indirect
 	webtyp.com/color v0.1.3 // indirect
 	webtyp.com/css v0.4.31 // indirect
-	webtyp.com/date v0.0.11 // indirect
 	webtyp.com/escape v0.1.0 // indirect
 	webtyp.com/font v0.0.6 // indirect
 	webtyp.com/html v0.0.27 // indirect

@@ -34,7 +34,7 @@ func Load(m *clinicalencounter.Module, up Upstream) (Data, error) {
 
 	// time.Now() está en NANOsegundos (igual que AttentionAt, que visit.go
 	// rellena con time.Now()): 30 días = 30*86400 segundos * 1e9.
-	thirtyDaysAgo := time.Now() - seedVisitAgeDays*86400*1_000_000_000
+	thirtyDaysAgo := time.NowUnix() - seedVisitAgeDays*time.Day
 
 	for i, p := range patients {
 		id := "demo-visit-" + fmt.Convert(i+1).String()
@@ -46,7 +46,7 @@ func Load(m *clinicalencounter.Module, up Upstream) (Data, error) {
 			DoctorId:                doc.Id,
 			DoctorNameSnapshot:      doc.Name,
 			DoctorSpecialtySnapshot: doc.Specialty,
-			AttentionAt:             thirtyDaysAgo,
+			AttentionAt:             int64(thirtyDaysAgo),
 			Reason:                  "Control",
 			Diagnostic:              "Sin hallazgos",
 		})

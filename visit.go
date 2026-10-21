@@ -29,7 +29,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 	// created because it is happening now, so this defaults instead of
 	// rejecting — rejecting made the generic create flow permanently fail.
 	if args.AttentionAt == 0 {
-		args.AttentionAt = time.Now()
+		args.AttentionAt = int64(time.NowUnix())
 	}
 
 	record := &MedicalHistory{
@@ -38,7 +38,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 		DoctorId:                args.DoctorId,
 		ReservationId:           args.ReservationId,
 		Status:                  StatusCreated,
-		AttentionAt:             args.AttentionAt,
+		AttentionAt:             time.Unix(args.AttentionAt),
 		Reason:                  args.Reason,
 		Diagnostic:              args.Diagnostic,
 		Prescription:            args.Prescription,
@@ -46,7 +46,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 		PatientRutSnapshot:      args.PatientRutSnapshot,
 		DoctorNameSnapshot:      args.DoctorNameSnapshot,
 		DoctorSpecialtySnapshot: args.DoctorSpecialtySnapshot,
-		UpdatedAt:               time.Now(),
+		UpdatedAt:               time.NowNano(),
 	}
 
 	if err := m.db.Create(record); err != nil {
