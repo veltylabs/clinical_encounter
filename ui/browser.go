@@ -84,11 +84,13 @@ func loadDoctorIdentity(caller router.Caller, tenantID, userID string) (doctorId
 // behind a real network call, so it has to already be in memory by the time
 // Filter runs.
 type agendaPatient struct {
-	ID          string
-	Label       string
-	Sublabel    string
-	Description string
-	History     []view.Item
+	ID            string
+	Label         string
+	Sublabel      string
+	Description   string
+	ReservationID string
+	ServiceID     string
+	History       []view.Item
 }
 
 // loadTodayAgenda lists this staff member's CONFIRMED reservations for
@@ -121,18 +123,20 @@ func loadTodayAgenda(caller router.Caller, tenantID, staffID string) ([]agendaPa
 
 		var history clinicalencounter.MedicalHistoryList
 		_ = blockingCall(caller, clinicalencounter.ModelName+"."+clinicalencounter.OpListVisitsByPatient,
-			&clinicalencounter.ListVisitsArgs{PatientId: r.ClientId}, &history)
+			&clinicalencounter.ListVisitsArgs{TenantId: tenantID, PatientId: r.ClientId}, &history)
 		items := make([]view.Item, len(history))
 		for i, h := range history {
 			items[i] = h.Item()
 		}
 
 		agenda = append(agenda, agendaPatient{
-			ID:          r.ClientId,
-			Label:       patient.Name,
-			Sublabel:    patient.Rut,
-			Description: r.LocalStringTime,
-			History:     items,
+			ID:            r.ClientId,
+			Label:         patient.Name,
+			Sublabel:      patient.Rut,
+			Description:   r.LocalStringTime,
+			ReservationID: r.Id,
+			ServiceID:     r.EmployeeServiceConfigId,
+			History:       items,
 		})
 	}
 	return agenda, nil
@@ -241,6 +245,7 @@ func Browser(caller router.Caller, ids model.IDGenerator, tenantID, userID strin
 		// formulario simplemente sale en blanco como antes.
 		cfg.NewRecord = func() model.Model {
 			rec := &clinicalencounter.MedicalHistory{
+				TenantId:                tenantID,
 				DoctorId:                doctor.StaffID,
 				DoctorNameSnapshot:      doctor.Name,
 				DoctorSpecialtySnapshot: doctor.Specialty,
@@ -250,6 +255,8 @@ func Browser(caller router.Caller, ids model.IDGenerator, tenantID, userID strin
 				rec.PatientId = chosen.ID
 				rec.PatientNameSnapshot = chosen.Label
 				rec.PatientRutSnapshot = chosen.Sublabel
+				rec.ReservationId = chosen.ReservationID
+				rec.ServiceId = chosen.ServiceID
 			}
 			return rec
 		}

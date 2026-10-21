@@ -15,13 +15,18 @@ const defaultRecentPatientsLimit = 200
 // by an ID nobody has memorized. Sourced entirely from this module's own
 // data — no cross-module dependency on a patient/client directory, which
 // does not exist yet (see ARCHITECTURE.md).
-func (m *Module) ListRecentPatients(limit int) ([]*MedicalHistory, error) {
+func (m *Module) ListRecentPatients(tenantId string, limit int) ([]*MedicalHistory, error) {
+	if tenantId == "" {
+		return nil, ErrTenantRequired
+	}
 	if limit <= 0 {
 		limit = defaultRecentPatientsLimit
 	}
 
 	var rec MedicalHistory
-	qb := m.db.Query(&rec).OrderBy(MedicalHistory_.AttentionAt).Desc()
+	qb := m.db.Query(&rec).
+		Where(MedicalHistory_.TenantId).Eq(tenantId).
+		OrderBy(MedicalHistory_.AttentionAt).Desc()
 	rows, err := ReadAllMedicalHistory(qb)
 	if err != nil {
 		if orm.IsNotFound(err) {

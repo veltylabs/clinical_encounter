@@ -25,7 +25,7 @@ func TestMountOperations_CreateVisit(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"id":"visit_123","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
+		InBody: []byte(`{"tenant_id":"t1","id":"visit_123","tenant_id":"t1","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
@@ -65,7 +65,7 @@ func TestMountOperations_CreateVisit_MissingArgs(t *testing.T) {
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
 	})
 
-	ctx := &mock.Context{InBody: []byte(`{"patient_id":"pat_1"}`)}
+	ctx := &mock.Context{InBody: []byte(`{"tenant_id":"t1","patient_id":"pat_1"}`)}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
 
@@ -83,7 +83,7 @@ func TestMountOperations_GetVisit_NotFound(t *testing.T) {
 		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
 	})
 
-	ctx := &mock.Context{InBody: []byte(`{"id":"does-not-exist"}`)}
+	ctx := &mock.Context{InBody: []byte(`{"tenant_id":"t1","id":"does-not-exist"}`)}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpGetVisit, ctx)
 
@@ -102,7 +102,7 @@ func TestMountOperations_CreateVisit_RBACDenial(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"id":"visit_123","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
+		InBody: []byte(`{"tenant_id":"t1","id":"visit_123","tenant_id":"t1","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
@@ -116,7 +116,7 @@ func TestMountOperations_GetVisit(t *testing.T) {
 	m := setup(t)
 	// Seed a visit
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
+		TenantId: "t1", Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control",
@@ -137,7 +137,7 @@ func TestMountOperations_GetVisit(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"id":"` + rec.Id + `"}`),
+		InBody: []byte(`{"tenant_id":"t1","id":"` + rec.Id + `"}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpGetVisit, ctx)
@@ -151,7 +151,7 @@ func TestMountOperations_ListVisits(t *testing.T) {
 	m := setup(t)
 	// Seed a visit
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
+		TenantId: "t1", Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control",
@@ -172,7 +172,7 @@ func TestMountOperations_ListVisits(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"patient_id":"pat_1"}`),
+		InBody: []byte(`{"tenant_id":"t1","patient_id":"pat_1"}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpListVisitsByPatient, ctx)
@@ -191,7 +191,7 @@ func TestCreateVisit_PublishesEvent(t *testing.T) {
 	}
 
 	_, err = m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
+		TenantId: "t1", Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -223,7 +223,7 @@ func TestCreateVisit_PublishesEvent(t *testing.T) {
 func TestMountOperations_CreateVisit_Collision(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_1",
+		TenantId: "t1", Id:                  "visit_1",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control",
@@ -244,12 +244,71 @@ func TestMountOperations_CreateVisit_Collision(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"id":"visit_1","patient_id":"pat_2","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Pedro","patient_rut_snapshot":"2-9","doctor_name_snapshot":"Dr. Soto"}`),
+		InBody: []byte(`{"tenant_id":"t1","id":"visit_1","patient_id":"pat_2","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Pedro","patient_rut_snapshot":"2-9","doctor_name_snapshot":"Dr. Soto"}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
 
 	if ctx.Status != 409 {
 		t.Fatalf("expected 409 for id collision, got %d", ctx.Status)
+	}
+}
+
+func TestMountOperations_CompleteVisit_Twice(t *testing.T) {
+	m := setup(t)
+	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
+		TenantId: "t1", Id: "visit_123", PatientId: "pat_1", DoctorId: "doc_1",
+		Reason: "Control", AttentionAt: 1700000000, PatientNameSnapshot: "Juan",
+		PatientRutSnapshot: "1-9", DoctorNameSnapshot: "Dr. Soto",
+	})
+	if err != nil {
+		t.Fatalf("CreateVisit: %v", err)
+	}
+
+	reg := &mock.Router{}
+	m.MountOperations(reg)
+	reg.Configure(mock.Config{
+		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
+		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
+	})
+
+	ctx := &mock.Context{
+		InBody: []byte(`{"tenant_id":"t1","id":"visit_123"}`),
+	}
+	ctx.SetUserID("test-user")
+	reg.Invoke("OP", "/"+clinicalencounter.OpCompleteVisit, ctx)
+
+	if ctx.Status != 0 && ctx.Status != 200 {
+		t.Fatalf("expected success on first complete, got %d", ctx.Status)
+	}
+
+	ctx2 := &mock.Context{
+		InBody: []byte(`{"tenant_id":"t1","id":"visit_123"}`),
+	}
+	ctx2.SetUserID("test-user")
+	reg.Invoke("OP", "/"+clinicalencounter.OpCompleteVisit, ctx2)
+
+	if ctx2.Status != 409 {
+		t.Fatalf("expected 409 on second complete, got %d", ctx2.Status)
+	}
+}
+
+func TestMountOperations_SupplyOp_SupplyUseOff(t *testing.T) {
+	m := setup(t)
+	reg := &mock.Router{}
+	m.MountOperations(reg)
+	reg.Configure(mock.Config{
+		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
+		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
+	})
+
+	ctx := &mock.Context{
+		InBody: []byte(`{"tenant_id":"t1","encounter_id":"v1"}`),
+	}
+	ctx.SetUserID("test-user")
+	reg.Invoke("OP", "/"+clinicalencounter.OpListSupplyUse, ctx)
+
+	if ctx.Status != 501 {
+		t.Fatalf("expected 501 when supply use is off, got %d", ctx.Status)
 	}
 }

@@ -118,7 +118,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if _, err := ceseed.Load(ceMod, ceseed.Upstream{
+	if _, err := ceseed.Load(ceMod, demoTenantID, ceseed.Upstream{
 		Patients: patientData,
 		Staff:    staffData,
 	}); err != nil {

@@ -11,7 +11,7 @@ import (
 func TestCreateVisit_HappyPath(t *testing.T) {
 	m := setup(t)
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
+		TenantId: "t1", Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -42,7 +42,7 @@ func TestCreateVisit_HappyPath(t *testing.T) {
 func TestCreateVisit_DefaultsAttentionAtToNow(t *testing.T) {
 	m := setup(t)
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_123",
+		TenantId: "t1", Id:                  "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -61,14 +61,14 @@ func TestCreateVisit_DefaultsAttentionAtToNow(t *testing.T) {
 func TestCreateVisit_MissingRequiredArgs(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{})
-	if err == nil || err.Error() != clinicalencounter.ErrMissingArgs.Error() {
-		t.Fatalf("expected ErrMissingArgs, got %v", err)
+	if err == nil || err.Error() != clinicalencounter.ErrTenantRequired.Error() {
+		t.Fatalf("expected ErrTenantRequired, got %v", err)
 	}
 }
 
 func TestGetVisit_NotFound(t *testing.T) {
 	m := setup(t)
-	_, err := m.GetVisit("does-not-exist")
+	_, err := m.GetVisit("t1", "does-not-exist")
 	if err == nil || err.Error() != clinicalencounter.ErrNotFound.Error() {
 		t.Fatalf("expected ErrNotFound, got %v", err)
 	}
@@ -77,14 +77,14 @@ func TestGetVisit_NotFound(t *testing.T) {
 func TestListVisitsByPatient(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id: "visit_1",
+		TenantId: "t1", Id: "visit_1",
 		PatientId: "pat_1", DoctorId: "doc_1", Reason: "r", AttentionAt: 1,
 		PatientNameSnapshot: "P", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D",
 	})
 	if err != nil {
 		t.Fatalf("CreateVisit: %v", err)
 	}
-	list, err := m.ListVisitsByPatient("pat_1")
+	list, err := m.ListVisitsByPatient("t1", "pat_1")
 	if err != nil {
 		t.Fatalf("ListVisitsByPatient: %v", err)
 	}
@@ -102,7 +102,7 @@ func TestCreateVisit_RetryIdempotency(t *testing.T) {
 	}
 
 	args := clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_1",
+		TenantId: "t1", Id:                  "visit_1",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Initial",
@@ -131,7 +131,7 @@ func TestCreateVisit_RetryIdempotency(t *testing.T) {
 func TestCreateVisit_RetryCollision(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_1",
+		TenantId: "t1", Id:                  "visit_1",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Initial",
@@ -142,7 +142,7 @@ func TestCreateVisit_RetryCollision(t *testing.T) {
 	}
 
 	_, err = m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		Id:                  "visit_1",
+		TenantId: "t1", Id:                  "visit_1",
 		PatientId:           "pat_2",
 		DoctorId:            "doc_1",
 		Reason:              "Initial",
@@ -150,5 +150,30 @@ func TestCreateVisit_RetryCollision(t *testing.T) {
 	})
 	if err == nil || err.Error() != clinicalencounter.ErrIdTaken.Error() {
 		t.Fatalf("expected ErrIdTaken, got %v", err)
+	}
+}
+
+func TestCreateVisit_MissingArgs(t *testing.T) {
+	m := setup(t)
+	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{TenantId: "t1"})
+	if err == nil || err.Error() != clinicalencounter.ErrMissingArgs.Error() {
+		t.Fatalf("expected ErrMissingArgs, got %v", err)
+	}
+}
+
+func TestGetVisit_TenantIsolation(t *testing.T) {
+	m := setup(t)
+	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
+		TenantId: "t1", Id: "visit_1", PatientId: "pat_1", DoctorId: "doc_1",
+		Reason: "Control", AttentionAt: 1, PatientNameSnapshot: "P",
+		PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D",
+	})
+	if err != nil {
+		t.Fatalf("CreateVisit: %v", err)
+	}
+
+	_, err = m.GetVisit("t2", "visit_1")
+	if err == nil || err.Error() != clinicalencounter.ErrNotFound.Error() {
+		t.Fatalf("expected ErrNotFound for different tenant, got %v", err)
 	}
 }

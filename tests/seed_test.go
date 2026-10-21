@@ -38,7 +38,7 @@ func TestSeedLoad(t *testing.T) {
 		},
 	}
 
-	data, err := ceseed.Load(m, up)
+	data, err := ceseed.Load(m, "t1", up)
 	if err != nil {
 		t.Fatalf("seed.Load: %v", err)
 	}
@@ -73,11 +73,11 @@ func TestSeedLoadTwice(t *testing.T) {
 			},
 		},
 	}
-	data1, err := ceseed.Load(m, up)
+	data1, err := ceseed.Load(m, "t1", up)
 	if err != nil {
 		t.Fatalf("first seed.Load: %v", err)
 	}
-	data2, err := ceseed.Load(m, up)
+	data2, err := ceseed.Load(m, "t1", up)
 	if err != nil {
 		t.Fatalf("second seed.Load: %v", err)
 	}

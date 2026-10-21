@@ -7,12 +7,15 @@ import (
 )
 
 func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
+	if args.TenantId == "" {
+		return nil, ErrTenantRequired
+	}
 	if args.Id == "" || args.PatientId == "" || args.DoctorId == "" || args.Reason == "" ||
 		args.PatientNameSnapshot == "" || args.PatientRutSnapshot == "" || args.DoctorNameSnapshot == "" {
 		return nil, ErrMissingArgs
 	}
 
-	if existing, err := m.GetVisit(args.Id); err == nil {
+	if existing, err := m.GetVisit(args.TenantId, args.Id); err == nil {
 		if existing.PatientId == args.PatientId {
 			return existing, nil
 		}
@@ -34,9 +37,11 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 
 	record := &MedicalHistory{
 		Id:                      args.Id,
+		TenantId:                args.TenantId,
 		PatientId:               args.PatientId,
 		DoctorId:                args.DoctorId,
 		ReservationId:           args.ReservationId,
+		ServiceId:               args.ServiceId,
 		Status:                  StatusCreated,
 		AttentionAt:             time.Unix(args.AttentionAt),
 		Reason:                  args.Reason,
@@ -55,12 +60,37 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 	if m.pub != nil {
 		m.pub.Publish(events.Event{Topic: TopicVisitCreated, Payload: record})
 	}
+	if m.supplyOn && record.ServiceId != "" {
+		itemIds, quantities, err := m.recipes.ServiceRecipe(record.TenantId, record.ServiceId)
+		if err != nil {
+			return record, err
+		}
+		for i, itemId := range itemIds {
+			line := &EncounterSupply{
+				Id:          m.ids.NewID(),
+				TenantId:    record.TenantId,
+				EncounterId: record.Id,
+				ItemId:      itemId,
+				Quantity:    quantities[i],
+				Billable:    false,
+				FromRecipe:  true,
+				Status:      SupplyPlanned,
+				UpdatedAt:   time.NowNano(),
+			}
+			if err := m.db.Create(line); err != nil {
+				return record, err
+			}
+		}
+	}
 	return record, nil
 }
 
-func (m *Module) GetVisit(id string) (*MedicalHistory, error) {
+func (m *Module) GetVisit(tenantId, id string) (*MedicalHistory, error) {
+	if tenantId == "" {
+		return nil, ErrTenantRequired
+	}
 	var rec MedicalHistory
-	qb := m.db.Query(&rec).Where(MedicalHistory_.Id).Eq(id)
+	qb := m.db.Query(&rec).Where(MedicalHistory_.Id).Eq(id).Where(MedicalHistory_.TenantId).Eq(tenantId)
 	_, err := ReadOneMedicalHistory(qb, &rec)
 	if err != nil {
 		if orm.IsNotFound(err) {
@@ -71,10 +101,14 @@ func (m *Module) GetVisit(id string) (*MedicalHistory, error) {
 	return &rec, nil
 }
 
-func (m *Module) ListVisitsByPatient(patientId string) ([]*MedicalHistory, error) {
+func (m *Module) ListVisitsByPatient(tenantId, patientId string) ([]*MedicalHistory, error) {
+	if tenantId == "" {
+		return nil, ErrTenantRequired
+	}
 	var rec MedicalHistory
 	qb := m.db.Query(&rec).
 		Where(MedicalHistory_.PatientId).Eq(patientId).
+		Where(MedicalHistory_.TenantId).Eq(tenantId).
 		OrderBy(MedicalHistory_.AttentionAt).Desc()
 	results, err := ReadAllMedicalHistory(qb)
 	if err != nil {

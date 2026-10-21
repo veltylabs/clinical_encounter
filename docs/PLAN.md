@@ -2,8 +2,10 @@
 PLAN: "feat!: tenant_id everywhere, supply use lines from the service recipe, deduction when the attention is completed (pending + alert on failure)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 1480903546617489967
+PR: https://github.com/veltylabs/clinical_encounter/pull/9
+REVIEWED_COMMIT: 1fcc957d06722337760003c119657ed413e2d362
 ---
 
 > Read AGENTS.md at the repo root before any change.
@@ -435,3 +437,6 @@ git diff --stat main
 | 7 | `migrate/migrate.go`, `seed/seed.go`, `web/client.go`, `ui/browser.go` | builds |
 | 8 | `tests/*` | all tables green |
 | 9 | `README.md`, `docs/ARCHITECTURE.md` | docs match |
+
+## Executor notes
+- `wasmbrowsertest` executable missing in test environment, but standard `go build` for wasm and `tests` pass perfectly.

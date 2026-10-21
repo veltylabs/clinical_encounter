@@ -20,6 +20,8 @@ require (
 	webtyp.com/json v0.5.30
 	webtyp.com/layout v0.3.60
 	webtyp.com/model v0.2.4
+	webtyp.com/msgtype v0.1.0
+	webtyp.com/notify v0.2.2
 	webtyp.com/orm v0.12.10
 	webtyp.com/router v0.4.3
 	webtyp.com/storage v0.1.8
@@ -38,7 +40,6 @@ require (
 	webtyp.com/html v0.0.28 // indirect
 	webtyp.com/icons v0.0.26 // indirect
 	webtyp.com/lang v0.1.7 // indirect
-	webtyp.com/msgtype v0.1.0 // indirect
 	webtyp.com/network v0.1.2 // indirect
 	webtyp.com/user v0.3.14 // indirect
 	webtyp.com/widget v0.6.44 // indirect
