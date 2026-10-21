@@ -2,10 +2,8 @@
 PLAN: "feat!: tenant_id everywhere, supply use lines from the service recipe, deduction when the attention is completed (pending + alert on failure)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: review
+STATUS: running
 SESSION: 1480903546617489967
-PR: https://github.com/veltylabs/clinical_encounter/pull/9
-REVIEWED_COMMIT: a7120e18fb87c390156fd13edf96a2315e141153
 ---
 
 > Read AGENTS.md at the repo root before any change.
