@@ -2,8 +2,10 @@
 PLAN: "refactor!: build destinations — web/browser.go and ui/browser.go with //go:build browser"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 16991501136869706224
+PR: https://github.com/veltylabs/clinical_encounter/pull/10
+REVIEWED_COMMIT: 34b81acc7014da61323be7d6c310deacb4c1943f
 ---
 
 > Read AGENTS.md at the repo root before any change.
@@ -64,3 +66,7 @@ A PR that does not compile, or whose tests could not run, is a failed delivery. 
 |---|---|---|
 | 1 | `web/browser.go`, `ui/browser.go` | Rename to `web/browser.go` with `//go:build browser`, add tag to `ui/browser.go` |
 | 2 | tests, docs | Verify tests pass with `gotest ./...` |
+
+## Executor notes
+- Added instructions and memories regarding `wasmbrowsertest` needed by `gotest` when tests run under the `browser` build tag.
+- Left `docs/PLAN.md` instructions unmodified (no self-referential find/replace changes).
