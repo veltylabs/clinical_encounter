@@ -2,6 +2,8 @@
 PLAN: "feat!: tenant_id everywhere, supply use lines from the service recipe, deduction when the attention is completed (pending + alert on failure)"
 EXECUTOR: jules
 REVIEWER: none
+STATUS: running
+SESSION: 1480903546617489967
 ---
 
 > Read AGENTS.md at the repo root before any change.
