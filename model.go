@@ -10,9 +10,11 @@ var MedicalHistoryModel = model.Definition{
 	Name: "medical_history",
 	Fields: model.Fields{
 		{Name: "id", Type: model.Text(), DB: &model.FieldDB{PK: true}},
+		{Name: "tenant_id", Type: model.Text(), NotNull: true},
 		{Name: "patient_id", Type: input.Text(), NotNull: true},
 		{Name: "doctor_id", Type: input.Text(), NotNull: true},
 		{Name: "reservation_id", Type: input.Text()},
+		{Name: "service_id", Type: input.Text()},
 		// status: los valores válidos son ÚNICAMENTE las constantes Status* en const.go — los literales
 		// viven solo en esas constantes y en ningún otro lugar (regla anti magic-string; ver la revisión de service_catalog).
 		{Name: "status", Type: statusSelectInput(), NotNull: true},
@@ -39,6 +41,7 @@ var CreateVisitArgsModel = model.Definition{
 	// id lo genera quien llama.
 	Fields: model.Fields{
 		{Name: "id", Type: model.Text(), DB: &model.FieldDB{PK: true}, NotNull: true},
+		{Name: "tenant_id", Type: model.Text(), NotNull: true},
 		{Name: "patient_id", Type: input.Text(), NotNull: true},
 		{Name: "doctor_id", Type: input.Text(), NotNull: true},
 		{Name: "attention_at", Type: input.Number(), NotNull: true},
@@ -47,6 +50,7 @@ var CreateVisitArgsModel = model.Definition{
 		{Name: "patient_rut_snapshot", Type: input.Text(), NotNull: true},
 		{Name: "doctor_name_snapshot", Type: input.Text(), NotNull: true},
 		{Name: "reservation_id", Type: input.Text()},
+		{Name: "service_id", Type: input.Text()},
 		{Name: "diagnostic", Type: input.Textarea()},
 		{Name: "prescription", Type: input.Textarea()},
 		{Name: "doctor_specialty_snapshot", Type: input.Text()},
@@ -58,6 +62,7 @@ var CreateVisitArgsModel = model.Definition{
 var GetVisitArgsModel = model.Definition{
 	Name: "get_visit_args",
 	Fields: model.Fields{
+		{Name: "tenant_id", Type: model.Text()},
 		{Name: "id", Type: model.Text()},
 	},
 }
@@ -65,6 +70,7 @@ var GetVisitArgsModel = model.Definition{
 var ListVisitsArgsModel = model.Definition{
 	Name: "list_visits_args",
 	Fields: model.Fields{
+		{Name: "tenant_id", Type: model.Text()},
 		{Name: "patient_id", Type: model.Text()},
 	},
 }
@@ -76,6 +82,7 @@ var ListVisitsArgsModel = model.Definition{
 var ListRecentPatientsArgsModel = model.Definition{
 	Name: "list_recent_patients_args",
 	Fields: model.Fields{
+		{Name: "tenant_id", Type: model.Text()},
 		{Name: "limit", Type: model.Int()},
 	},
 }
@@ -114,3 +121,65 @@ const (
 const (
 	TopicVisitCreated = "clinical_encounter.visit.created"
 )
+
+var EncounterSupplyModel = model.Definition{
+	Name: "encounter_supply",
+	Fields: model.Fields{
+		{Name: "id", Type: model.Text(), DB: &model.FieldDB{PK: true}, OmitEmpty: true},
+		{Name: "tenant_id", Type: model.Text(), NotNull: true},
+		{Name: "encounter_id", Type: model.Text(), Ref: &MedicalHistoryModel, DB: &model.FieldDB{RefColumn: "id"}, NotNull: true},
+		{Name: "item_id", Type: model.Text(), NotNull: true},
+		{Name: "quantity", Type: input.Decimal(), Label: "Quantity", NotNull: true},
+		{Name: "billable", Type: input.Checkbox(), Label: "Billable"},
+		{Name: "from_recipe", Type: model.Bool()},
+		{Name: "status", Type: model.Text(), NotNull: true},
+		{Name: "room_id", Type: model.Text()},
+		{Name: "cost", Type: model.Int()},
+		{Name: "failure", Type: model.Text()},
+		{Name: "deducted_at", Type: model.NanoTime(), OmitEmpty: true},
+		{Name: "updated_at", Type: model.NanoTime(), OmitEmpty: true},
+	},
+}
+
+var CompleteVisitArgsModel = model.Definition{
+	Name: "complete_visit_args",
+	Fields: model.Fields{
+		{Name: "tenant_id", Type: model.Text()},
+		{Name: "id", Type: model.Text()},
+	},
+}
+
+var UpsertSupplyUseArgsModel = model.Definition{
+	Name: "upsert_supply_use_args",
+	Fields: model.Fields{
+		{Name: "tenant_id", Type: model.Text()},
+		{Name: "encounter_id", Type: model.Text()},
+		{Name: "id", Type: model.Text()},
+		{Name: "item_id", Type: model.Text()},
+		{Name: "quantity", Type: model.Float()},
+		{Name: "billable", Type: model.Bool()},
+	},
+}
+
+var SupplyUseRefArgsModel = model.Definition{
+	Name: "supply_use_ref_args",
+	Fields: model.Fields{
+		{Name: "tenant_id", Type: model.Text()},
+		{Name: "id", Type: model.Text()},
+	},
+}
+
+var ListSupplyUseArgsModel = model.Definition{
+	Name: "list_supply_use_args",
+	Fields: model.Fields{
+		{Name: "tenant_id", Type: model.Text()},
+		{Name: "encounter_id", Type: model.Text()},
+	},
+}
+
+var ListPendingSupplyArgsModel = model.Definition{
+	Name: "list_pending_supply_args",
+	Fields: model.Fields{
+		{Name: "tenant_id", Type: model.Text()},
+	},
+}

@@ -7,7 +7,7 @@ import (
 )
 
 // Migrate reconciles the database schema clinical_encounter owns:
-// MedicalHistory.
+// MedicalHistory and EncounterSupply.
 //
 // It is deliberately NOT called by New, and deliberately lives in its own
 // package rather than a new file in the root package: nothing on a
@@ -25,5 +25,5 @@ import (
 //	compiler, _ := conn.(ddl.Compiler)
 //	err := migrate.Migrate(conn, compiler)
 func Migrate(conn ddl.Execer, ddlCompiler ddl.Compiler) error {
-	return ddl.New(conn, ddlCompiler).CreateTable(&clinicalencounter.MedicalHistory{})
+	return ddl.New(conn, ddlCompiler).Sync(&clinicalencounter.MedicalHistory{}, &clinicalencounter.EncounterSupply{})
 }

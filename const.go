@@ -9,3 +9,12 @@ const (
 	StatusCompleted  = "completed"
 	StatusCancelled  = "cancelled"
 )
+
+// Encounter supply line status
+const (
+	SupplyPlanned          = "planned"
+	SupplyDeducted         = "deducted"
+	SupplyPendingDeduction = "pending_deduction"
+)
+
+const TopicVisitCompleted = "clinical_encounter.visit.completed"

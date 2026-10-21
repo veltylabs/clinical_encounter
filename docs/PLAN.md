@@ -435,3 +435,6 @@ git diff --stat main
 | 7 | `migrate/migrate.go`, `seed/seed.go`, `web/client.go`, `ui/browser.go` | builds |
 | 8 | `tests/*` | all tables green |
 | 9 | `README.md`, `docs/ARCHITECTURE.md` | docs match |
+
+## Executor notes
+- `wasmbrowsertest` executable missing in test environment, but standard `go build` for wasm and `tests` pass perfectly.
