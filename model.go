@@ -16,18 +16,18 @@ var MedicalHistoryModel = model.Definition{
 		// status: los valores válidos son ÚNICAMENTE las constantes Status* en const.go — los literales
 		// viven solo en esas constantes y en ningún otro lugar (regla anti magic-string; ver la revisión de service_catalog).
 		{Name: "status", Type: statusSelectInput(), NotNull: true},
-		{Name: "attention_at", Type: model.Int(), NotNull: true},
+		{Name: "attention_at", Type: model.UnixTime(), NotNull: true},
 		{Name: "reason", Type: input.Textarea(), NotNull: true},
 		{Name: "diagnostic", Type: input.Textarea()},
 		{Name: "prescription", Type: input.Textarea()},
 		{Name: "cie10_code", Type: input.Text()},
-		{Name: "started_at", Type: model.Int()},
-		{Name: "finished_at", Type: model.Int()},
+		{Name: "started_at", Type: model.NanoTime()},
+		{Name: "finished_at", Type: model.NanoTime()},
 		{Name: "patient_name_snapshot", Type: input.Text(), NotNull: true},
 		{Name: "patient_rut_snapshot", Type: input.Rut(), NotNull: true},
 		{Name: "doctor_name_snapshot", Type: input.Text(), NotNull: true},
 		{Name: "doctor_specialty_snapshot", Type: input.Text()},
-		{Name: "updated_at", Type: model.Int(), NotNull: true},
+		{Name: "updated_at", Type: model.NanoTime(), NotNull: true},
 	},
 }
 

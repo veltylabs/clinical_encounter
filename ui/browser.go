@@ -40,13 +40,12 @@ func blockingCall(caller router.Caller, op string, args model.Encodable, into mo
 // that convention (see business_calendar.specificDateLabel's identical
 // note): a single day is From == To.
 func todayRange() (from, to int64) {
-	todayISO := tintime.FormatISO8601(tintime.Now())[:10]
-	nano, err := tintime.ParseDate(todayISO)
+	todayISO := tintime.FormatISO8601(tintime.NowUnix())[:10]
+	day, err := tintime.ParseDate(todayISO)
 	if err != nil {
 		return 0, 0
 	}
-	day := nano / 1000000000
-	return day, day
+	return int64(day), int64(day)
 }
 
 // doctorIdentity is what the logged-in user needs to act as a doctor: their

@@ -5,6 +5,7 @@ package clinical_encounter
 import (
 	"webtyp.com/model"
 	"webtyp.com/orm"
+	"webtyp.com/time"
 )
 
 type MedicalHistory struct {
@@ -13,25 +14,25 @@ type MedicalHistory struct {
 	DoctorId string
 	ReservationId string
 	Status string
-	AttentionAt int64
+	AttentionAt time.Unix
 	Reason string
 	Diagnostic string
 	Prescription string
 	Cie10Code string
-	StartedAt int64
-	FinishedAt int64
+	StartedAt time.Nano
+	FinishedAt time.Nano
 	PatientNameSnapshot string
 	PatientRutSnapshot string
 	DoctorNameSnapshot string
 	DoctorSpecialtySnapshot string
-	UpdatedAt int64
+	UpdatedAt time.Nano
 }
 
 func (m *MedicalHistory) ModelName() string { return "medical_history" }
 
 func (m *MedicalHistory) Schema() []model.Field { return MedicalHistoryModel.Fields }
 
-func (m *MedicalHistory) Pointers() []any { return []any{&m.Id, &m.PatientId, &m.DoctorId, &m.ReservationId, &m.Status, &m.AttentionAt, &m.Reason, &m.Diagnostic, &m.Prescription, &m.Cie10Code, &m.StartedAt, &m.FinishedAt, &m.PatientNameSnapshot, &m.PatientRutSnapshot, &m.DoctorNameSnapshot, &m.DoctorSpecialtySnapshot, &m.UpdatedAt} }
+func (m *MedicalHistory) Pointers() []any { return []any{&m.Id, &m.PatientId, &m.DoctorId, &m.ReservationId, &m.Status, (*int64)(&m.AttentionAt), &m.Reason, &m.Diagnostic, &m.Prescription, &m.Cie10Code, (*int64)(&m.StartedAt), (*int64)(&m.FinishedAt), &m.PatientNameSnapshot, &m.PatientRutSnapshot, &m.DoctorNameSnapshot, &m.DoctorSpecialtySnapshot, (*int64)(&m.UpdatedAt)} }
 
 func (m *MedicalHistory) IsNil() bool { return m == nil }
 
@@ -41,18 +42,18 @@ func (m *MedicalHistory) EncodeFields(w model.FieldWriter) {
 	w.String("doctor_id", m.DoctorId)
 	w.String("reservation_id", m.ReservationId)
 	w.String("status", m.Status)
-	w.Int("attention_at", m.AttentionAt)
+	w.Int("attention_at", int64(m.AttentionAt))
 	w.String("reason", m.Reason)
 	w.String("diagnostic", m.Diagnostic)
 	w.String("prescription", m.Prescription)
 	w.String("cie10_code", m.Cie10Code)
-	w.Int("started_at", m.StartedAt)
-	w.Int("finished_at", m.FinishedAt)
+	w.Int("started_at", int64(m.StartedAt))
+	w.Int("finished_at", int64(m.FinishedAt))
 	w.String("patient_name_snapshot", m.PatientNameSnapshot)
 	w.String("patient_rut_snapshot", m.PatientRutSnapshot)
 	w.String("doctor_name_snapshot", m.DoctorNameSnapshot)
 	w.String("doctor_specialty_snapshot", m.DoctorSpecialtySnapshot)
-	w.Int("updated_at", m.UpdatedAt)
+	w.Int("updated_at", int64(m.UpdatedAt))
 }
 
 func (m *MedicalHistory) DecodeFields(r model.FieldReader) {
@@ -61,18 +62,18 @@ func (m *MedicalHistory) DecodeFields(r model.FieldReader) {
 	if v, ok := r.String("doctor_id"); ok { m.DoctorId = v }
 	if v, ok := r.String("reservation_id"); ok { m.ReservationId = v }
 	if v, ok := r.String("status"); ok { m.Status = v }
-	if v, ok := r.Int("attention_at"); ok { m.AttentionAt = v }
+	if v, ok := r.Int("attention_at"); ok { m.AttentionAt = time.Unix(v) }
 	if v, ok := r.String("reason"); ok { m.Reason = v }
 	if v, ok := r.String("diagnostic"); ok { m.Diagnostic = v }
 	if v, ok := r.String("prescription"); ok { m.Prescription = v }
 	if v, ok := r.String("cie10_code"); ok { m.Cie10Code = v }
-	if v, ok := r.Int("started_at"); ok { m.StartedAt = v }
-	if v, ok := r.Int("finished_at"); ok { m.FinishedAt = v }
+	if v, ok := r.Int("started_at"); ok { m.StartedAt = time.Nano(v) }
+	if v, ok := r.Int("finished_at"); ok { m.FinishedAt = time.Nano(v) }
 	if v, ok := r.String("patient_name_snapshot"); ok { m.PatientNameSnapshot = v }
 	if v, ok := r.String("patient_rut_snapshot"); ok { m.PatientRutSnapshot = v }
 	if v, ok := r.String("doctor_name_snapshot"); ok { m.DoctorNameSnapshot = v }
 	if v, ok := r.String("doctor_specialty_snapshot"); ok { m.DoctorSpecialtySnapshot = v }
-	if v, ok := r.Int("updated_at"); ok { m.UpdatedAt = v }
+	if v, ok := r.Int("updated_at"); ok { m.UpdatedAt = time.Nano(v) }
 }
 
 type MedicalHistoryList []*MedicalHistory

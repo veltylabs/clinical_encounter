@@ -71,7 +71,7 @@ func main() {
 		panic(err)
 	}
 	pd, err := patientdirectory.New(db, patientdirectory.Deps{
-		IDs: ids, Publisher: broker, TenantID: demoTenantID, ValidateRUT: trustedip.ValidateRUT,
+		Publisher: broker, TenantID: demoTenantID, ValidateRUT: trustedip.ValidateRUT,
 	})
 	if err != nil {
 		panic(err)
@@ -126,10 +126,10 @@ func main() {
 	}
 
 	// 3. Add a confirmed reservation for today at 16:00 Santiago time if possible (omit if weekend/holiday)
-	nowSec := tinytime.Now() / 1e9
-	isoDate := tinytime.FormatISO8601(nowSec * 1e9)[:10]
-	if dayNano, err := tinytime.ParseDate(isoDate); err == nil {
-		todaySec := dayNano / 1e9
+	nowSec := tinytime.NowUnix()
+	isoDate := tinytime.FormatISO8601(nowSec)[:10]
+	if daySec, err := tinytime.ParseDate(isoDate); err == nil {
+		todaySec := daySec
 		if len(patientData.Patients) > 0 && len(bookingData.ServiceConfigs) > 0 {
 			resToday, err := abMod.CreateReservation(ab.CreateReservationCmd{
 				TenantId:                demoTenantID,

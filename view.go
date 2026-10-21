@@ -22,11 +22,11 @@ var monthAbbr = [12]string{"Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago
 // day/month accessor of its own. A zero or malformed timestamp degrades to
 // an empty badge rather than a panic — Item() runs over whatever the store
 // holds, and one bad row must not take the whole list down.
-func leadFromUnix(sec int64) (top, main, bottom string) {
+func leadFromUnix(sec time.Unix) (top, main, bottom string) {
 	if sec <= 0 {
 		return "", "", ""
 	}
-	compact := time.FormatCompact(sec * 1e9)
+	compact := time.FormatCompact(sec)
 	if len(compact) != 14 {
 		return "", "", ""
 	}

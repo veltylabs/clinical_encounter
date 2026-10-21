@@ -2,7 +2,7 @@ package tests
 
 import (
 	"testing"
-	tinytime "webtyp.com/time"
+	"webtyp.com/time"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 	ceseed "github.com/veltylabs/clinical_encounter/seed"
@@ -49,7 +49,7 @@ func TestSeedLoad(t *testing.T) {
 
 	// Las fichas de demo son de hace ~30 días: AttentionAt va en nanosegundos,
 	// así que debe quedar al menos 29 días antes de ahora (no "hoy").
-	limit := tinytime.Now() - 29*86400*1_000_000_000
+	limit := time.Unix(int64(time.NowUnix()) - 29*86400)
 	for _, v := range data.Visits {
 		if v.AttentionAt > limit {
 			t.Errorf("visit %s: AttentionAt %d no está ~30 días atrás (límite %d)", v.Id, v.AttentionAt, limit)
