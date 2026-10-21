@@ -114,7 +114,7 @@ Campos no renderizados (se pasan por contexto desde `client.go`):
 Subdirectorio `web/mockdb/mockdb.go` con package `mockdb`.
 
 Implementa las interfaces `orm.Executor` y `orm.Compiler` sobre un slice en memoria de `*MedicalHistory`.
-El `web/client.go` lo instancia y pasa a `orm.New(exec, compiler)` — el `Module` recibe un `*orm.DB` real,
+El `web/browser.go` lo instancia y pasa a `orm.New(exec, compiler)` — el `Module` recibe un `*orm.DB` real,
 no un nil, por lo que el código de producción queda intacto.
 
 ```go
@@ -142,7 +142,7 @@ RUT:  "12.345.678-9"
 
 ---
 
-### 4. `web/client.go` — entrypoint WASM (`//go:build wasm`)
+### 4. `web/browser.go` — entrypoint WASM (`//go:build browser`)
 
 Responsabilidades:
 1. Instanciar `mockdb.New()` → `*orm.DB`
@@ -161,7 +161,7 @@ github.com/tinywasm/dom
 github.com/tinywasm/layout
 ```
 
-> Mismas versiones que usa el workspace tinywasm. El `web/client.go` forma parte del
+> Mismas versiones que usa el workspace tinywasm. El `web/browser.go` forma parte del
 > mismo módulo (`github.com/cdvelop/clinical_encounter`), sin `go.mod` propio.
 
 ---
@@ -182,7 +182,7 @@ usuario click card[id] en Aside
 - [x] Actualizar `go.mod` con `tinywasm/dom` y `tinywasm/layout`
 - [x] Crear `web/mockdb/mockdb.go` (Executor + Compiler + datos mock)
 - [x] Implementar `view.go` (4 componentes + CSS inline)
-- [x] Reemplazar `web/client.go` con entrypoint real
+- [x] Reemplazar `web/browser.go` con entrypoint real
 - [x] Verificar compilación (`GOOS=js GOARCH=wasm go build -o /tmp/app.wasm ./web/`)
 - [x] Module campos públicos (DB, UID, Pub)
 - [ ] Verificar render en navegador (esperar logs del MCP)

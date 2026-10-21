@@ -64,3 +64,7 @@ A PR that does not compile, or whose tests could not run, is a failed delivery. 
 |---|---|---|
 | 1 | `web/browser.go`, `ui/browser.go` | Rename to `web/browser.go` with `//go:build browser`, add tag to `ui/browser.go` |
 | 2 | tests, docs | Verify tests pass with `gotest ./...` |
+
+## Executor notes
+- Added instructions and memories regarding `wasmbrowsertest` needed by `gotest` when tests run under the `browser` build tag.
+- Left `docs/PLAN.md` instructions unmodified (no self-referential find/replace changes).

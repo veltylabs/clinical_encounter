@@ -236,7 +236,7 @@ exempt, and only them:
 - `seed/` (package `seed`, no build tag) holds demo data: `Load(...) (Data, error)`,
   which writes through the module's own methods so every row is validated, and
   returns the rows it created so downstream demos can reference them.
-- `web/` (package `main`, `web/client.go` tagged `wasm`) is the runnable demo and
+- `web/` (package `main`, `web/browser.go` tagged `browser`) is the runnable demo and
   may additionally import the concrete `webtyp.com/storage/mem`,
   `webtyp.com/router/loopback`, `webtyp.com/events/mock`, `webtyp.com/unixid` and
   `webtyp.com/auth/trusted_ip` (for `ValidateRUT`).
@@ -310,7 +310,7 @@ never runs `codejob` or `gopush` itself — dispatch and close are the human's c
   existed in the retired `docs/PLAN_MODEL_MIGRATION.md` and carries forward verbatim here.
 - **View reconciliation (resolved 2026-07-17):** an earlier plan (`docs/PLAN_UI_INITIAL_VIEW.md`,
   now retired/merged into `docs/PLAN.md`) built a WASM frontend directly inside this module —
-  `web/client.go` importing `webtyp/dom` + `webtyp/layout/rightpanel` concretely, and a homemade
+  `web/browser.go` importing `webtyp/dom` + `webtyp/layout/rightpanel` concretely, and a homemade
   `web/mockdb` package reimplementing `orm.Executor`/`orm.Compiler` as an in-memory store. Both
   violate this file's blacklist (a module may never import a concrete renderer, and never hand-rolls
   a port `storage/mem` already provides upstream) and are removed by `docs/PLAN.md`. The equivalent
