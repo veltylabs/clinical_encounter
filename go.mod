@@ -4,7 +4,7 @@ go 1.26.8
 
 require (
 	github.com/veltylabs/appointment_booking v0.3.11
-	github.com/veltylabs/business_calendar v0.4.93
+	github.com/veltylabs/business_calendar v0.5.0
 	github.com/veltylabs/device_manager v0.2.60
 	github.com/veltylabs/patient_directory v0.1.38
 	github.com/veltylabs/service_catalog v0.5.9
@@ -24,7 +24,7 @@ require (
 	webtyp.com/notify v0.2.2
 	webtyp.com/orm v0.12.10
 	webtyp.com/router v0.4.6
-	webtyp.com/storage v0.1.8
+	webtyp.com/storage v0.1.10
 	webtyp.com/svg v0.3.30
 	webtyp.com/time v0.6.2
 	webtyp.com/unixid v0.3.1
