@@ -7,7 +7,7 @@ require (
 	github.com/veltylabs/business_calendar v0.5.0
 	github.com/veltylabs/device_manager v0.2.60
 	github.com/veltylabs/patient_directory v0.1.38
-	github.com/veltylabs/service_catalog v0.5.9
+	github.com/veltylabs/service_catalog v0.6.0
 	github.com/veltylabs/staff_manager v0.1.126
 	webtyp.com/auth v0.0.76
 	webtyp.com/components v0.8.38
@@ -15,7 +15,7 @@ require (
 	webtyp.com/dom v0.13.27
 	webtyp.com/events v0.1.0
 	webtyp.com/fmt v1.0.0
-	webtyp.com/form v0.4.44
+	webtyp.com/form v0.4.47
 	webtyp.com/input v0.0.21
 	webtyp.com/json v0.5.30
 	webtyp.com/layout v0.3.64
@@ -39,7 +39,7 @@ require (
 	webtyp.com/font v0.0.6 // indirect
 	webtyp.com/html v0.0.29 // indirect
 	webtyp.com/icons v0.0.26 // indirect
-	webtyp.com/lang v0.1.7 // indirect
+	webtyp.com/lang v0.1.8 // indirect
 	webtyp.com/network v0.1.2 // indirect
 	webtyp.com/user v0.3.14 // indirect
 	webtyp.com/widget v0.6.44 // indirect
