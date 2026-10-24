@@ -12,7 +12,7 @@ require (
 	webtyp.com/auth v0.0.76
 	webtyp.com/components v0.8.38
 	webtyp.com/ddl v0.0.24
-	webtyp.com/dom v0.13.27
+	webtyp.com/dom v0.13.28
 	webtyp.com/events v0.1.0
 	webtyp.com/fmt v1.0.0
 	webtyp.com/form v0.4.47
