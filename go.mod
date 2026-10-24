@@ -37,7 +37,7 @@ require (
 	webtyp.com/css v0.4.31 // indirect
 	webtyp.com/escape v0.1.0 // indirect
 	webtyp.com/font v0.0.6 // indirect
-	webtyp.com/html v0.0.29 // indirect
+	webtyp.com/html v0.0.30 // indirect
 	webtyp.com/icons v0.0.33 // indirect
 	webtyp.com/lang v0.1.9 // indirect
 	webtyp.com/network v0.1.2 // indirect
