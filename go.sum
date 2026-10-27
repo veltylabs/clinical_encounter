@@ -8,8 +8,8 @@ github.com/veltylabs/patient_directory v0.1.38 h1:rx64gqJy3AGa/O1+NC09f3+ZlsNGCF
 github.com/veltylabs/patient_directory v0.1.38/go.mod h1:ptlon8hCEL5MLIhXmNyOfILWIavW4Rg8wyL9H8ZqdU8=
 github.com/veltylabs/service_catalog v0.6.10 h1:wcULDOdw/MdmN3EwcFvNBKXAmh2bmBSnUddpTAdt/40=
 github.com/veltylabs/service_catalog v0.6.10/go.mod h1:uT60y2/54pmvQAG2HGZ8CnWGf+WMmlM67zrGKNEC+qE=
-github.com/veltylabs/staff_manager v0.1.152 h1:mHxuV1ujfRxCeymJVnrCOMnqqAMC5r0fIUJ4VgcQdEk=
-github.com/veltylabs/staff_manager v0.1.152/go.mod h1:9qiY6AtlvjScn1k8/YRUS5cXbZBf6PtNr3D9PXkvkLo=
+github.com/veltylabs/staff_manager v0.1.153 h1:Xn073wfuczYDWKffz+fNvvZ1ZwdnfFR5XAa1W7idGhw=
+github.com/veltylabs/staff_manager v0.1.153/go.mod h1:9qiY6AtlvjScn1k8/YRUS5cXbZBf6PtNr3D9PXkvkLo=
 webtyp.com/auth v0.0.76 h1:ttDe0xTnU2xkrkbtc3qhV3B1Og1tzRI023gwbLCoCxY=
 webtyp.com/auth v0.0.76/go.mod h1:iYYNmn1wCplRuqLciYPIgwrtXLpCqOnQD8qad8d2h08=
 webtyp.com/calendar v0.1.0 h1:lI0i74Ghee+fnYDx2P6XFJQKLyJKTeQbg4eT9IK8980=
