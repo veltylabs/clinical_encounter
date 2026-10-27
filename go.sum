@@ -1,7 +1,7 @@
 github.com/veltylabs/appointment_booking v0.3.11 h1:ZTZGlEy9X6rLlEYI8lOXFeB/3E8YaDC2iARhPc9L8O8=
 github.com/veltylabs/appointment_booking v0.3.11/go.mod h1:q5ADpCBywBwwP7qBQwXL5Dhm1sKjqhNQsixzft/7N1A=
-github.com/veltylabs/business_calendar v0.5.0 h1:mc4bKBuwpRt0WTmDtXVJRjUxX7rEFzOMZB+l/jzJ57g=
-github.com/veltylabs/business_calendar v0.5.0/go.mod h1:5EpdslD3xfkqMZlaiHTAz8UI+VnSESMp0dF2y+L+r8M=
+github.com/veltylabs/business_calendar v0.5.16 h1:nvvHpEy8ooKqhjUB4Cmq3FrIyBs3RmTX07no7tE8cFM=
+github.com/veltylabs/business_calendar v0.5.16/go.mod h1:CMpfeGkaX/Xp9I1QM8Up+ErPLf8XE7ycYLdxpPW3RIc=
 github.com/veltylabs/device_manager v0.2.72 h1:Jn94LuR9mPu5IL2x13F3y+Qt2wammCxLNIpBZY+cgGQ=
 github.com/veltylabs/device_manager v0.2.72/go.mod h1:zuxbKu7Zy0h3kAjoIQlmeX2W4r6SMowjVQkNjk94UWk=
 github.com/veltylabs/patient_directory v0.1.62 h1:Ats+8PJZ1vTMvqumNIfiz/nFDxmGV+ncQAv0snxh4bs=
