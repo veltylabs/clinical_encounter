@@ -5,6 +5,7 @@ package clinical_encounter
 import (
 	"webtyp.com/model"
 	"webtyp.com/orm"
+	"webtyp.com/fmt"
 	"webtyp.com/time"
 )
 
@@ -93,6 +94,10 @@ func (s *MedicalHistoryList) DecodeFields(_ model.FieldReader) {}
 
 func (m *MedicalHistory) Validate(action byte) error {
 	return model.ValidateFields(action, m)
+}
+
+func (m *MedicalHistory) Item() model.Item {
+	return model.Item{ID: m.Id, Label: m.Reason, Description: m.Status, Badge: fmt.Convert(int64(m.AttentionAt)).String()}
 }
 
 var MedicalHistory_ = struct {

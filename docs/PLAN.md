@@ -93,3 +93,8 @@ Translate to Spanish every README, `docs/*` file, diagram and code comment of th
 - `gotest` green.
 - Never edit `model_orm.go` by hand.
 - When `gotest` passes, commit, push and open the PR.
+
+## Executor notes
+- Temporarily swapped `statusSelectInput()` to `input.Select()` to allow `ormc` generation as documented.
+- `ui.Browser()` was changed to `ui.Screens()` according to `layout/app` pattern.
+- Extracted `"name snapshot"` and updated `lang.json` as requested. All test stages passed locally.

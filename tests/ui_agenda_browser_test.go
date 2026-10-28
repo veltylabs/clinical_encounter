@@ -17,6 +17,7 @@ import (
 	"webtyp.com/components/searchbar"
 	"webtyp.com/components/selectsearch"
 	"webtyp.com/layout/crudview"
+	"webtyp.com/view"
 )
 
 func encodeInto(v model.Encodable, into model.Decodable) error {
@@ -61,14 +62,10 @@ func TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations(t *testing.
 		},
 	}
 
-	m, err := ui.Browser(mock, &testIDGen{}, "t1", "user1")
-	if err != nil {
-		t.Fatalf("Browser: %v", err)
-	}
-
-	cv, ok := m.View().(*crudview.CrudView)
+	screens := ui.Screens(view.NewRecords().Caller(mock), &testIDGen{}, "t1", "user1")
+	cv, ok := screens[0].Component.(*crudview.CrudView)
 	if !ok {
-		t.Fatalf("expected *crudview.CrudView, got %T", m.View())
+		t.Fatalf("expected *crudview.CrudView, got %T", screens[0].Component)
 	}
 	if _, ok := cv.Filter.(*selectsearch.SelectSearch); !ok {
 		t.Fatalf("expected the agenda picker (*selectsearch.SelectSearch) once the logged-in user resolves to a staff row, got %T", cv.Filter)
@@ -114,13 +111,10 @@ func TestWASM_ClinicalEncounter_NoStaffRowFallsBackToPlainList(t *testing.T) {
 		},
 	}
 
-	m, err := ui.Browser(mock, &testIDGen{}, "t1", "admin-with-no-staff-row")
-	if err != nil {
-		t.Fatalf("Browser: %v", err)
-	}
-	cv, ok := m.View().(*crudview.CrudView)
+	screens := ui.Screens(view.NewRecords().Caller(mock), &testIDGen{}, "t1", "admin-with-no-staff-row")
+	cv, ok := screens[0].Component.(*crudview.CrudView)
 	if !ok {
-		t.Fatalf("expected *crudview.CrudView, got %T", m.View())
+		t.Fatalf("expected *crudview.CrudView, got %T", screens[0].Component)
 	}
 	if _, ok := cv.Filter.(*searchbar.SearchBar); !ok {
 		t.Errorf("expected crudview's default SearchBar when the logged-in account has no staff row, got %T", cv.Filter)
@@ -159,13 +153,10 @@ func TestWASM_ClinicalEncounter_NewDraftIsSeededFromThePicker(t *testing.T) {
 		},
 	}
 
-	m, err := ui.Browser(mock, &testIDGen{}, "t1", "user1")
-	if err != nil {
-		t.Fatalf("Browser: %v", err)
-	}
-	cv, ok := m.View().(*crudview.CrudView)
+	screens := ui.Screens(view.NewRecords().Caller(mock), &testIDGen{}, "t1", "user1")
+	cv, ok := screens[0].Component.(*crudview.CrudView)
 	if !ok {
-		t.Fatalf("expected *crudview.CrudView, got %T", m.View())
+		t.Fatalf("expected *crudview.CrudView, got %T", screens[0].Component)
 	}
 	if cv.NewRecord == nil {
 		t.Fatal("la pantalla debe sembrar el borrador nuevo; NewRecord quedó sin cablear")
