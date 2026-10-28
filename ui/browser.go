@@ -9,7 +9,6 @@ import (
 	"webtyp.com/dom"
 	"webtyp.com/fmt"
 	"webtyp.com/layout/crudview"
-	"webtyp.com/layout/platformd"
 	"webtyp.com/model"
 	"webtyp.com/router"
 	"webtyp.com/svg"
@@ -92,7 +91,7 @@ type agendaPatient struct {
 	Description   string
 	ReservationID string
 	ServiceID     string
-	History       []view.Item
+	History       []model.Item
 }
 
 // loadTodayAgenda lists this staff member's CONFIRMED reservations for
@@ -126,7 +125,7 @@ func loadTodayAgenda(caller router.Caller, tenantID, staffID string) ([]agendaPa
 		var history clinicalencounter.MedicalHistoryList
 		_ = blockingCall(caller, clinicalencounter.ModelName+"."+clinicalencounter.OpListVisitsByPatient,
 			&clinicalencounter.ListVisitsArgs{TenantId: tenantID, PatientId: r.ClientId}, &history)
-		items := make([]view.Item, len(history))
+		items := make([]model.Item, len(history))
 		for i, h := range history {
 			items[i] = h.Item()
 		}
@@ -160,7 +159,7 @@ type requirePatient struct {
 	chosen *agendaPatient
 }
 
-func (p requirePatient) Filter(term string) []view.Item {
+func (p requirePatient) Filter(term string) []model.Item {
 	if term == "" {
 		if p.chosen != nil {
 			*p.chosen = agendaPatient{}
@@ -204,24 +203,24 @@ var _ view.Saver = requirePatient{}
 // row is "the doctor" so today's agenda can be built. See README.md for the
 // full design and the one still-open gap (crudview cannot pre-fill a new
 // draft's fields from the picker's selection yet).
-func Browser(caller router.Caller, ids model.IDGenerator, tenantID, userID string) (platformd.UIModule, error) {
+func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID string) ([]view.Screen) {
 	cfg := crudview.Config{
 		ParentID:  ID,
 		Presenter: clinicalencounter.NewView(caller),
 		IDs:       ids,
-		List: func(selected *dom.SignalString, onSelect func(view.Item)) crudview.ListView {
+		List: func(selected *dom.SignalString, onSelect func(model.Item)) crudview.ListView {
 			return &targethour.TargetHour{Selected: selected, OnSelect: onSelect}
 		},
 	}
 
 	doctor, err := loadDoctorIdentity(caller, tenantID, userID)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	if doctor.StaffID != "" {
 		agenda, err := loadTodayAgenda(caller, tenantID, doctor.StaffID)
 		if err != nil {
-			return nil, err
+			return nil
 		}
 		picker := &selectsearch.SelectSearch{Placeholder: "Seleccione un paciente de la agenda de hoy..."}
 		opts := make([]selectsearch.SsOption, len(agenda))
@@ -266,7 +265,14 @@ func Browser(caller router.Caller, ids model.IDGenerator, tenantID, userID strin
 
 	v, err := crudview.New(cfg)
 	if err != nil {
-		return nil, err
+		return nil
 	}
-	return platformd.NewUIModule(ID, Label, svg.Icon(ID), v), nil
+	return []view.Screen{{
+		ID:         ID,
+		Label:      Label,
+		Icon:       string(svg.Icon(ID)),
+		Component:  v,
+		Permission: "medical_history",
+		Help:       Label,
+	}}
 }

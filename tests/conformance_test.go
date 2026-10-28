@@ -37,7 +37,7 @@ func TestView_ListPopulatesItems(t *testing.T) {
 			rec.Id, rec.Reason, rec.Status = "mh_1", "Control", clinicalencounter.StatusCompleted
 		},
 	}
-	p := clinicalencounter.NewView(caller)
+	p := clinicalencounter.NewView(view.NewRecords().Caller(caller))
 	var rerr error
 	p.Reload(func(err error) { rerr = err })
 	if rerr != nil {
