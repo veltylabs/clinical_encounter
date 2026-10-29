@@ -1,6 +1,7 @@
 package clinical_encounter
 
 import (
+	"webtyp.com/model"
 	"webtyp.com/orm"
 	"webtyp.com/time"
 )
@@ -18,7 +19,7 @@ func (m *Module) ListSupplyUse(tenantId, encounterId string) ([]*EncounterSupply
 		return nil, ErrSupplyUseOff
 	}
 	if tenantId == "" {
-		return nil, ErrTenantRequired
+		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 	var rec EncounterSupply
 	qb := m.db.Query(&rec).
@@ -32,10 +33,10 @@ func (m *Module) UpsertSupplyUse(args UpsertSupplyUseArgs) (*EncounterSupply, er
 		return nil, ErrSupplyUseOff
 	}
 	if args.TenantId == "" {
-		return nil, ErrTenantRequired
+		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 	if args.Quantity <= 0 {
-		return nil, ErrQuantity
+		return nil, &model.FieldError{Field: "quantity", Err: ErrQuantity}
 	}
 
 	visit, err := m.GetVisit(args.TenantId, args.EncounterId)
@@ -96,7 +97,7 @@ func (m *Module) DeleteSupplyUse(tenantId, id string) error {
 		return ErrSupplyUseOff
 	}
 	if tenantId == "" {
-		return ErrTenantRequired
+		return &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 
 	var existing EncounterSupply
@@ -127,7 +128,7 @@ func (m *Module) ListPendingSupply(tenantId string) ([]*EncounterSupply, error) 
 		return nil, ErrSupplyUseOff
 	}
 	if tenantId == "" {
-		return nil, ErrTenantRequired
+		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 	var rec EncounterSupply
 	qb := m.db.Query(&rec).
@@ -141,7 +142,7 @@ func (m *Module) RetrySupplyUse(tenantId, id, by string) (*EncounterSupply, erro
 		return nil, ErrSupplyUseOff
 	}
 	if tenantId == "" {
-		return nil, ErrTenantRequired
+		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 
 	var existing EncounterSupply

@@ -25,7 +25,7 @@ func TestMountOperations_CreateVisit(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"tenant_id":"t1","id":"visit_123","tenant_id":"t1","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
+		InBody: []byte(`{"records":[{"tenant_id":"t1","id":"visit_123","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}]}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
@@ -102,7 +102,7 @@ func TestMountOperations_CreateVisit_RBACDenial(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"tenant_id":"t1","id":"visit_123","tenant_id":"t1","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}`),
+		InBody: []byte(`{"records":[{"tenant_id":"t1","id":"visit_123","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}]}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
@@ -244,7 +244,7 @@ func TestMountOperations_CreateVisit_Collision(t *testing.T) {
 	})
 
 	ctx := &mock.Context{
-		InBody: []byte(`{"tenant_id":"t1","id":"visit_1","patient_id":"pat_2","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Pedro","patient_rut_snapshot":"2-9","doctor_name_snapshot":"Dr. Soto"}`),
+		InBody: []byte(`{"records":[{"tenant_id":"t1","id":"visit_1","patient_id":"pat_2","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Pedro","patient_rut_snapshot":"2-9","doctor_name_snapshot":"Dr. Soto"}]}`),
 	}
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, ctx)
@@ -308,7 +308,7 @@ func TestMountOperations_SupplyOp_SupplyUseOff(t *testing.T) {
 	ctx.SetUserID("test-user")
 	reg.Invoke("OP", "/"+clinicalencounter.OpListSupplyUse, ctx)
 
-	if ctx.Status != 501 {
-		t.Fatalf("expected 501 when supply use is off, got %d", ctx.Status)
+	if ctx.Status != 400 {
+		t.Fatalf("expected 400 when supply use is off, got %d", ctx.Status)
 	}
 }

@@ -23,7 +23,8 @@ require (
 	webtyp.com/msgtype v0.1.0
 	webtyp.com/notify v0.2.2
 	webtyp.com/orm v0.12.10
-	webtyp.com/router v0.4.12
+	webtyp.com/router v0.4.16
+	webtyp.com/rpc v0.2.10
 	webtyp.com/storage v0.1.10
 	webtyp.com/svg v0.3.30
 	webtyp.com/time v0.6.2
@@ -44,7 +45,6 @@ require (
 	webtyp.com/icons v0.0.38 // indirect
 	webtyp.com/lang v0.1.10 // indirect
 	webtyp.com/network v0.1.2 // indirect
-	webtyp.com/rpc v0.2.10 // indirect
 	webtyp.com/user v0.3.14 // indirect
 	webtyp.com/widget v0.6.45 // indirect
 )

@@ -1,6 +1,10 @@
 package clinical_encounter
 
 import (
+	ab "github.com/veltylabs/appointment_booking"
+	"github.com/veltylabs/patient_directory"
+	"github.com/veltylabs/service_catalog"
+	"github.com/veltylabs/staff_manager"
 	"webtyp.com/fmt"
 	"webtyp.com/input"
 	"webtyp.com/model"
@@ -11,10 +15,10 @@ var MedicalHistoryModel = model.Definition{
 	Fields: model.Fields{
 		{Name: "id", Type: model.Text(), DB: &model.FieldDB{PK: true}},
 		{Name: "tenant_id", Type: model.Text(), NotNull: true},
-		{Name: "patient_id", Type: input.Text(), NotNull: true},
-		{Name: "doctor_id", Type: input.Text(), NotNull: true},
-		{Name: "reservation_id", Type: input.Text()},
-		{Name: "service_id", Type: input.Text()},
+		{Name: "patient_id", Type: input.Text(), Ref: &patientdirectory.PatientModel, DB: &model.FieldDB{RefColumn: "id"}, NotNull: true},
+		{Name: "doctor_id", Type: input.Text(), Ref: &staffmanager.StaffMemberModel, DB: &model.FieldDB{RefColumn: "id"}, NotNull: true},
+		{Name: "reservation_id", Type: input.Text(), Ref: &ab.ReservationModel, DB: &model.FieldDB{RefColumn: "id"}},
+		{Name: "service_id", Type: input.Text(), Ref: &servicecatalog.ServiceModel, DB: &model.FieldDB{RefColumn: "id"}},
 		// status: los valores válidos son ÚNICAMENTE las constantes Status* en const.go — los literales
 		// viven solo en esas constantes y en ningún otro lugar (regla anti magic-string; ver la revisión de service_catalog).
 		{Name: "status", Type: statusSelectInput(), NotNull: true, Item: model.ItemDescription},
@@ -25,9 +29,9 @@ var MedicalHistoryModel = model.Definition{
 		{Name: "cie10_code", Type: input.Text()},
 		{Name: "started_at", Type: model.NanoTime()},
 		{Name: "finished_at", Type: model.NanoTime()},
-		{Name: "patient_name_snapshot", Type: input.Text(), NotNull: true},
+		{Name: "patient_name_snapshot", Type: input.Text(), Label: "patient name", NotNull: true},
 		{Name: "patient_rut_snapshot", Type: input.Rut(), NotNull: true},
-		{Name: "doctor_name_snapshot", Type: input.Text(), NotNull: true},
+		{Name: "doctor_name_snapshot", Type: input.Text(), Label: "doctor name", NotNull: true},
 		{Name: "doctor_specialty_snapshot", Type: input.Text()},
 		{Name: "updated_at", Type: model.NanoTime(), NotNull: true},
 	},
@@ -42,15 +46,15 @@ var CreateVisitArgsModel = model.Definition{
 	Fields: model.Fields{
 		{Name: "id", Type: model.Text(), DB: &model.FieldDB{PK: true}, NotNull: true},
 		{Name: "tenant_id", Type: model.Text(), NotNull: true},
-		{Name: "patient_id", Type: input.Text(), NotNull: true},
-		{Name: "doctor_id", Type: input.Text(), NotNull: true},
+		{Name: "patient_id", Type: input.Text(), Ref: &patientdirectory.PatientModel, DB: &model.FieldDB{RefColumn: "id"}, NotNull: true},
+		{Name: "doctor_id", Type: input.Text(), Ref: &staffmanager.StaffMemberModel, DB: &model.FieldDB{RefColumn: "id"}, NotNull: true},
 		{Name: "attention_at", Type: input.Number(), NotNull: true},
 		{Name: "reason", Type: input.Text(), NotNull: true},
-		{Name: "patient_name_snapshot", Type: input.Text(), NotNull: true},
+		{Name: "patient_name_snapshot", Type: input.Text(), Label: "patient name", NotNull: true},
 		{Name: "patient_rut_snapshot", Type: input.Text(), NotNull: true},
-		{Name: "doctor_name_snapshot", Type: input.Text(), NotNull: true},
-		{Name: "reservation_id", Type: input.Text()},
-		{Name: "service_id", Type: input.Text()},
+		{Name: "doctor_name_snapshot", Type: input.Text(), Label: "doctor name", NotNull: true},
+		{Name: "reservation_id", Type: input.Text(), Ref: &ab.ReservationModel, DB: &model.FieldDB{RefColumn: "id"}},
+		{Name: "service_id", Type: input.Text(), Ref: &servicecatalog.ServiceModel, DB: &model.FieldDB{RefColumn: "id"}},
 		{Name: "diagnostic", Type: input.Textarea()},
 		{Name: "prescription", Type: input.Textarea()},
 		{Name: "doctor_specialty_snapshot", Type: input.Text()},
@@ -91,29 +95,30 @@ func statusSelectInput() input.Input {
 	inp := input.Select()
 	if s, ok := inp.(interface{ SetOptions(...fmt.KeyValue) }); ok {
 		s.SetOptions(
-			fmt.KeyValue{Key: StatusCreated, Value: "Agendada"},
-			fmt.KeyValue{Key: StatusArrived, Value: "En recepción"},
-			fmt.KeyValue{Key: StatusTriaged, Value: "En triage"},
-			fmt.KeyValue{Key: StatusInProgress, Value: "En atención"},
-			fmt.KeyValue{Key: StatusCompleted, Value: "Completada"},
-			fmt.KeyValue{Key: StatusCancelled, Value: "Cancelada"},
+			fmt.KeyValue{Key: StatusCreated, Value: "Scheduled"},
+			fmt.KeyValue{Key: StatusArrived, Value: "In reception"},
+			fmt.KeyValue{Key: StatusTriaged, Value: "In triage"},
+			fmt.KeyValue{Key: StatusInProgress, Value: "In attention"},
+			fmt.KeyValue{Key: StatusCompleted, Value: "Completed"},
+			fmt.KeyValue{Key: StatusCancelled, Value: "Cancelled"},
 		)
 	}
 	return inp
 }
 
-// domainError is the concrete type of this package's sentinel errors. Code
-// compares them by asserting this type and comparing the value: == between two
-// error values compiles, under TinyGo, to runtime.interfaceEqual, which pulls
-// internal/reflectlite into the wasm binary.
-type domainError string
+// 
+const ErrCannotRead model.Invalid = "clinical_encounter: cannot read the request"
 
-func (e domainError) Error() string { return string(e) }
+
+
+
+
+
 
 const (
-	ErrNotFound    domainError = "visit not found"
-	ErrMissingArgs domainError = "missing required arguments"
-	ErrIdTaken     domainError = "visit id already used by another patient"
+	ErrNotFound model.NotFound = "visit not found"
+	ErrMissingArgs model.Invalid = "missing required arguments"
+	ErrIdTaken model.Conflict = "visit id already used by another patient"
 )
 
 // Topics de eventos de dominio — <módulo>.<entidad>.<verbo-en-pasado>, los datos de tenant/id van en

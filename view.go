@@ -6,7 +6,7 @@ import (
 	"webtyp.com/view"
 )
 
-const titleMedicalHistory = "Historial clínico"
+const titleMedicalHistory = "Medical history"
 
 // NewView construye el Presenter del historial médico — el motor agnóstico de
 // tecnología que envuelve un renderer (rightpanel, o cualquier otro). Este

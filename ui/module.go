@@ -5,4 +5,4 @@ package ui
 const ID = "clinical_encounter"
 
 // Label is the nav item's display text.
-const Label = "Historial Clínico"
+const Label = "Medical History"
