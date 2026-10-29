@@ -698,3 +698,4 @@ func (s *ListPendingSupplyArgsList) DecodeFields(_ model.FieldReader) {}
 func (m *ListPendingSupplyArgs) Validate(action byte) error {
 	return model.ValidateFields(action, m)
 }
+
