@@ -197,13 +197,13 @@ func (p requirePatient) Save(recs []model.Model, done func(error)) {
 var _ view.Presenter = requirePatient{}
 var _ view.Saver = requirePatient{}
 
-// Browser builds this module's view for the registry in modules/browser.go.
+// Screens builds this module's screens for the app menu.
 // userID is the logged-in account (auth.ProfileDTO.Id, resolved once at
 // startup by config/client.go's auth.OpMe call) — used to find which staff
 // row is "the doctor" so today's agenda can be built. See README.md for the
 // full design and the one still-open gap (crudview cannot pre-fill a new
 // draft's fields from the picker's selection yet).
-func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID string) ([]view.Screen) {
+func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID string) []view.Screen {
 	cfg := crudview.Config{
 		ParentID:  ID,
 		Presenter: clinicalencounter.NewView(caller),
@@ -273,6 +273,6 @@ func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID strin
 		Icon:       string(svg.Icon(ID)),
 		Component:  v,
 		Permission: "medical_history",
-		Help:       Label,
+		Help:       "Historial Clínico",
 	}}
 }

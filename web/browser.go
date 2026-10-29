@@ -5,7 +5,9 @@ package main
 import (
 	. "webtyp.com/dom"
 	"webtyp.com/events/mock"
+	"webtyp.com/layout/app"
 	"webtyp.com/layout/platformd"
+	"webtyp.com/model"
 	"webtyp.com/orm"
 	"webtyp.com/router/loopback"
 	"webtyp.com/storage/mem"
@@ -153,7 +155,8 @@ func main() {
 	caller := loopback.WithTenant(demoTenantID, ceMod, abMod, sm, dm, ic, pd, bc)
 
 	// 5. Build WASM browser view for doctor 'demo-user-ana'
-	v, err := ui.Browser(caller, ids, demoTenantID, "demo-user-ana")
+	screens := ui.Screens(caller, ids, demoTenantID, "demo-user-ana")
+	menu, err := app.BuildMenu(screens, ids, func(model.Resource) bool { return true })
 	if err != nil {
 		panic(err)
 	}
@@ -161,7 +164,8 @@ func main() {
 	p := &platformd.Platform{
 		AppName:   ui.Label + " — demo",
 		User:      demoUser{},
-		Modules:   []platformd.UIModule{v},
+		Modules:   menu.Modules,
+		CanView:   menu.CanView,
 		DefaultID: ui.ID,
 	}
 	Append("body", p)
