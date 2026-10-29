@@ -1,6 +1,7 @@
 package clinical_encounter
 
 import (
+	"webtyp.com/model"
 	"webtyp.com/events"
 	"webtyp.com/msgtype"
 	"webtyp.com/notify"
@@ -12,7 +13,7 @@ const SupplyDocType = "medical_history"
 
 func (m *Module) CompleteVisit(tenantId, id, by string) (*MedicalHistory, []*EncounterSupply, error) {
 	if tenantId == "" {
-		return nil, nil, ErrTenantRequired
+		return nil, nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 
 	visit, err := m.GetVisit(tenantId, id)

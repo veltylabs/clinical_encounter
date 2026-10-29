@@ -159,6 +159,15 @@ func ReadAllMedicalHistory(qb *orm.QB) (MedicalHistoryList, error) {
 	return results, err
 }
 
+func (m *MedicalHistory) SchemaExt() []model.FieldExt {
+	return []model.FieldExt{
+		{Field: MedicalHistoryModel.Fields[2], Ref: "patientdirectory.patient", RefColumn: "id", OnDelete: ""},
+		{Field: MedicalHistoryModel.Fields[3], Ref: "staffmanager.staff_member", RefColumn: "id", OnDelete: ""},
+		{Field: MedicalHistoryModel.Fields[4], Ref: "ab.reservation", RefColumn: "id", OnDelete: ""},
+		{Field: MedicalHistoryModel.Fields[5], Ref: "servicecatalog.service", RefColumn: "id", OnDelete: ""},
+	}
+}
+
 type CreateVisitArgs struct {
 	Id string
 	TenantId string
@@ -278,6 +287,15 @@ func ReadAllCreateVisitArgs(qb *orm.QB) (CreateVisitArgsList, error) {
 		func(m model.Model) { results = append(results, m.(*CreateVisitArgs)) },
 	)
 	return results, err
+}
+
+func (m *CreateVisitArgs) SchemaExt() []model.FieldExt {
+	return []model.FieldExt{
+		{Field: CreateVisitArgsModel.Fields[2], Ref: "patientdirectory.patient", RefColumn: "id", OnDelete: ""},
+		{Field: CreateVisitArgsModel.Fields[3], Ref: "staffmanager.staff_member", RefColumn: "id", OnDelete: ""},
+		{Field: CreateVisitArgsModel.Fields[9], Ref: "ab.reservation", RefColumn: "id", OnDelete: ""},
+		{Field: CreateVisitArgsModel.Fields[10], Ref: "servicecatalog.service", RefColumn: "id", OnDelete: ""},
+	}
 }
 
 type GetVisitArgs struct {

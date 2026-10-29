@@ -203,11 +203,7 @@ var _ view.Saver = requirePatient{}
 // row is "the doctor" so today's agenda can be built. See README.md for the
 // full design and the one still-open gap (crudview cannot pre-fill a new
 // draft's fields from the picker's selection yet).
-<<<<<<< HEAD
 func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID string) []view.Screen {
-=======
-func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID string) ([]view.Screen) {
->>>>>>> origin/main
 	cfg := crudview.Config{
 		ParentID:  ID,
 		Presenter: clinicalencounter.NewView(caller),
@@ -226,7 +222,7 @@ func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID strin
 		if err != nil {
 			return nil
 		}
-		picker := &selectsearch.SelectSearch{Placeholder: "Seleccione un paciente de la agenda de hoy..."}
+		picker := &selectsearch.SelectSearch{Placeholder: "Select a patient from today.s agenda..."}
 		opts := make([]selectsearch.SsOption, len(agenda))
 		for i, a := range agenda {
 			opts[i] = selectsearch.SsOption{ID: a.ID, Label: a.Label, Sublabel: a.Sublabel, Description: a.Description}
@@ -276,11 +272,7 @@ func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID strin
 		Label:      Label,
 		Icon:       string(svg.Icon(ID)),
 		Component:  v,
-		Permission: "medical_history",
-<<<<<<< HEAD
-		Help:       "Historial Clínico",
-=======
+		Permission: model.ResourceOf(&clinicalencounter.MedicalHistoryModel),
 		Help:       Label,
->>>>>>> origin/main
 	}}
 }

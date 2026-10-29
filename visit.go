@@ -1,6 +1,7 @@
 package clinical_encounter
 
 import (
+	"webtyp.com/model"
 	"webtyp.com/events"
 	"webtyp.com/orm"
 	"webtyp.com/time"
@@ -8,7 +9,7 @@ import (
 
 func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 	if args.TenantId == "" {
-		return nil, ErrTenantRequired
+		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 	if args.Id == "" || args.PatientId == "" || args.DoctorId == "" || args.Reason == "" ||
 		args.PatientNameSnapshot == "" || args.PatientRutSnapshot == "" || args.DoctorNameSnapshot == "" {
@@ -20,7 +21,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 			return existing, nil
 		}
 		return nil, ErrIdTaken
-	} else if e, ok := err.(domainError); !ok || e != ErrNotFound {
+	} else if model.KindOf(err) != model.ErrorNotFound {
 		return nil, err
 	}
 
@@ -87,7 +88,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 
 func (m *Module) GetVisit(tenantId, id string) (*MedicalHistory, error) {
 	if tenantId == "" {
-		return nil, ErrTenantRequired
+		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 	var rec MedicalHistory
 	qb := m.db.Query(&rec).Where(MedicalHistory_.Id).Eq(id).Where(MedicalHistory_.TenantId).Eq(tenantId)
@@ -103,7 +104,7 @@ func (m *Module) GetVisit(tenantId, id string) (*MedicalHistory, error) {
 
 func (m *Module) ListVisitsByPatient(tenantId, patientId string) ([]*MedicalHistory, error) {
 	if tenantId == "" {
-		return nil, ErrTenantRequired
+		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 	var rec MedicalHistory
 	qb := m.db.Query(&rec).

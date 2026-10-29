@@ -17,18 +17,19 @@ require (
 	webtyp.com/fmt v1.0.0
 	webtyp.com/form v0.4.52
 	webtyp.com/input v0.0.28
-	webtyp.com/json v0.5.36
+	webtyp.com/json v0.5.37
 	webtyp.com/layout v0.3.87
-	webtyp.com/model v0.2.9
+	webtyp.com/model v0.2.12
 	webtyp.com/msgtype v0.1.0
 	webtyp.com/notify v0.2.2
 	webtyp.com/orm v0.12.10
-	webtyp.com/router v0.4.11
+	webtyp.com/router v0.4.16
+	webtyp.com/rpc v0.2.10
 	webtyp.com/storage v0.1.10
 	webtyp.com/svg v0.3.30
 	webtyp.com/time v0.6.2
 	webtyp.com/unixid v0.3.1
-	webtyp.com/view v0.6.50
+	webtyp.com/view v0.6.53
 )
 
 require (
