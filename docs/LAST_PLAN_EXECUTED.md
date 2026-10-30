@@ -10,17 +10,17 @@ SESSION: 16485784564591611385 (completed locally)
 
 <!-- Dispatch only after webtyp.com/model v0.2.9, webtyp.com/view v0.6.48, webtyp.com/ormc v0.1.26 and webtyp.com/layout v0.3.79 are published. -->
 
-# Plan — `clinical_encounter`: what is saved shows everywhere
+# Plan — `clinical_encounter`: lo que se guarda se muestra en todas partes
 
-## Why
+## Por qué
 
-`webtyp.com/view` v0.6.48 keeps one shared copy of each record per page (`view.Records`). `webtyp.com/model` v0.2.9
-defines a single item type `model.Item{ID, Label, Description, Badge}`. `ormc` v0.1.26 generates a typed
-`func (m *X) Item() model.Item` from the field marks (`Item: model.ItemLabel` / `ItemDescription` / `ItemBadge`),
-and `view.Records` lists only records that implement `view.Record` (`model.Model` + `model.Itemizer`), computing each
-item once. Breaking change, no compatibility layer.
+`webtyp.com/view` v0.6.48 mantiene una copia compartida de cada registro por página (`view.Records`). `webtyp.com/model` v0.2.9
+define un tipo de ítem único `model.Item{ID, Label, Description, Badge}`. `ormc` v0.1.26 genera una
+`func (m *X) Item() model.Item` tipada a partir de las marcas de campo (`Item: model.ItemLabel` / `ItemDescription` / `ItemBadge`),
+y `view.Records` lista solo registros que implementan `view.Record` (`model.Model` + `model.Itemizer`), computando cada
+ítem una vez. Cambio que rompe compatibilidad, sin capa de compatibilidad.
 
-## Tools
+## Herramientas
 
 ```
 go install webtyp.com/devflow/cmd/gotest@latest
@@ -31,65 +31,65 @@ go get webtyp.com/view@v0.6.48
 go get webtyp.com/layout@v0.3.79
 ```
 
-`ormc@v0.1.26` rejects a field still written `Row: …` («Field.Row was replaced by Field.Item»).
+`ormc@v0.1.26` rechaza un campo aún escrito `Row: …` («Field.Row fue reemplazado por Field.Item»).
 
-## Stage 0 — screens as data (`ui/`), replacing the cancelled plan
+## Etapa 0 — pantallas como datos (`ui/`), reemplazando el plan cancelado
 
-Every screen keeps what it shows today:
+Cada pantalla mantiene lo que muestra hoy:
 
-- Replace every exported `…Browser(...) (platformd.UIModule, error)` in `ui/` with ONE exported
-  `func Screens(caller router.Caller, ids model.IDGenerator, tenantID string, userID string) []view.Screen` returning one
-  `view.Screen` per former `…Browser`, with the same `ID`, label and icon it has today.
-- A screen that today is a plain `crudview` over this module's presenter with no custom `crudview.Config` fields →
-  a list leaf: `Presenter: <the presenter>`, `Permission: <resource>`, help via `view.WithDescription(...)`.
-- Every other screen (a wizard, a chat, a `crudview` with a custom `List`/`Filter`/`NewRecord`/`Scope`, anything
-  built with `rightpanel`) → a component leaf: `Component: <the same component it builds today>`,
-  `Permission: <resource>`, `Help: <lang.Text>`. It may keep importing `webtyp.com/layout/chatview`,
-  `webtyp.com/layout/crudview` or `webtyp.com/layout/rightpanel` to build that component; it must **not** import
+- Reemplazar cada `…Browser(...) (platformd.UIModule, error)` exportado en `ui/` con UNA
+  `func Screens(caller router.Caller, ids model.IDGenerator, tenantID string, userID string) []view.Screen` exportada que devuelva una
+  `view.Screen` por cada antiguo `…Browser`, con los mismos `ID`, etiqueta e ícono que tiene hoy.
+- Una pantalla que hoy es un `crudview` simple sobre el presentador de este módulo sin campos `crudview.Config` personalizados →
+  una hoja de lista: `Presenter: <el presentador>`, `Permission: <recurso>`, ayuda mediante `view.WithDescription(...)`.
+- Cualquier otra pantalla (un wizard, un chat, un `crudview` con un `List`/`Filter`/`NewRecord`/`Scope` personalizado, cualquier cosa
+  construida con `rightpanel`) → una hoja de componente: `Component: <el mismo componente que construye hoy>`,
+  `Permission: <recurso>`, `Help: <lang.Text>`. Puede seguir importando `webtyp.com/layout/chatview`,
+  `webtyp.com/layout/crudview` o `webtyp.com/layout/rightpanel` para construir ese componente; **no** debe importar
   `webtyp.com/layout/platformd`.
-- `Permission` of each screen = the resource the main list operation it calls `Requires` (read `ops.go`).
-- `Help`: reuse the module's existing description text when there is one; otherwise write one English sentence
-  saying what the screen is for, as a `lang.Text` constant, translated in `lang.json`.
-- `web/browser/main.go` (demo): build the menu with `layout/app.BuildMenu(ui.Screens(...), ids, allowAll)` and pass
-  `Menu.CanView` to the `platformd.Platform`; `allowAll` is a demo func returning true.
-- Check: `grep -rn "layout/platformd" --include=*.go . | grep -v web/` → empty.
+- `Permission` de cada pantalla = el recurso que la operación principal de lista que llama `Requires` (leer `ops.go`).
+- `Help`: reutilizar el texto de descripción existente del módulo cuando haya uno; de lo contrario escribir una oración en español
+  diciendo para qué es la pantalla, como una constante `lang.Text`, traducida en `lang.json`.
+- `web/browser/main.go` (demo): construir el menú con `layout/app.BuildMenu(ui.Screens(...), ids, allowAll)` y pasar
+  `Menu.CanView` al `platformd.Platform`; `allowAll` es una func de demostración que devuelve true.
+- Chequeo: `grep -rn "layout/platformd" --include=*.go . | grep -v web/` → vacío.
 
-## Stage 1 — mark items on fields (`model.go`), then regenerate
+## Etapa 1 — marcar ítems en campos (`model.go`), luego regenerar
 
-In `model.Definition` of `MedicalHistoryModel`:
-- `reason` field → `Item: model.ItemLabel`
-- `status` field → `Item: model.ItemDescription`
-- `attention_at` field → `Item: model.ItemBadge`
+En `model.Definition` de `MedicalHistoryModel`:
+- campo `reason` → `Item: model.ItemLabel`
+- campo `status` → `Item: model.ItemDescription`
+- campo `attention_at` → `Item: model.ItemBadge`
 
-Then run `ormc .`: each listed model gets a generated `func (m *X) Item() model.Item` in `model_orm.go`.
-Check: `grep -rn "Row: model\." --include=*.go .` → empty; `grep -c "Item() model.Item" model_orm.go` ≥ 1.
+Luego ejecutar `ormc .`: cada modelo listado obtiene una `func (m *X) Item() model.Item` generada en `model_orm.go`.
+Chequeo: `grep -rn "Row: model\." --include=*.go .` → vacío; `grep -c "Item() model.Item" model_orm.go` ≥ 1.
 
-## Stage 2 — delete hand-written `Item()` methods (`view.go`)
+## Etapa 2 — eliminar métodos `Item()` escritos a mano (`view.go`)
 
-Delete the hand-written `func (it *MedicalHistory) Item() view.Item` method and any `var _ view.Itemizer` lines in `view.go`.
-`ormc` has generated `Item() model.Item` in `model_orm.go`.
+Eliminar el método `func (it *MedicalHistory) Item() view.Item` escrito a mano y cualquier línea `var _ view.Itemizer` en `view.go`.
+`ormc` ha generado `Item() model.Item` en `model_orm.go`.
 
-## Stage 3 — selects
+## Etapa 3 — selecciones
 
-Check: `grep -rn "view.Lookup\|Lookups:" --include=*.go .` → empty.
+Chequeo: `grep -rn "view.Lookup\|Lookups:" --include=*.go .` → vacío.
 
-## Stage 4 — saving answers the saved record
+## Etapa 4 — el guardado responde el registro guardado
 
-Every operation named as `Save` in a `view.Ops{…}` must encode the saved record (`ctx.Encode(&out)`).
+Toda operación nombrada como `Save` en un `view.Ops{…}` debe codificar el registro guardado (`ctx.Encode(&out)`).
 
-## Stage 5 — tests
+## Etapa 5 — pruebas
 
-- Every test that checked `Item()` or `RowOf()` calls `.Item()` on the model instance (`.Label`, `.Description`, `.Badge`).
-- Presenter tests wrap the caller: `view.NewRecords().Caller(caller)`.
-- Hand-written test doubles used as listed records implement `Item() model.Item`.
+- Cada prueba que chequeaba `Item()` o `RowOf()` llama a `.Item()` en la instancia del modelo (`.Label`, `.Description`, `.Badge`).
+- Las pruebas del presentador envuelven al llamador: `view.NewRecords().Caller(caller)`.
+- Los dobles de prueba escritos a mano usados como registros listados implementan `Item() model.Item`.
 
-## Stage 6 — Spanish
+## Etapa 6 — Español
 
-Translate to Spanish every README, `docs/*` file, diagram and code comment of this repo still in English. Run
-`langc sync .` and fill every empty value of `lang.json`; zero untranslated keys, zero reuse warnings.
+Traducir a Español cada README, archivo `docs/*`, diagrama y comentario de código de este repo aún en inglés. Ejecutar
+`langc sync .` y rellenar cada valor vacío de `lang.json`; cero llaves sin traducir, cero advertencias de reutilización.
 
-## Delivery
+## Entrega
 
-- `gotest` green.
-- Never edit `model_orm.go` by hand.
-- When `gotest` passes, commit, push and open the PR.
+- `gotest` verde.
+- Nunca editar `model_orm.go` a mano.
+- Cuando `gotest` pase, hacer commit, push y abrir el PR.

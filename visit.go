@@ -25,13 +25,13 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 		return nil, err
 	}
 
-	// attention_at is model.Int() in MedicalHistoryModel, not an input.*
-	// widget (see model.go's field comment: status changes through the FSM,
-	// attention time is machine-supplied, not typed by the doctor) — so
-	// webtyp/form never renders it and every crudview-driven "new ficha"
-	// submission reaches here with AttentionAt == 0. A clinical encounter is
-	// created because it is happening now, so this defaults instead of
-	// rejecting — rejecting made the generic create flow permanently fail.
+	// attention_at es model.Int() en MedicalHistoryModel, no un widget input.*
+	// (ver el comentario del campo en model.go: el estado cambia a través del FSM,
+	// el tiempo de atención es proporcionado por la máquina, no escrito por el doctor) — así que
+	// webtyp/form nunca lo renderiza y todo envío de "nueva ficha" desde un crudview
+	// llega aquí con AttentionAt == 0. Un encuentro clínico se crea
+	// porque está ocurriendo ahora, por lo que toma el valor por defecto en lugar de
+	// rechazar — rechazar haría que el flujo genérico de creación fallara permanentemente.
 	if args.AttentionAt == 0 {
 		args.AttentionAt = int64(time.NowUnix())
 	}
@@ -115,5 +115,5 @@ func (m *Module) ListVisitsByPatient(tenantId, patientId string) ([]*MedicalHist
 	if err != nil {
 		return nil, err
 	}
-	return results, nil // ReadAllX returns []*MedicalHistory directly (same as service_catalog) — never dereference it
+	return results, nil // ReadAllX devuelve []*MedicalHistory directamente (igual que service_catalog) — nunca de-referenciarlo
 }

@@ -49,21 +49,21 @@ func todayRange() (from, to int64) {
 	return int64(day), int64(day)
 }
 
-// doctorIdentity is what the logged-in user needs to act as a doctor: their
-// staff_id (to look up today's confirmed reservations) and the two snapshot
-// values CreateVisitArgs requires. StaffID == "" means the logged-in account
-// is not itself a staff row (e.g. an administrator browsing this module) —
-// not an error, just "no agenda to narrow by".
+// doctorIdentity es lo que el usuario logueado necesita para actuar como un doctor: su
+// staff_id (para buscar las reservas confirmadas de hoy) y los dos valores snapshot
+// que requiere CreateVisitArgs. StaffID == "" significa que la cuenta logueada
+// no es en sí misma una fila de personal (ej. un administrador navegando en este módulo) —
+// no es un error, solo "sin agenda por la cual filtrar".
 type doctorIdentity struct {
 	StaffID   string
 	Name      string
 	Specialty string
 }
 
-// loadDoctorIdentity finds which staff row belongs to the logged-in user.
-// staff_manager has no "get staff by user_id" op — a tenant's staff roster
-// is small (a handful of professionals, not thousands), so listing all and
-// matching UserId locally reuses the existing op instead of adding one.
+// loadDoctorIdentity encuentra qué fila de personal pertenece al usuario logueado.
+// staff_manager no tiene operación "obtener personal por user_id" — la lista
+// de personal de un tenant es pequeña (un puñado de profesionales, no miles), así que
+// listar todos y hacer match del UserId localmente reutiliza la operación existente en lugar de agregar una.
 func loadDoctorIdentity(caller router.Caller, tenantID, userID string) (doctorIdentity, error) {
 	var staff staffmanager.StaffMemberList
 	err := blockingCall(caller, staffmanager.ModelName+"."+staffmanager.OpListStaff,
@@ -79,11 +79,11 @@ func loadDoctorIdentity(caller router.Caller, tenantID, userID string) (doctorId
 	return doctorIdentity{}, nil
 }
 
-// agendaPatient is one row of the doctor's today-agenda picker — see
-// README.md. History is pre-fetched (not looked up when the picker fires):
-// view.Presenter.Filter(term) is synchronous, and this data only exists
-// behind a real network call, so it has to already be in memory by the time
-// Filter runs.
+// agendaPatient es una fila del picker de la agenda del doctor de hoy — ver
+// docs/UI.md. El historial se pre-busca (no se busca cuando el picker se dispara):
+// view.Presenter.Filter(term) es síncrono, y estos datos solo existen
+// detrás de una llamada de red real, por lo que ya tiene que estar en memoria para
+// el momento que Filter se ejecute.
 type agendaPatient struct {
 	ID            string
 	Label         string
@@ -94,10 +94,10 @@ type agendaPatient struct {
 	History       []model.Item
 }
 
-// loadTodayAgenda lists this staff member's CONFIRMED reservations for
-// today and resolves each one to a picker row — the doctor sees exactly who
-// they are scheduled to see today, nothing more, and never types a name or
-// a RUT (see README.md's "Error de diseño descartado").
+// loadTodayAgenda lista las reservas CONFIRMED de este miembro del personal para
+// hoy y resuelve cada una a una fila del picker — el doctor ve exactamente a
+// quién tiene programado ver hoy, nada más, y nunca escribe un nombre o
+// un RUT (ver docs/UI.md "Error de diseño descartado").
 func loadTodayAgenda(caller router.Caller, tenantID, staffID string) ([]agendaPatient, error) {
 	from, to := todayRange()
 	var reservations ab.ReservationList
@@ -117,8 +117,8 @@ func loadTodayAgenda(caller router.Caller, tenantID, staffID string) ([]agendaPa
 		var patient patientdirectory.Patient
 		if err := blockingCall(caller, patientdirectory.ModelName+"."+patientdirectory.OpGetPatient,
 			&patientdirectory.GetPatientArgs{TenantId: tenantID, Id: r.ClientId}, &patient); err != nil {
-			// One unresolvable patient must not take the whole agenda down —
-			// it just doesn't get a row.
+			// Un paciente irresoluble no debe botar toda la agenda —
+			// simplemente no obtiene una fila.
 			continue
 		}
 
@@ -143,12 +143,12 @@ func loadTodayAgenda(caller router.Caller, tenantID, staffID string) ([]agendaPa
 	return agenda, nil
 }
 
-// requirePatient wraps the generic Presenter view.New builds so
-// Filter(term) means "which patient", not a free-text search — same role as
-// the tinywasm/app-demo/modules/medicalhistory reference this
-// productionizes (see README.md), except history comes from agenda's
-// pre-fetched cache instead of a synchronous in-memory query, because here
-// it is real, per-patient server data.
+// requirePatient envuelve al Presenter genérico que view.New construye para
+// que Filter(term) signifique "qué paciente", no una búsqueda de texto libre —
+// mismo rol que la referencia tinywasm/app-demo/modules/medicalhistory que
+// esto lleva a producción (ver docs/UI.md), excepto que el historial proviene del
+// caché pre-buscado de agenda en lugar de una consulta síncrona en-memoria, porque aquí
+// son datos de servidor reales, por paciente.
 type requirePatient struct {
 	view.Presenter
 	agenda []agendaPatient
@@ -177,15 +177,15 @@ func (p requirePatient) Filter(term string) []model.Item {
 	return nil
 }
 
-// Save forwards explicitly: embedding an INTERFACE only promotes the
-// methods view.Presenter itself declares, never view.Saver's — see the
-// identical note on the app-demo reference this follows. Update/Delete are
-// deliberately NOT forwarded here (unlike that reference): the underlying
-// clinicalencounter.NewView presenter supports create only (Ops has no
-// Update/Delete op — a clinical encounter is append-only), and declaring
-// those methods on this wrapper would make it start satisfying
-// view.Updater/view.Deleter structurally, showing crudview's edit/delete
-// footer buttons for an action that can never work.
+// Save redirige explícitamente: embeber una INTERFAZ solo promueve los
+// métodos que view.Presenter mismo declara, nunca los de view.Saver — ver la
+// nota idéntica en la referencia app-demo que esto sigue. Update/Delete
+// deliberadamente NO son redirigidos aquí (a diferencia de esa referencia): el
+// presentador clinicalencounter.NewView subyacente soporta create solamente (Ops no tiene
+// op de Update/Delete — un encuentro clínico es solo para anexar), y declarar
+// esos métodos en este envoltorio lo haría empezar a satisfacer
+// view.Updater/view.Deleter estructuralmente, mostrando los botones footer de edit/delete
+// del crudview para una acción que nunca podría funcionar.
 func (p requirePatient) Save(recs []model.Model, done func(error)) {
 	if s, ok := p.Presenter.(view.Saver); ok {
 		s.Save(recs, done)
@@ -197,12 +197,12 @@ func (p requirePatient) Save(recs []model.Model, done func(error)) {
 var _ view.Presenter = requirePatient{}
 var _ view.Saver = requirePatient{}
 
-// Screens builds this module's screens for the app menu.
-// userID is the logged-in account (auth.ProfileDTO.Id, resolved once at
-// startup by config/client.go's auth.OpMe call) — used to find which staff
-// row is "the doctor" so today's agenda can be built. See README.md for the
-// full design and the one still-open gap (crudview cannot pre-fill a new
-// draft's fields from the picker's selection yet).
+// Screens construye las pantallas de este módulo para el menú de la aplicación.
+// userID es la cuenta logueada (auth.ProfileDTO.Id, resuelta una vez al
+// inicio mediante la llamada auth.OpMe de config/client.go) — usada para encontrar qué
+// fila de personal es "el doctor" para que la agenda de hoy pueda ser construida. Ver docs/UI.md para
+// el diseño completo.
+// Ejemplo: ui.Screens(caller, ids, "tenant1", "user1")
 func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID string) []view.Screen {
 	cfg := crudview.Config{
 		ParentID:  ID,

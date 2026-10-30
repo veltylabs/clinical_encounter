@@ -12,6 +12,7 @@ const titleMedicalHistory = "Medical history"
 // tecnología que envuelve un renderer (rightpanel, o cualquier otro). Este
 // módulo lo construye (view + model + router); la app decide qué renderer lo
 // dibuja.
+// Ejemplo: view := clinicalencounter.NewView(caller)
 func NewView(caller router.Caller) view.Presenter {
 	b := view.NewCallerLister(caller,
 		view.Ops{Module: ModelName, List: OpListVisitsByPatient, Save: OpCreateVisit},

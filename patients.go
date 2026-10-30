@@ -2,19 +2,20 @@ package clinical_encounter
 
 import "webtyp.com/orm"
 
-// defaultRecentPatientsLimit caps the scan when the caller passes Limit<=0.
-// medical_history starts empty in production (see docs/PLAN_MODEL_MIGRATION.md
-// — this module does not inherit the legacy medicalhistory table's rows), so
-// a full-table scan-and-dedupe in Go is cheap today; revisit with a real
-// query once volume makes that untrue.
+// defaultRecentPatientsLimit limita el escaneo cuando el llamador pasa Limit<=0.
+// medical_history comienza vacío en producción (ver docs/PLAN_MODEL_MIGRATION.md
+// — este módulo no hereda las filas de la tabla heredada medicalhistory), por lo que
+// un escaneo completo de tabla y deduplicación en Go es barato hoy; revisar con una
+// consulta real una vez que el volumen haga que eso sea falso.
 const defaultRecentPatientsLimit = 200
 
-// ListRecentPatients returns the most recently attended patients, one row
-// per patient_id (deduped, most recent attention_at wins), for a picker that
-// searches "which patient has an existing ficha" rather than looking one up
-// by an ID nobody has memorized. Sourced entirely from this module's own
-// data — no cross-module dependency on a patient/client directory, which
-// does not exist yet (see ARCHITECTURE.md).
+// ListRecentPatients devuelve los pacientes atendidos más recientemente, una fila
+// por patient_id (deduplicado, la más reciente attention_at gana), para un picker que
+// busca "qué paciente tiene una ficha existente" en lugar de buscar uno
+// por un ID que nadie ha memorizado. Obtenido enteramente de los datos propios
+// de este módulo — sin dependencia cruzada de módulos en un directorio de pacientes/clientes, que
+// aún no existe (ver ARCHITECTURE.md).
+// Ejemplo: module.ListRecentPatients("tenant1", 10)
 func (m *Module) ListRecentPatients(tenantId string, limit int) ([]*MedicalHistory, error) {
 	if tenantId == "" {
 		return nil, ErrTenantRequired
@@ -35,11 +36,11 @@ func (m *Module) ListRecentPatients(tenantId string, limit int) ([]*MedicalHisto
 		return nil, err
 	}
 
-	// Slice, no map — the "zero map" rule in AGENTS.md has no exceptions.
-	// patients is capped at limit (≤200 by default), so the linear
-	// already-seen scan below is at most limit² comparisons — the same
-	// trade-off appointment_booking's own weeklyForDay makes over a
-	// similarly small, bounded slice.
+	// Slice, no mapa — la regla de "cero mapas" en AGENTS.md no tiene excepciones.
+	// patients está limitado a limit (≤200 por defecto), por lo que el escaneo lineal
+	// ya visto a continuación es como máximo limit² comparaciones — el mismo
+	// compromiso que el weeklyForDay propio de appointment_booking hace sobre un
+	// slice similarmente pequeño y limitado.
 	patients := make([]*MedicalHistory, 0, limit)
 	for _, r := range rows {
 		alreadySeen := false

@@ -2,10 +2,10 @@ package clinical_encounter
 
 // Visit status — FHIR-aligned lifecycle
 const (
-	StatusCreated    = "created"     // scheduled, not yet at clinic
-	StatusArrived    = "arrived"     // patient registered at reception
-	StatusTriaged    = "triaged"     // nurse took vitals, waiting for doctor
-	StatusInProgress = "in_progress" // doctor started the consultation
+	StatusCreated    = "created"     // agendado, aún no en clínica
+	StatusArrived    = "arrived"     // paciente registrado en recepción
+	StatusTriaged    = "triaged"     // enfermera tomó signos vitales, esperando al doctor
+	StatusInProgress = "in_progress" // doctor comenzó la consulta
 	StatusCompleted  = "completed"
 	StatusCancelled  = "cancelled"
 )

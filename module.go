@@ -8,35 +8,39 @@ import (
 	"webtyp.com/time"
 )
 
-// ModelName is this module's identity: mcp.HarvestOps qualifies every op
-// below as "clinical_encounter.<name>" on the wire, and view.go's NewView
-// passes this same constant as view.Ops.Module so the client composes the
-// identical qualified name.
+// ModelName es la identidad de este módulo: mcp.HarvestOps califica cada op
+// debajo como "clinical_encounter.<name>" en el cable, y NewView de view.go
+// pasa esta misma constante como view.Ops.Module para que el cliente componga el
+// nombre calificado idéntico.
+// Ejemplo: ModelName == "clinical_encounter"
 const ModelName = "clinical_encounter"
 
 // Deps son los puertos de infraestructura del módulo — nunca una implementación concreta.
 
-// RecipeReader is the part of service_catalog this module uses.
+// RecipeReader es la parte de service_catalog que este módulo utiliza.
+// Ejemplo: type MyRecipeReader struct{}
 type RecipeReader interface {
 	ServiceRecipe(tenantId, serviceId string) (itemIds []string, quantities []float64, err error)
 }
 
-// RoomFinder is the part of room_layout this module uses.
+// RoomFinder es la parte de room_layout que este módulo utiliza.
+// Ejemplo: type MyRoomFinder struct{}
 type RoomFinder interface {
 	RoomOfOccupant(tenantID, occupantID string, at time.Unix) (roomID string, found bool, err error)
 }
 
-// SupplyStock is the part of supply_manager this module uses.
+// SupplyStock es la parte de supply_manager que este módulo utiliza.
+// Ejemplo: type MySupplyStock struct{}
 type SupplyStock interface {
 	UseInRoom(tenantId, roomId, itemId string, quantity float64, docType, docId, by string) (int64, error)
 }
 type Deps struct {
-	Publisher    events.Publisher  // optional: nil disables events and the alert
-	IDs          model.IDGenerator // required when supply use is configured (ids of the lines)
-	Recipes      RecipeReader      // supply use: the three are set together or not at all
+	Publisher    events.Publisher  // opcional: nil deshabilita eventos y la alerta
+	IDs          model.IDGenerator // requerido cuando el uso de insumos está configurado (ids de las líneas)
+	Recipes      RecipeReader      // uso de insumos: los tres se configuran juntos o en lo absoluto
 	Rooms        RoomFinder
 	Supplies     SupplyStock
-	SuppliesArea string            // the application's notify.Area code of the Supplies area; required with supply use
+	SuppliesArea string            // el código notify.Area de la aplicación del área de Insumos; requerido con uso de insumos
 }
 
 type Module struct {
