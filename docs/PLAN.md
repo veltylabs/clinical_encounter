@@ -2,8 +2,10 @@
 PLAN: "feat: the demo shows its API and its database (layout v0.3.99 developer tools)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 10272247989571858546
+PR: https://github.com/veltylabs/clinical_encounter/pull/13
+REVIEWED_COMMIT: 5936884055420faa7e63f6b9936fedee2b20c5a8
 ---
 
 > Read AGENTS.md at the repo root before any change.
