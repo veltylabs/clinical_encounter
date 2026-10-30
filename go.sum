@@ -10,8 +10,8 @@ github.com/veltylabs/service_catalog v0.6.33 h1:v0Ib/9Lc+eyiPauYZhpB6dG4TGLoApW0
 github.com/veltylabs/service_catalog v0.6.33/go.mod h1:PNdPmxoxnqifEsIXFvdENTVmCGYhOfcnRCJav7dhyno=
 github.com/veltylabs/staff_manager v0.1.158 h1:gskKkQCYhzp2657FVPfbWGa9qeklr1LGouZ8yy4ISIE=
 github.com/veltylabs/staff_manager v0.1.158/go.mod h1:Vm3g/mDzavUCtGjy1lwRYOn9Dp1WerieO2dsEMhR5b0=
-webtyp.com/auth v0.0.89 h1:CfbfiPucxnCZHEpe/ws2w/kN/KYPzIiQzREI1wZRw6Y=
-webtyp.com/auth v0.0.89/go.mod h1:DuJAFU/DMcnz08bKI9Cx5cxRqpNy5xpEcCdy++1rNgc=
+webtyp.com/auth v0.0.96 h1:iGyuLpEqlto1yYWU/YGq82B/u1DlBzWtZLR/CZamWsU=
+webtyp.com/auth v0.0.96/go.mod h1:tCVIRkwf+h2Z1GgKYIEMRdxSROOB4ml1m2Ne5Ahm1YM=
 webtyp.com/calendar v0.1.0 h1:lI0i74Ghee+fnYDx2P6XFJQKLyJKTeQbg4eT9IK8980=
 webtyp.com/calendar v0.1.0/go.mod h1:lHsVxVDpLBAGKovlPew9d5c0YiMoNQxfUHG8OfXDhHk=
 webtyp.com/color v0.1.3 h1:4IeJ4v3PlSTycx/paD3jMGhCnBhCic57JsKc49hdcGs=
