@@ -19,24 +19,33 @@ import (
 	ab "github.com/veltylabs/appointment_booking"
 	bookingseed "github.com/veltylabs/appointment_booking/seed"
 	businesscalendar "github.com/veltylabs/business_calendar"
+	businesscalendarmigrate "github.com/veltylabs/business_calendar/migrate"
 	calendarseed "github.com/veltylabs/business_calendar/seed"
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
+	clinicalencountermigrate "github.com/veltylabs/clinical_encounter/migrate"
 	ceseed "github.com/veltylabs/clinical_encounter/seed"
 	"github.com/veltylabs/clinical_encounter/ui"
 	devicemanager "github.com/veltylabs/device_manager"
+	devicemanagermigrate "github.com/veltylabs/device_manager/migrate"
 	deviceseed "github.com/veltylabs/device_manager/seed"
 	patientdirectory "github.com/veltylabs/patient_directory"
+	patientdirectorymigrate "github.com/veltylabs/patient_directory/migrate"
 	patientseed "github.com/veltylabs/patient_directory/seed"
 	servicecatalog "github.com/veltylabs/service_catalog"
+	servicecatalogmigrate "github.com/veltylabs/service_catalog/migrate"
 	catalogseed "github.com/veltylabs/service_catalog/seed"
 	staffmanager "github.com/veltylabs/staff_manager"
+	staffmanagermigrate "github.com/veltylabs/staff_manager/migrate"
 	staffseed "github.com/veltylabs/staff_manager/seed"
+	abmigrate "github.com/veltylabs/appointment_booking/migrate"
+	"webtyp.com/ddl"
+	"webtyp.com/router"
 )
 
-// demoTenantID is the only tenant of this in-browser demo.
+// demoTenantID es el único tenant de esta demo en el navegador.
 const demoTenantID = "demo"
 
-// demoUser is the fixed identity the demo shell shows: the demo has no login.
+// demoUser es la identidad fija que muestra la demo: la demo no tiene inicio de sesión.
 type demoUser struct{}
 
 func (demoUser) UserName() string    { return "Demo" }
@@ -51,7 +60,7 @@ func main() {
 	db := orm.New(mem.New())
 	broker := &mock.Broker{}
 
-	// 1. Build modules in dependency order
+	// 1. Construir módulos en orden de dependencia
 	dm, err := devicemanager.New(db, devicemanager.Deps{
 		IDs: ids, Publisher: broker, TenantID: demoTenantID,
 	})
@@ -93,7 +102,7 @@ func main() {
 		panic(err)
 	}
 
-	// 2. Load seeds, upstream first
+	// 2. Cargar semillas, primero los dependientes
 	if _, err := deviceseed.Load(dm, demoTenantID); err != nil {
 		panic(err)
 	}
@@ -127,7 +136,7 @@ func main() {
 		panic(err)
 	}
 
-	// 3. Add a confirmed reservation for today at 16:00 Santiago time if possible (omit if weekend/holiday)
+	// 3. Agregar una reserva confirmada para hoy a las 16:00 hora de Santiago si es posible (omitir si es fin de semana/feriado)
 	nowSec := tinytime.NowUnix()
 	isoDate := tinytime.FormatISO8601(nowSec)[:10]
 	if daySec, err := tinytime.ParseDate(isoDate); err == nil {
@@ -151,12 +160,27 @@ func main() {
 		}
 	}
 
-	// 4. Mount modules in loopback router
+	// 4. Montar módulos en el enrutador loopback
 	caller := loopback.WithTenant(demoTenantID, ceMod, abMod, sm, dm, ic, pd, bc)
 
-	// 5. Build WASM browser view for doctor 'demo-user-ana'
+	// 5. Construir vista del navegador WASM para la doctora 'demo-user-ana'
 	screens := ui.Screens(caller, ids, demoTenantID, "demo-user-ana")
-	menu, err := app.BuildMenu(screens, ids, func(model.Resource) bool { return true })
+
+	steps := []ddl.Step{
+		{Name: devicemanager.ModelName, Run: devicemanagermigrate.Migrate},
+		{Name: staffmanager.ModelName, Run: staffmanagermigrate.Migrate},
+		{Name: servicecatalog.ModelName, Run: servicecatalogmigrate.Migrate},
+		{Name: patientdirectory.ModelName, Run: patientdirectorymigrate.Migrate},
+		{Name: businesscalendar.ModelName, Run: businesscalendarmigrate.Migrate},
+		{Name: ab.ModelName, Run: abmigrate.Migrate},
+		{Name: clinicalencounter.ModelName, Run: clinicalencountermigrate.Migrate},
+	}
+	tools, err := app.LocalTools([]router.OperationModule{ceMod, abMod, sm, dm, ic, pd, bc}, steps...)
+	if err != nil {
+		panic(err)
+	}
+
+	menu, err := app.BuildMenu(screens, ids, func(model.Resource) bool { return true }, tools)
 	if err != nil {
 		panic(err)
 	}

@@ -2,27 +2,29 @@
 PLAN: "feat: the demo shows its API and its database (layout v0.3.99 developer tools)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 10272247989571858546
+PR: https://github.com/veltylabs/clinical_encounter/pull/13
+REVIEWED_COMMIT: 5936884055420faa7e63f6b9936fedee2b20c5a8
 ---
 
 > Read AGENTS.md at the repo root before any change.
 > **Finish by yourself:** when the delivery check passes, commit, push and open the pull request. Never ask whether to
 > proceed or finalize — nobody answers, and a session that waits ends without your work.
 
-# Developer tools in the demo
+# Herramientas de desarrollador en la demo
 
-## Context
+## Contexto
 
-This repo's demo (`web/browser.go`) runs entirely in the browser: its operations go through `loopback` and its data lives
-in memory, with no server. Until now the menu always added «Developer tools», and both screens asked a server that
-does not exist for `/_routes` and `/_schema` (404). `webtyp.com/layout` v0.3.99 fixes that: `BuildMenu` now takes the
-tools as a **required** fourth argument, and `app.LocalTools(modules, steps...)` builds them in the browser with the
-same pieces the server uses — the routes the operations declare and the migration steps. So this demo stops compiling
-until it passes its tools; this plan does exactly that. In a demo the explorer shows the table without the «try» form
-(there is no server to send a request to).
+La demo de este repo (`web/browser.go`) se ejecuta enteramente en el navegador: sus operaciones pasan a través de `loopback` y sus datos viven
+en memoria, sin servidor. Hasta ahora el menú siempre añadía «Developer tools» (Herramientas de desarrollador), y ambas pantallas preguntaban a un servidor que
+no existe por `/_routes` y `/_schema` (404). `webtyp.com/layout` v0.3.99 arregla eso: `BuildMenu` ahora toma las
+herramientas como un cuarto argumento **requerido**, y `app.LocalTools(modules, steps...)` las construye en el navegador con las
+mismas piezas que usa el servidor — las rutas que las operaciones declaran y los pasos de migración. Así que esta demo deja de compilar
+hasta que pase sus herramientas; este plan hace exactamente eso. En una demo el explorador muestra la tabla sin el formulario de «probar»
+(no hay servidor a dónde enviar una solicitud).
 
-## Tools
+## Herramientas
 
 ```bash
 go install webtyp.com/devflow/cmd/gotest@latest
@@ -32,21 +34,21 @@ go mod tidy
 
 Environment: `GOPRIVATE=webtyp.com/*,github.com/veltylabs/*`, `GOFLAGS=-mod=mod`.
 
-## APIs used
+## APIs utilizadas
 
-| Symbol | Exact signature | Tag |
+| Símbolo | Firma exacta | Tag |
 |---|---|---|
 | `app.LocalTools` | `func LocalTools(modules []router.OperationModule, steps ...ddl.Step) (Tools, error)` | `webtyp.com/layout/app` v0.3.99 |
 | `app.BuildMenu` | `func BuildMenu(screens []view.Screen, ids model.IDGenerator, allows func(model.Resource) bool, tools Tools) (Menu, error)` | v0.3.99 |
 | `ddl.Step` | `struct { Name string; Run func(conn Execer, compiler Compiler) error }` | `webtyp.com/ddl` |
-| each `migrate.Migrate` used below | `func Migrate(conn ddl.Execer, ddlCompiler ddl.Compiler) error` — fits `ddl.Step.Run` | each module |
+| cada `migrate.Migrate` utilizado debajo | `func Migrate(conn ddl.Execer, ddlCompiler ddl.Compiler) error` — encaja en `ddl.Step.Run` | cada módulo |
 
-In this file the layout package is imported as `app`. If a signature differs, stop and name the symbol in
-the PR; never adapt it by guessing.
+En este archivo el paquete layout se importa como `app`. Si una firma difiere, detente y nombra el símbolo en
+el PR; nunca lo adaptes adivinando.
 
-## Stage 1 — `web/browser.go`
+## Etapa 1 — `web/browser.go`
 
-Add the imports (keep the existing ones; use the aliases already in the file for the root packages):
+Agrega las importaciones (mantén las existentes; usa los alias que ya están en el archivo para los paquetes raíz):
 
 ```go
 	devicemanagermigrate "github.com/veltylabs/device_manager/migrate"
@@ -60,8 +62,8 @@ Add the imports (keep the existing ones; use the aliases already in the file for
 	"webtyp.com/router"
 ```
 
-Right before the existing `app.BuildMenu(...)` call, build the tools from the **same modules the loopback
-caller mounts** and the modules' migration steps, in this order:
+Justo antes de la llamada existente `app.BuildMenu(...)`, construye las herramientas a partir de los **mismos módulos que el llamador loopback
+monta** y los pasos de migración de los módulos, en este orden:
 
 ```go
 	steps := []ddl.Step{
@@ -79,33 +81,35 @@ caller mounts** and the modules' migration steps, in this order:
 	}
 ```
 
-and pass `tools` as the fourth argument of the existing `BuildMenu` call (nothing else in that call changes). If `err`
-is already declared in that scope, use `=` where the compiler asks for it.
+y pasa `tools` como el cuarto argumento de la llamada existente `BuildMenu` (nada más en esa llamada cambia). Si `err`
+ya está declarado en ese ámbito, usa `=` donde el compilador lo solicite.
 
 
-Check that it compiles for the browser: `GOOS=js GOARCH=wasm go build -o /dev/null ./web`; then run `gotest`.
-Commit.
+Comprueba que compila para el navegador: `GOOS=js GOARCH=wasm go build -o /dev/null ./web`; luego ejecuta `gotest`.
+Haz commit.
 
-## Stage 2 — language
+## Etapa 2 — idioma
 
-Translate to Spanish every `README.md`, `docs/*` file, diagram and code comment of this repo that is still in English
-(only those; never rewrite what is already Spanish), and add a usage example (`// Ejemplo: …`) to exported-symbol
-comments that lack one. Code, identifiers and translation keys stay in English. Commit.
+Traduce a Español cada README.md, archivo `docs/*`, diagrama y comentario de código de este repo que aún esté en Inglés
+(sólo esos; nunca reescribas lo que ya esté en Español), y agrega un ejemplo de uso (`// Ejemplo: …`) a los comentarios de
+símbolos exportados que no tengan uno. El código, los identificadores y las claves de traducción permanecen en Inglés. Haz commit.
 
-## Delivery check
+## Chequeo de entrega
 
-1. `GOOS=js GOARCH=wasm go build -o /dev/null ./web` succeeds and `gotest` passes. A PR that does not compile, or whose tests could not run, is a failed delivery.
-2. `grep -n "LocalTools" web/browser.go` → one match; every `BuildMenu(` call has four arguments.
+1. `GOOS=js GOARCH=wasm go build -o /dev/null ./web` tiene éxito y `gotest` pasa. Un PR que no compila, o cuyas pruebas no pudieron ejecutarse, es una entrega fallida.
+2. `grep -n "LocalTools" web/browser.go` → una coincidencia; toda llamada a `BuildMenu(` tiene cuatro argumentos.
 
-## Delivery rules
+## Reglas de entrega
 
-- Commit after every stage. Never run `git reset`, `git restore`, `git checkout -- <file>` or `git stash` on your own work.
-- Stuck for 30 minutes: open the PR anyway, listing what fails.
-- Do not change anything else in the demo (screens, seeds, events).
+- Haz commit luego de cada etapa. Nunca ejecutes `git reset`, `git restore`, `git checkout -- <file>` o `git stash` en tu propio trabajo.
+- Atascado por 30 minutos: abre el PR de todas formas, listando qué falla.
+- No cambies nada más en la demo (pantallas, semillas, eventos).
 
-## Stages
+## Etapas
 
-| # | Files | Result |
+| # | Archivos | Resultado |
 |---|---|---|
-| 1 | `web/browser.go`, `go.mod`, `go.sum` | The demo passes its tools; explorer and diagram show its own API and tables |
-| 2 | docs and comments still in English | Spanish |
+| 1 | `web/browser.go`, `go.mod`, `go.sum` | La demo pasa sus herramientas; el explorador y el diagrama muestran sus propias API y tablas |
+| 2 | docs y comentarios aún en Inglés | Español |
+## Executor notes
+- None

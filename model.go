@@ -40,6 +40,7 @@ var MedicalHistoryModel = model.Definition{
 // NotNull refleja exactamente el conjunto de argumentos requeridos que CreateVisit exige (visit.go) —
 // el Definition es el único lugar donde se declara el contrato; las validaciones manuales del servicio
 // son un duplicado de defensa en profundidad del mismo conjunto, nunca uno distinto.
+// Ejemplo: CreateVisitArgsModel.Name == "create_visit_args"
 var CreateVisitArgsModel = model.Definition{
 	Name: "create_visit_args",
 	// id lo genera quien llama.
@@ -63,6 +64,7 @@ var CreateVisitArgsModel = model.Definition{
 
 // GetVisitArgsModel y ListVisitsArgsModel son solo de transporte (Field.DB es nil en todos los campos) —
 // ver ops.go para las operaciones que los consumen.
+// Ejemplo: GetVisitArgsModel.Name == "get_visit_args"
 var GetVisitArgsModel = model.Definition{
 	Name: "get_visit_args",
 	Fields: model.Fields{
@@ -79,10 +81,11 @@ var ListVisitsArgsModel = model.Definition{
 	},
 }
 
-// ListRecentPatientsArgsModel is transport-only, no DB fields — the picker
-// that lists WHICH patients already have a ficha (see ListRecentPatients in
-// patients.go) takes no filter of its own today; Limit exists so a caller
-// can cap the scan without a schema change once volume calls for it.
+// ListRecentPatientsArgsModel es solo de transporte, sin campos de base de datos — el picker
+// que lista QUÉ pacientes ya tienen ficha (ver ListRecentPatients en
+// patients.go) no toma filtro propio hoy en día; Limit existe para que un llamador
+// pueda limitar el escaneo sin un cambio de esquema una vez que el volumen lo requiera.
+// Ejemplo: ListRecentPatientsArgsModel.Name == "list_recent_patients_args"
 var ListRecentPatientsArgsModel = model.Definition{
 	Name: "list_recent_patients_args",
 	Fields: model.Fields{
@@ -95,12 +98,12 @@ func statusSelectInput() input.Input {
 	inp := input.Select()
 	if s, ok := inp.(interface{ SetOptions(...fmt.KeyValue) }); ok {
 		s.SetOptions(
-			fmt.KeyValue{Key: StatusCreated, Value: "Scheduled"},
-			fmt.KeyValue{Key: StatusArrived, Value: "In reception"},
-			fmt.KeyValue{Key: StatusTriaged, Value: "In triage"},
-			fmt.KeyValue{Key: StatusInProgress, Value: "In attention"},
-			fmt.KeyValue{Key: StatusCompleted, Value: "Completed"},
-			fmt.KeyValue{Key: StatusCancelled, Value: "Cancelled"},
+			fmt.KeyValue{Key: StatusCreated, Value: "Agendado"},
+			fmt.KeyValue{Key: StatusArrived, Value: "En recepción"},
+			fmt.KeyValue{Key: StatusTriaged, Value: "En triaje"},
+			fmt.KeyValue{Key: StatusInProgress, Value: "En atención"},
+			fmt.KeyValue{Key: StatusCompleted, Value: "Completado"},
+			fmt.KeyValue{Key: StatusCancelled, Value: "Cancelado"},
 		)
 	}
 	return inp
@@ -123,6 +126,7 @@ const (
 
 // Topics de eventos de dominio — <módulo>.<entidad>.<verbo-en-pasado>, los datos de tenant/id van en
 // el payload, nunca en el nombre del topic (no aplica aquí — ver la nota "no TenantId field" en ARCHITECTURE.md).
+// Ejemplo: TopicVisitCreated == "clinical_encounter.visit.created"
 const (
 	TopicVisitCreated = "clinical_encounter.visit.created"
 )
