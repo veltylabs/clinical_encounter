@@ -50,8 +50,8 @@ estados FSM que no tienen lógica de negocios correspondiente aún. Añadir éso
 - **Arnés de módulo reusable**: el módulo está acoplado solo a contratos publicados, no a infraestructura
   concreta — ver `AGENTS.md` (esta raíz del repo) para la lista blanca/lista negra completa:
     - `orm.DB` para el almacenamiento (agnóstico al backend — envuelve cualquier `storage.Conn` que la app inyecte).
-    - `ddl.CreateTable` (sobre `db.RawConn()`, protegido por una aserción de tipo `ddl.Compiler`) para la
-      migración del esquema propia del módulo en `New()`.
+    - `ddl.Sync` (sobre `db.RawConn()`, protegido por una aserción de tipo `ddl.Compiler`) para la
+      migración del esquema propia del módulo con `Sync` (crea lo que falta y agrega columnas nuevas).
     - `router.OpModule` (`ModelName()` + `MountOps(reg router.OpRegistry)`) para el transporte — el
       módulo nunca importa `webtyp/mcp` y nunca implementa `router.Router`/`router.APIModule`.
     - `model.IDGenerator` para la identidad (`Deps.IDs`, requerido).
