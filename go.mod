@@ -46,5 +46,5 @@ require (
 	webtyp.com/lang v0.1.10 // indirect
 	webtyp.com/network v0.1.2 // indirect
 	webtyp.com/user v0.3.14 // indirect
-	webtyp.com/widget v0.6.45 // indirect
+	webtyp.com/widget v0.6.46 // indirect
 )
