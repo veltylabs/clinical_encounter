@@ -7,7 +7,7 @@ require (
 	github.com/veltylabs/business_calendar v0.5.20
 	github.com/veltylabs/device_manager v0.2.76
 	github.com/veltylabs/patient_directory v0.1.76
-	github.com/veltylabs/service_catalog v0.6.15
+	github.com/veltylabs/service_catalog v0.6.33
 	github.com/veltylabs/staff_manager v0.1.158
 	webtyp.com/auth v0.0.89
 	webtyp.com/components v0.8.57

@@ -6,8 +6,8 @@ github.com/veltylabs/device_manager v0.2.76 h1:yek4ky0ywDe6qNQESn90jE2x6+9WMScLS
 github.com/veltylabs/device_manager v0.2.76/go.mod h1:pxcbmaaZjjKVMHXStocgrA9bpz7m/12/4t4un3vcU9U=
 github.com/veltylabs/patient_directory v0.1.76 h1:ynRfm/NIQ5ZmH91NsEVcT2HZM+V4XjTu4pBqfGJxvAg=
 github.com/veltylabs/patient_directory v0.1.76/go.mod h1:+8y+9cf3L+UV+0DChOrbcN4EpkGQNu0zf1Sfwnq8gUs=
-github.com/veltylabs/service_catalog v0.6.15 h1:PVObOSWuF9uA0zBocM9cU9w7Zd1pfYlk2dgTxSvrkTI=
-github.com/veltylabs/service_catalog v0.6.15/go.mod h1:3OcCyeZ3+LysXdq9JBo/6hZjUY234y9zAmzKTZRxgF0=
+github.com/veltylabs/service_catalog v0.6.33 h1:v0Ib/9Lc+eyiPauYZhpB6dG4TGLoApW0ieimqfmwqNs=
+github.com/veltylabs/service_catalog v0.6.33/go.mod h1:PNdPmxoxnqifEsIXFvdENTVmCGYhOfcnRCJav7dhyno=
 github.com/veltylabs/staff_manager v0.1.158 h1:gskKkQCYhzp2657FVPfbWGa9qeklr1LGouZ8yy4ISIE=
 github.com/veltylabs/staff_manager v0.1.158/go.mod h1:Vm3g/mDzavUCtGjy1lwRYOn9Dp1WerieO2dsEMhR5b0=
 webtyp.com/auth v0.0.89 h1:CfbfiPucxnCZHEpe/ws2w/kN/KYPzIiQzREI1wZRw6Y=
