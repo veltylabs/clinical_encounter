@@ -11,7 +11,7 @@ require (
 	github.com/veltylabs/staff_manager v0.1.158
 	webtyp.com/auth v0.0.96
 	webtyp.com/components v0.8.57
-	webtyp.com/ddl v0.0.37
+	webtyp.com/ddl v0.0.39
 	webtyp.com/dom v0.13.29
 	webtyp.com/events v0.1.0
 	webtyp.com/fmt v1.0.0
@@ -25,7 +25,7 @@ require (
 	webtyp.com/orm v0.12.20
 	webtyp.com/router v0.4.17
 	webtyp.com/rpc v0.2.15
-	webtyp.com/storage v0.1.10
+	webtyp.com/storage v0.1.18
 	webtyp.com/svg v0.3.30
 	webtyp.com/time v0.6.2
 	webtyp.com/unixid v0.3.1
