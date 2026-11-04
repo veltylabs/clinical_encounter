@@ -4,8 +4,8 @@ github.com/veltylabs/business_calendar v0.5.31 h1:jgnnYsbepyutc1LumM/5H/FMs5vHJI
 github.com/veltylabs/business_calendar v0.5.31/go.mod h1:y/AE+df2ybYpy+1qFc4B5POPxbANFNfTLWqE5jbYe/Q=
 github.com/veltylabs/device_manager v0.2.89 h1:f45GcTK9DY5JS2FIz3qF3YnOleUxRlWNYlBwpkuHm30=
 github.com/veltylabs/device_manager v0.2.89/go.mod h1:sh5hGpDJ8Gnws7nFmpPOr7M7D0ilwntFWKvRvJlGURE=
-github.com/veltylabs/patient_directory v0.1.76 h1:ynRfm/NIQ5ZmH91NsEVcT2HZM+V4XjTu4pBqfGJxvAg=
-github.com/veltylabs/patient_directory v0.1.76/go.mod h1:+8y+9cf3L+UV+0DChOrbcN4EpkGQNu0zf1Sfwnq8gUs=
+github.com/veltylabs/patient_directory v0.1.86 h1:tw4AmeoSc0LlFnvsapGuFrImY9pSHnkuv+VvrV5CbP4=
+github.com/veltylabs/patient_directory v0.1.86/go.mod h1:4bpKeCjSOX8LTA8EYx6aYqv3o38OqbzFNojvU6ANJXI=
 github.com/veltylabs/service_catalog v0.6.44 h1:AYnUL0lrfQ/XqJ7eMGjpt0qHm/9WyFXz5fyaL8rgj8k=
 github.com/veltylabs/service_catalog v0.6.44/go.mod h1:HTeLXtZLlrmtqGBuP16lV7+FL2QOmG6VPBUK+kaFxI4=
 github.com/veltylabs/staff_manager v0.1.158 h1:gskKkQCYhzp2657FVPfbWGa9qeklr1LGouZ8yy4ISIE=
