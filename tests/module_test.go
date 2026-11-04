@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"strings"
 	"testing"
+	"webtyp.com/fmt"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
 
@@ -78,7 +78,7 @@ func TestNew_ConfigValidation(t *testing.T) {
 				if err == nil {
 					t.Fatalf("expected error, got nil")
 				}
-				if !strings.Contains(err.Error(), tc.errContains) {
+				if !fmt.Contains(err.Error(), tc.errContains) {
 					t.Fatalf("expected error to contain %q, got %v", tc.errContains, err)
 				}
 			} else {

@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"errors"
 	"testing"
+	"webtyp.com/fmt"
 	"webtyp.com/notify"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
@@ -49,7 +49,7 @@ func TestCompleteVisit_Stage5(t *testing.T) {
 			name:          "stock empty error -> pending, alert",
 			roomFound:     true,
 			stockCost:     0,
-			stockErr:      errors.New("not enough stock"),
+			stockErr:      fmt.Err("not enough stock"),
 			visitStatus:   clinicalencounter.StatusCreated,
 			supplyOff:     false,
 			expectedCost:  0,
@@ -60,7 +60,7 @@ func TestCompleteVisit_Stage5(t *testing.T) {
 			name:          "stock warning (cost > 0 but err) -> deducted",
 			roomFound:     true,
 			stockCost:     70,
-			stockErr:      errors.New("some warning"),
+			stockErr:      fmt.Err("some warning"),
 			visitStatus:   clinicalencounter.StatusCreated,
 			supplyOff:     false,
 			expectedCost:  70,

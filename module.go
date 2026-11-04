@@ -1,8 +1,8 @@
 package clinical_encounter
 
 import (
-	"fmt"
 	"webtyp.com/events"
+	"webtyp.com/fmt"
 	"webtyp.com/model"
 	"webtyp.com/orm"
 	"webtyp.com/time"
@@ -67,14 +67,14 @@ func New(db *orm.DB, deps Deps) (*Module, error) {
 
 	if hasRecipes && hasRooms && hasSupplies {
 		if deps.IDs == nil {
-			return nil, fmt.Errorf("clinical_encounter: supply use is configured but IDs generator is missing")
+			return nil, fmt.Errf("clinical_encounter: supply use is configured but IDs generator is missing")
 		}
 		if deps.SuppliesArea == "" {
-			return nil, fmt.Errorf("clinical_encounter: supply use is configured but SuppliesArea is empty")
+			return nil, fmt.Errf("clinical_encounter: supply use is configured but SuppliesArea is empty")
 		}
 		m.supplyOn = true
 	} else if hasRecipes || hasRooms || hasSupplies {
-		return nil, fmt.Errorf("clinical_encounter: supply use requires Recipes, Rooms and Supplies together")
+		return nil, fmt.Errf("clinical_encounter: supply use requires Recipes, Rooms and Supplies together")
 	}
 
 	return m, nil

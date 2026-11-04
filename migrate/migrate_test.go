@@ -1,9 +1,6 @@
 package migrate_test
 
 import (
-	"fmt"
-	"strings"
-
 	"testing"
 
 	"github.com/veltylabs/clinical_encounter/migrate"
@@ -29,8 +26,17 @@ func TestMigrate_CreatesMedicalHistoryTable(t *testing.T) {
 	if err := migrate.Migrate(execer, &dummyCompiler{}); err != nil {
 		t.Fatalf("Migrate returned error: %v", err)
 	}
-	tablesStr := fmt.Sprintf("%v", execer.calls)
-	if !strings.Contains(tablesStr, "medical_history") || !strings.Contains(tablesStr, "encounter_supply") {
+	hasMedicalHistory := false
+	hasEncounterSupply := false
+	for _, call := range execer.calls {
+		if call == "medical_history" {
+			hasMedicalHistory = true
+		}
+		if call == "encounter_supply" {
+			hasEncounterSupply = true
+		}
+	}
+	if !hasMedicalHistory || !hasEncounterSupply {
 		t.Errorf("got %d Exec calls, tables: %v, want medical_history and encounter_supply", len(execer.calls), execer.calls)
 	}
 }

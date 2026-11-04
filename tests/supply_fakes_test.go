@@ -1,8 +1,7 @@
 package tests
 
 import (
-	"errors"
-	"fmt"
+	"webtyp.com/fmt"
 	"webtyp.com/time"
 )
 
@@ -14,7 +13,7 @@ type fakeRecipes struct {
 
 func (f *fakeRecipes) ServiceRecipe(tenantId, serviceId string) ([]string, []float64, error) {
 	if f.fail {
-		return nil, nil, errors.New("recipe error")
+		return nil, nil, fmt.Err("recipe error")
 	}
 	return f.items, f.qtys, nil
 }
@@ -27,7 +26,7 @@ type fakeRooms struct {
 
 func (f *fakeRooms) RoomOfOccupant(tenantID, occupantID string, at time.Unix) (string, bool, error) {
 	if f.fail {
-		return "", false, errors.New("room error")
+		return "", false, fmt.Err("room error")
 	}
 	return f.roomId, f.found, nil
 }
