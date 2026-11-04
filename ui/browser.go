@@ -40,9 +40,9 @@ func blockingCall(caller router.Caller, op string, args model.Encodable, into mo
 // inclusively between From and To, and a reservation's date is stored as
 // that convention (see business_calendar.specificDateLabel's identical
 // note): a single day is From == To.
-func todayRange() (from, to int64) {
-	todayISO := tintime.FormatISO8601(tintime.NowUnix())[:10]
-	day, err := tintime.ParseDate(todayISO)
+func todayRange(zone tintime.Zone) (from, to int64) {
+	todayISO := zone.Date(tintime.NowUnix())
+	day, err := tintime.ParseDateUTC(todayISO)
 	if err != nil {
 		return 0, 0
 	}
@@ -98,8 +98,8 @@ type agendaPatient struct {
 // hoy y resuelve cada una a una fila del picker — el doctor ve exactamente a
 // quién tiene programado ver hoy, nada más, y nunca escribe un nombre o
 // un RUT (ver docs/UI.md "Error de diseño descartado").
-func loadTodayAgenda(caller router.Caller, tenantID, staffID string) ([]agendaPatient, error) {
-	from, to := todayRange()
+func loadTodayAgenda(caller router.Caller, zone tintime.Zone, tenantID, staffID string) ([]agendaPatient, error) {
+	from, to := todayRange(zone)
 	var reservations ab.ReservationList
 	err := blockingCall(caller, ab.ModelName+"."+ab.OpListReservationsByStaff,
 		&ab.ListReservationsByStaffArgs{TenantId: tenantID, StaffId: staffID, From: from, To: to},
@@ -203,7 +203,7 @@ var _ view.Saver = requirePatient{}
 // fila de personal es "el doctor" para que la agenda de hoy pueda ser construida. Ver docs/UI.md para
 // el diseño completo.
 // Ejemplo: ui.Screens(caller, ids, "tenant1", "user1")
-func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID string) []view.Screen {
+func Screens(caller router.Caller, zone tintime.Zone, ids model.IDGenerator, tenantID, userID string) []view.Screen {
 	cfg := crudview.Config{
 		ParentID:  ID,
 		Presenter: clinicalencounter.NewView(caller),
@@ -218,7 +218,7 @@ func Screens(caller router.Caller, ids model.IDGenerator, tenantID, userID strin
 		return nil
 	}
 	if doctor.StaffID != "" {
-		agenda, err := loadTodayAgenda(caller, tenantID, doctor.StaffID)
+		agenda, err := loadTodayAgenda(caller, zone, tenantID, doctor.StaffID)
 		if err != nil {
 			return nil
 		}
