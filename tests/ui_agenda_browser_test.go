@@ -7,12 +7,10 @@ import (
 
 	"webtyp.com/json"
 	"webtyp.com/model"
+	"webtyp.com/time"
 
-	ab "github.com/veltylabs/appointment_booking"
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 	"github.com/veltylabs/clinical_encounter/ui"
-	patientdirectory "github.com/veltylabs/patient_directory"
-	staffmanager "github.com/veltylabs/staff_manager"
 
 	"webtyp.com/components/searchbar"
 	"webtyp.com/components/selectsearch"
@@ -29,31 +27,32 @@ func encodeInto(v model.Encodable, into model.Decodable) error {
 }
 
 // TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations pins the
-// design in docs/UI.md: the doctor's picker is
-// built from staff_manager + appointment_booking + patient_directory, shows
-// only CONFIRMED reservations, and Filter(patientID) resolves to that
-// patient's pre-fetched history without any further network call.
+// design: the agenda picker is built via OpMyAgenda, showing confirmed entries
+// and allowing filtering by patient without external dependencies.
 func TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations(t *testing.T) {
-	staff := staffmanager.StaffMemberList{
-		{Id: "staff1", TenantId: "t1", UserId: "user1", Name: "Dra. Soto", Specialty: "Pediatría"},
+	agendaResult := clinicalencounter.MyAgendaResult{
+		StaffId:         "staff1",
+		DoctorName:      "Dra. Soto",
+		DoctorSpecialty: "Pediatría",
+		Entries: []clinicalencounter.AgendaEntry{
+			{
+				PatientId:       "pat1",
+				PatientName:     "Juan Pérez",
+				PatientDocument: "12.345.678-9",
+				TimeLabel:       "09:00",
+				ReservationId:   "r1",
+				ServiceId:       "s1",
+			},
+		},
 	}
-	reservations := ab.ReservationList{
-		{Id: "r1", TenantId: "t1", ClientId: "pat1", StaffIdsnapshot: "staff1", Status: ab.StatusConfirmed, LocalStringTime: "09:00"},
-		{Id: "r2", TenantId: "t1", ClientId: "pat2", StaffIdsnapshot: "staff1", Status: ab.StatusPending, LocalStringTime: "09:30"},
-	}
-	patient := patientdirectory.Patient{Id: "pat1", TenantId: "t1", Name: "Juan Pérez", Rut: "12.345.678-9"}
 
 	var calledOps []string
 	mock := &mockCaller{
 		onCall: func(op string, args model.Encodable, into model.Decodable) error {
 			calledOps = append(calledOps, op)
 			switch op {
-			case staffmanager.ModelName + "." + staffmanager.OpListStaff:
-				return encodeInto(&staff, into)
-			case ab.ModelName + "." + ab.OpListReservationsByStaff:
-				return encodeInto(&reservations, into)
-			case patientdirectory.ModelName + "." + patientdirectory.OpGetPatient:
-				return encodeInto(&patient, into)
+			case clinicalencounter.ModelName + "." + clinicalencounter.OpMyAgenda:
+				return encodeInto(&agendaResult, into)
 			case clinicalencounter.ModelName + "." + clinicalencounter.OpListVisitsByPatient:
 				empty := clinicalencounter.MedicalHistoryList{}
 				return encodeInto(&empty, into)
@@ -62,7 +61,10 @@ func TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations(t *testing.
 		},
 	}
 
-	screens := ui.Screens(view.NewRecords().Caller(mock), &testIDGen{}, "t1", "user1")
+	screens := ui.Screens(view.NewRecords().Caller(mock), time.MachineZone(), &testIDGen{}, "t1", "user1")
+	if len(screens) == 0 {
+		t.Fatalf("expected at least 1 screen, got 0")
+	}
 	cv, ok := screens[0].Component.(*crudview.CrudView)
 	if !ok {
 		t.Fatalf("expected *crudview.CrudView, got %T", screens[0].Component)
@@ -71,29 +73,24 @@ func TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations(t *testing.
 		t.Fatalf("expected the agenda picker (*selectsearch.SelectSearch) once the logged-in user resolves to a staff row, got %T", cv.Filter)
 	}
 
-	for _, want := range []string{
-		staffmanager.ModelName + "." + staffmanager.OpListStaff,
-		ab.ModelName + "." + ab.OpListReservationsByStaff,
-		patientdirectory.ModelName + "." + patientdirectory.OpGetPatient,
-	} {
-		found := false
-		for _, op := range calledOps {
-			if op == want {
-				found = true
-				break
-			}
+	want := clinicalencounter.ModelName + "." + clinicalencounter.OpMyAgenda
+	found := false
+	for _, op := range calledOps {
+		if op == want {
+			found = true
+			break
 		}
-		if !found {
-			t.Errorf("expected op %q to be called while building the agenda, calledOps=%v", want, calledOps)
-		}
+	}
+	if !found {
+		t.Errorf("expected op %q to be called while building the agenda, calledOps=%v", want, calledOps)
 	}
 
-	// The confirmed reservation's patient is selectable; the pending one is not.
+	// The confirmed reservation's patient is selectable; unknown patient is not.
 	if items := cv.Presenter.Filter("pat1"); items == nil {
-		t.Error("expected pat1 (CONFIRMED reservation) to be selectable via Filter")
+		t.Error("expected pat1 to be selectable via Filter")
 	}
 	if items := cv.Presenter.Filter("pat2"); items != nil {
-		t.Errorf("expected pat2 (PENDING reservation) to be absent from the agenda, got %v", items)
+		t.Errorf("expected pat2 to be absent from the agenda, got %v", items)
 	}
 }
 
@@ -103,15 +100,18 @@ func TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations(t *testing.
 func TestWASM_ClinicalEncounter_NoStaffRowFallsBackToPlainList(t *testing.T) {
 	mock := &mockCaller{
 		onCall: func(op string, args model.Encodable, into model.Decodable) error {
-			if op == staffmanager.ModelName+"."+staffmanager.OpListStaff {
-				empty := staffmanager.StaffMemberList{}
+			if op == clinicalencounter.ModelName+"."+clinicalencounter.OpMyAgenda {
+				empty := clinicalencounter.MyAgendaResult{}
 				return encodeInto(&empty, into)
 			}
 			return nil
 		},
 	}
 
-	screens := ui.Screens(view.NewRecords().Caller(mock), &testIDGen{}, "t1", "admin-with-no-staff-row")
+	screens := ui.Screens(view.NewRecords().Caller(mock), time.MachineZone(), &testIDGen{}, "t1", "admin-with-no-staff-row")
+	if len(screens) == 0 {
+		t.Fatalf("expected at least 1 screen, got 0")
+	}
 	cv, ok := screens[0].Component.(*crudview.CrudView)
 	if !ok {
 		t.Fatalf("expected *crudview.CrudView, got %T", screens[0].Component)
@@ -121,30 +121,31 @@ func TestWASM_ClinicalEncounter_NoStaffRowFallsBackToPlainList(t *testing.T) {
 	}
 }
 
-// TestWASM_ClinicalEncounter_NewDraftIsSeededFromThePicker: el pago de P1.
+// TestWASM_ClinicalEncounter_NewDraftIsSeededFromThePicker:
 // Elegir un paciente en la agenda y pulsar "+" debe dejar la ficha nueva ya
-// con su id, nombre y RUT — y con el doctor de la sesión. Es lo único que
-// separa "el doctor selecciona y escribe" de "el doctor selecciona": si esto
-// se rompe, el formulario sale en blanco y nadie se entera hasta que alguien
-// tipea un RUT a mano.
+// con su id, nombre y RUT — y con el doctor de la sesión.
 func TestWASM_ClinicalEncounter_NewDraftIsSeededFromThePicker(t *testing.T) {
-	staff := staffmanager.StaffMemberList{
-		{Id: "staff1", TenantId: "t1", UserId: "user1", Name: "Dra. Soto", Specialty: "Pediatría"},
+	agendaResult := clinicalencounter.MyAgendaResult{
+		StaffId:         "staff1",
+		DoctorName:      "Dra. Soto",
+		DoctorSpecialty: "Pediatría",
+		Entries: []clinicalencounter.AgendaEntry{
+			{
+				PatientId:       "pat1",
+				PatientName:     "Juan Pérez",
+				PatientDocument: "12.345.678-9",
+				TimeLabel:       "09:00",
+				ReservationId:   "r1",
+				ServiceId:       "s1",
+			},
+		},
 	}
-	reservations := ab.ReservationList{
-		{Id: "r1", TenantId: "t1", ClientId: "pat1", StaffIdsnapshot: "staff1", Status: ab.StatusConfirmed, LocalStringTime: "09:00"},
-	}
-	patient := patientdirectory.Patient{Id: "pat1", TenantId: "t1", Name: "Juan Pérez", Rut: "12.345.678-9"}
 
 	mock := &mockCaller{
 		onCall: func(op string, args model.Encodable, into model.Decodable) error {
 			switch op {
-			case staffmanager.ModelName + "." + staffmanager.OpListStaff:
-				return encodeInto(&staff, into)
-			case ab.ModelName + "." + ab.OpListReservationsByStaff:
-				return encodeInto(&reservations, into)
-			case patientdirectory.ModelName + "." + patientdirectory.OpGetPatient:
-				return encodeInto(&patient, into)
+			case clinicalencounter.ModelName + "." + clinicalencounter.OpMyAgenda:
+				return encodeInto(&agendaResult, into)
 			case clinicalencounter.ModelName + "." + clinicalencounter.OpListVisitsByPatient:
 				empty := clinicalencounter.MedicalHistoryList{}
 				return encodeInto(&empty, into)
@@ -153,7 +154,10 @@ func TestWASM_ClinicalEncounter_NewDraftIsSeededFromThePicker(t *testing.T) {
 		},
 	}
 
-	screens := ui.Screens(view.NewRecords().Caller(mock), &testIDGen{}, "t1", "user1")
+	screens := ui.Screens(view.NewRecords().Caller(mock), time.MachineZone(), &testIDGen{}, "t1", "user1")
+	if len(screens) == 0 {
+		t.Fatalf("expected at least 1 screen, got 0")
+	}
 	cv, ok := screens[0].Component.(*crudview.CrudView)
 	if !ok {
 		t.Fatalf("expected *crudview.CrudView, got %T", screens[0].Component)

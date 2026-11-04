@@ -6,14 +6,6 @@ import (
 	"webtyp.com/time"
 )
 
-
-
-
-
-
-
-
-
 func (m *Module) ListSupplyUse(tenantId, encounterId string) ([]*EncounterSupply, error) {
 	if !m.supplyOn {
 		return nil, ErrSupplyUseOff

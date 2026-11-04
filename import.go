@@ -13,6 +13,7 @@ import (
 // opens no transaction (the importer already runs inside one).
 //
 // Example: v, err := enc.ImportVisit(MedicalHistory{Id: "8000000000000000005", TenantId: t, PatientId: p,
+//
 //	DoctorId: d, AttentionAt: at, Reason: "control", PatientNameSnapshot: "Ana", PatientRutSnapshot: "12345678-5",
 //	DoctorNameSnapshot: "Dra. Pérez"})
 func (m *Module) ImportVisit(v MedicalHistory) (*MedicalHistory, error) {

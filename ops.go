@@ -1,10 +1,10 @@
 package clinical_encounter
 
 import (
-	"webtyp.com/view"
-	"webtyp.com/rpc"
 	"webtyp.com/model"
 	"webtyp.com/router"
+	"webtyp.com/rpc"
+	"webtyp.com/view"
 )
 
 const (
@@ -12,16 +12,15 @@ const (
 	OpGetVisit            = "get_medical_history"
 	OpListVisitsByPatient = "list_medical_history"
 	OpListRecentPatients  = "list_recent_patients"
+	OpMyAgenda            = "my_agenda"
 
-	OpCompleteVisit       = "complete_visit"
-	OpListSupplyUse       = "list_supply_use"
-	OpUpsertSupplyUse     = "upsert_supply_use"
-	OpDeleteSupplyUse     = "delete_supply_use"
-	OpListPendingSupply   = "list_pending_supply"
-	OpRetrySupplyUse      = "retry_supply_use"
+	OpCompleteVisit     = "complete_visit"
+	OpListSupplyUse     = "list_supply_use"
+	OpUpsertSupplyUse   = "upsert_supply_use"
+	OpDeleteSupplyUse   = "delete_supply_use"
+	OpListPendingSupply = "list_pending_supply"
+	OpRetrySupplyUse    = "retry_supply_use"
 )
-
-
 
 func (m *Module) MountOperations(reg router.OperationRegistry) {
 	view.MountSave(reg, OpCreateVisit, func(rec *MedicalHistory) error {
@@ -50,6 +49,7 @@ func (m *Module) MountOperations(reg router.OperationRegistry) {
 	reg.Operation(OpGetVisit, m.opGetVisit).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&GetVisitArgs{})
 	reg.Operation(OpListVisitsByPatient, m.opListVisits).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&ListVisitsArgs{})
 	reg.Operation(OpListRecentPatients, m.opListRecentPatients).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&ListRecentPatientsArgs{})
+	reg.Operation(OpMyAgenda, m.opMyAgenda).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&MyAgendaArgs{})
 
 	reg.Operation(OpCompleteVisit, m.opCompleteVisit).Requires(model.ResourceOf(&MedicalHistoryModel), model.Update).Accepts(&CompleteVisitArgs{})
 	reg.Operation(OpListSupplyUse, m.opListSupplyUse).Requires(model.ResourceOf(&EncounterSupplyModel), model.Read).Accepts(&ListSupplyUseArgs{})
@@ -60,7 +60,6 @@ func (m *Module) MountOperations(reg router.OperationRegistry) {
 }
 
 var _ router.OperationModule = (*Module)(nil)
-
 
 func (m *Module) opGetVisit(ctx router.Context) {
 	var args GetVisitArgs
@@ -118,7 +117,24 @@ func (m *Module) opListRecentPatients(ctx router.Context) {
 	}
 }
 
-
+func (m *Module) opMyAgenda(ctx router.Context) {
+	var args MyAgendaArgs
+	if err := ctx.Decode(&args); err != nil {
+		rpc.WriteError(ctx, ErrCannotRead)
+		return
+	}
+	if args.UserId == "" {
+		args.UserId = ctx.UserID()
+	}
+	res, err := m.MyAgenda(args)
+	if err != nil {
+		rpc.WriteError(ctx, err)
+		return
+	}
+	if err := ctx.Encode(res); err != nil {
+		rpc.WriteError(ctx, err)
+	}
+}
 
 func (m *Module) opCompleteVisit(ctx router.Context) {
 	var args CompleteVisitArgs

@@ -2,8 +2,6 @@ package seed
 
 import (
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
-	patientseed "github.com/veltylabs/patient_directory/seed"
-	staffseed "github.com/veltylabs/staff_manager/seed"
 	"webtyp.com/fmt"
 	"webtyp.com/time"
 )
@@ -11,40 +9,68 @@ import (
 // seedVisitAgeDays es la antigüedad de las fichas de demo.
 const seedVisitAgeDays = 30
 
-type Upstream struct {
-	Patients patientseed.Data
-	Staff    staffseed.Data
+type PatientSeed struct {
+	ID             string
+	Name           string
+	DocumentNumber string
+}
+
+type DoctorSeed struct {
+	ID        string
+	Name      string
+	Specialty string
+}
+
+type LoadOptions struct {
+	Patients []PatientSeed
+	Doctors  []DoctorSeed
 }
 
 type Data struct {
 	Visits []*clinicalencounter.MedicalHistory
 }
 
-func Load(m *clinicalencounter.Module, tenantID string, up Upstream) (Data, error) {
-	if len(up.Patients.Patients) < 2 {
-		return Data{}, fmt.Errf("seed: need at least 2 patients from upstream")
-	}
-	if len(up.Staff.Staff) < 1 {
-		return Data{}, fmt.Errf("seed: need at least 1 staff member from upstream")
+func Load(m *clinicalencounter.Module, tenantID string, opts ...LoadOptions) (Data, error) {
+	var opt LoadOptions
+	if len(opts) > 0 {
+		opt = opts[0]
 	}
 
-	doc := up.Staff.Staff[0]
-	patients := up.Patients.Patients[:2]
+	patients := opt.Patients
+	doctors := opt.Doctors
+
+	if len(opts) > 0 && (len(patients) < 2 || len(doctors) < 1) {
+		return Data{}, fmt.Errf("seed: need at least 2 patients and 1 doctor from upstream")
+	}
+
+	if len(patients) == 0 {
+		patients = []PatientSeed{
+			{ID: "demo-pat-1", Name: "Juan Pérez", DocumentNumber: "12.345.678-9"},
+			{ID: "demo-pat-2", Name: "María López", DocumentNumber: "9.876.543-2"},
+		}
+	}
+	if len(doctors) == 0 {
+		doctors = []DoctorSeed{
+			{ID: "demo-doc-1", Name: "Dra. Soto", Specialty: "Pediatría"},
+		}
+	}
+
+	doc := doctors[0]
 	visits := make([]*clinicalencounter.MedicalHistory, 0, len(patients))
-
-	// time.Now() está en NANOsegundos (igual que AttentionAt, que visit.go
-	// rellena con time.Now()): 30 días = 30*86400 segundos * 1e9.
 	thirtyDaysAgo := time.NowUnix() - seedVisitAgeDays*time.Day
 
 	for i, p := range patients {
+		if i >= 2 {
+			break
+		}
 		id := "demo-visit-" + fmt.Convert(i+1).String()
 		v, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
 			TenantId:                tenantID,
 			Id:                      id,
-			PatientId:               p.Id,
+			PatientId:               p.ID,
 			PatientNameSnapshot:     p.Name,
-			PatientRutSnapshot:      p.Rut,
-			DoctorId:                doc.Id,
+			PatientRutSnapshot:      p.DocumentNumber,
+			DoctorId:                doc.ID,
 			DoctorNameSnapshot:      doc.Name,
 			DoctorSpecialtySnapshot: doc.Specialty,
 			AttentionAt:             int64(thirtyDaysAgo),

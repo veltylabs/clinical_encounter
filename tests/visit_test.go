@@ -11,7 +11,7 @@ import (
 func TestCreateVisit_HappyPath(t *testing.T) {
 	m := setup(t)
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_123",
+		TenantId: "t1", Id: "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -42,7 +42,7 @@ func TestCreateVisit_HappyPath(t *testing.T) {
 func TestCreateVisit_DefaultsAttentionAtToNow(t *testing.T) {
 	m := setup(t)
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_123",
+		TenantId: "t1", Id: "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -102,7 +102,7 @@ func TestCreateVisit_RetryIdempotency(t *testing.T) {
 	}
 
 	args := clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_1",
+		TenantId: "t1", Id: "visit_1",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Initial",
@@ -131,7 +131,7 @@ func TestCreateVisit_RetryIdempotency(t *testing.T) {
 func TestCreateVisit_RetryCollision(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_1",
+		TenantId: "t1", Id: "visit_1",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Initial",
@@ -142,7 +142,7 @@ func TestCreateVisit_RetryCollision(t *testing.T) {
 	}
 
 	_, err = m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_1",
+		TenantId: "t1", Id: "visit_1",
 		PatientId:           "pat_2",
 		DoctorId:            "doc_1",
 		Reason:              "Initial",

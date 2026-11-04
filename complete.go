@@ -1,8 +1,8 @@
 package clinical_encounter
 
 import (
-	"webtyp.com/model"
 	"webtyp.com/events"
+	"webtyp.com/model"
 	"webtyp.com/msgtype"
 	"webtyp.com/notify"
 	"webtyp.com/orm"

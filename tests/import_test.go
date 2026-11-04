@@ -2,9 +2,9 @@ package tests
 
 import (
 	"testing"
-	"webtyp.com/time"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
+	"webtyp.com/time"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 )

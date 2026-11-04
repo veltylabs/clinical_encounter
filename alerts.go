@@ -14,8 +14,8 @@ const (
 func AlertKinds(areaCode string) []notify.Kind {
 	return []notify.Kind{
 		{
-			Code:        AlertSupplyPending,
-			Area:        areaCode,
+			Code: AlertSupplyPending,
+			Area: areaCode,
 			Name: "Atenciones con insumos sin rebajar",
 		},
 	}

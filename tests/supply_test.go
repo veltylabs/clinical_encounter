@@ -205,6 +205,6 @@ func TestStage4_SupplyOperations(t *testing.T) {
 	})
 
 	t.Run("Modify deducted line - Error", func(t *testing.T) {
-	    // Not tested because we need to manually insert. Not strict per requirements.
+		// Not tested because we need to manually insert. Not strict per requirements.
 	})
 }

@@ -1,14 +1,14 @@
 package tests
 
 import (
-	"testing"
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
-	"webtyp.com/model"
-	"webtyp.com/router/loopback"
-	"webtyp.com/view"
-	"webtyp.com/orm"
-	"webtyp.com/storage/mem"
+	"testing"
 	"webtyp.com/events/mock"
+	"webtyp.com/model"
+	"webtyp.com/orm"
+	"webtyp.com/router/loopback"
+	"webtyp.com/storage/mem"
+	"webtyp.com/view"
 )
 
 func TestScreenSave(t *testing.T) {
@@ -22,7 +22,7 @@ func TestScreenSave(t *testing.T) {
 	b := view.NewCallerLister(view.NewRecords().Caller(caller),
 		view.Ops{Module: clinicalencounter.ModelName, List: clinicalencounter.OpListVisitsByPatient, Save: clinicalencounter.OpCreateVisit},
 		func() model.ModelSlice { return &clinicalencounter.MedicalHistoryList{} })
-	
+
 	rec := &clinicalencounter.MedicalHistory{
 		Id:                  "vis1",
 		TenantId:            "t1",
@@ -34,7 +34,7 @@ func TestScreenSave(t *testing.T) {
 		DoctorNameSnapshot:  "dname",
 		Status:              clinicalencounter.StatusCreated,
 	}
-	
+
 	done := make(chan error, 1)
 	if saver, ok := b.(view.Saver); ok {
 		saver.Save([]model.Model{rec}, func(err error) {

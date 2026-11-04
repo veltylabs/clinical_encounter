@@ -68,15 +68,15 @@ func TestCompleteVisit_Stage5(t *testing.T) {
 			expectPending: false,
 		},
 		{
-			name:          "visit closed -> ErrVisitClosed",
-			roomFound:     true,
-			visitStatus:   clinicalencounter.StatusCompleted,
-			expectErr:     clinicalencounter.ErrVisitClosed,
+			name:        "visit closed -> ErrVisitClosed",
+			roomFound:   true,
+			visitStatus: clinicalencounter.StatusCompleted,
+			expectErr:   clinicalencounter.ErrVisitClosed,
 		},
 		{
-			name:          "supply off -> ok, no lines",
-			visitStatus:   clinicalencounter.StatusCreated,
-			supplyOff:     true,
+			name:        "supply off -> ok, no lines",
+			visitStatus: clinicalencounter.StatusCreated,
+			supplyOff:   true,
 		},
 	}
 

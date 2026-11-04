@@ -3,13 +3,7 @@ module github.com/veltylabs/clinical_encounter
 go 1.26.8
 
 require (
-	github.com/veltylabs/appointment_booking v0.3.75-0.20261104042736-0a0aa2981fff
-	github.com/veltylabs/business_calendar v0.5.40-0.20261104042520-f2e0b7313909
-	github.com/veltylabs/device_manager v0.2.89
-	github.com/veltylabs/patient_directory v0.1.86
-	github.com/veltylabs/service_catalog v0.6.44
-	github.com/veltylabs/staff_manager v0.1.158
-	webtyp.com/auth v0.0.102
+	webtyp.com/appkit v0.2.8
 	webtyp.com/components v0.8.63
 	webtyp.com/ddl v0.0.39
 	webtyp.com/dom v0.13.29
@@ -27,15 +21,36 @@ require (
 	webtyp.com/rpc v0.2.15
 	webtyp.com/storage v0.1.18
 	webtyp.com/svg v0.3.33
-	webtyp.com/time v0.6.3
+	webtyp.com/time v0.6.4
 	webtyp.com/unixid v0.3.1
 	webtyp.com/view v0.6.55
 )
 
 require (
+	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
+	github.com/go-acme/lego/v4 v4.35.2 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	github.com/miekg/dns v1.1.72 // indirect
+	github.com/smallstep/truststore v0.13.0 // indirect
+	golang.org/x/crypto v0.53.0 // indirect
+	golang.org/x/mod v0.36.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
+	golang.org/x/tools v0.45.0 // indirect
+	howett.net/plist v1.0.0 // indirect
+	webtyp.com/access v0.0.41 // indirect
+	webtyp.com/auth v0.0.102 // indirect
+	webtyp.com/await v0.1.2 // indirect
+	webtyp.com/base64 v0.0.6 // indirect
 	webtyp.com/calendar v0.1.0 // indirect
 	webtyp.com/color v0.1.3 // indirect
+	webtyp.com/context v0.0.23 // indirect
+	webtyp.com/crypto v0.0.30 // indirect
 	webtyp.com/css v0.4.31 // indirect
+	webtyp.com/dbus v0.1.1 // indirect
+	webtyp.com/env v0.1.3 // indirect
 	webtyp.com/erd v0.0.16 // indirect
 	webtyp.com/escape v0.1.0 // indirect
 	webtyp.com/fetch v0.1.29 // indirect
@@ -43,8 +58,13 @@ require (
 	webtyp.com/font v0.0.6 // indirect
 	webtyp.com/html v0.0.30 // indirect
 	webtyp.com/icons v0.0.38 // indirect
+	webtyp.com/keyring v0.2.9 // indirect
 	webtyp.com/lang v0.1.11 // indirect
-	webtyp.com/network v0.1.2 // indirect
+	webtyp.com/mcp v0.3.20 // indirect
+	webtyp.com/pwa v0.2.13 // indirect
+	webtyp.com/rbac v0.0.29 // indirect
+	webtyp.com/server v0.2.105 // indirect
 	webtyp.com/user v0.3.14 // indirect
+	webtyp.com/webauthn v0.1.16 // indirect
 	webtyp.com/widget v0.6.46 // indirect
 )

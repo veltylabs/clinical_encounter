@@ -1,5 +1,7 @@
 package clinical_encounter
+
 import "webtyp.com/model"
+
 const (
 	ErrTenantRequired model.Invalid  = "tenant_id is required"
 	ErrQuantity       model.Invalid  = "quantity must be greater than zero"

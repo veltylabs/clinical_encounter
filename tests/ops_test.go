@@ -116,7 +116,7 @@ func TestMountOperations_GetVisit(t *testing.T) {
 	m := setup(t)
 	// Seed a visit
 	rec, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_123",
+		TenantId: "t1", Id: "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control",
@@ -151,7 +151,7 @@ func TestMountOperations_ListVisits(t *testing.T) {
 	m := setup(t)
 	// Seed a visit
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_123",
+		TenantId: "t1", Id: "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control",
@@ -191,7 +191,7 @@ func TestCreateVisit_PublishesEvent(t *testing.T) {
 	}
 
 	_, err = m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_123",
+		TenantId: "t1", Id: "visit_123",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control rutinario",
@@ -223,7 +223,7 @@ func TestCreateVisit_PublishesEvent(t *testing.T) {
 func TestMountOperations_CreateVisit_Collision(t *testing.T) {
 	m := setup(t)
 	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
-		TenantId: "t1", Id:                  "visit_1",
+		TenantId: "t1", Id: "visit_1",
 		PatientId:           "pat_1",
 		DoctorId:            "doc_1",
 		Reason:              "Control",

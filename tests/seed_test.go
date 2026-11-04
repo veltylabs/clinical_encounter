@@ -6,10 +6,6 @@ import (
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 	ceseed "github.com/veltylabs/clinical_encounter/seed"
-	patientdirectory "github.com/veltylabs/patient_directory"
-	patientseed "github.com/veltylabs/patient_directory/seed"
-	staffmanager "github.com/veltylabs/staff_manager"
-	staffseed "github.com/veltylabs/staff_manager/seed"
 	"webtyp.com/events/mock"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
@@ -24,21 +20,17 @@ func TestSeedLoad(t *testing.T) {
 		t.Fatalf("New: %v", err)
 	}
 
-	up := ceseed.Upstream{
-		Patients: patientseed.Data{
-			Patients: []patientdirectory.Patient{
-				{Id: "p1", Name: "Patient One", Rut: "11111111-1"},
-				{Id: "p2", Name: "Patient Two", Rut: "22222222-2"},
-			},
+	opt := ceseed.LoadOptions{
+		Patients: []ceseed.PatientSeed{
+			{ID: "p1", Name: "Patient One", DocumentNumber: "11111111-1"},
+			{ID: "p2", Name: "Patient Two", DocumentNumber: "22222222-2"},
 		},
-		Staff: staffseed.Data{
-			Staff: []staffmanager.StaffMember{
-				{Id: "s1", Name: "Doctor One", Specialty: "Medicina General"},
-			},
+		Doctors: []ceseed.DoctorSeed{
+			{ID: "s1", Name: "Doctor One", Specialty: "Medicina General"},
 		},
 	}
 
-	data, err := ceseed.Load(m, "t1", up)
+	data, err := ceseed.Load(m, "t1", opt)
 	if err != nil {
 		t.Fatalf("seed.Load: %v", err)
 	}
@@ -60,24 +52,20 @@ func TestSeedLoad(t *testing.T) {
 func TestSeedLoadTwice(t *testing.T) {
 	db := orm.New(mem.New())
 	m, _ := clinicalencounter.New(db, clinicalencounter.Deps{})
-	up := ceseed.Upstream{
-		Patients: patientseed.Data{
-			Patients: []patientdirectory.Patient{
-				{Id: "p1", Name: "Patient One", Rut: "11111111-1"},
-				{Id: "p2", Name: "Patient Two", Rut: "22222222-2"},
-			},
+	opt := ceseed.LoadOptions{
+		Patients: []ceseed.PatientSeed{
+			{ID: "p1", Name: "Patient One", DocumentNumber: "11111111-1"},
+			{ID: "p2", Name: "Patient Two", DocumentNumber: "22222222-2"},
 		},
-		Staff: staffseed.Data{
-			Staff: []staffmanager.StaffMember{
-				{Id: "s1", Name: "Doctor One", Specialty: "Medicina General"},
-			},
+		Doctors: []ceseed.DoctorSeed{
+			{ID: "s1", Name: "Doctor One", Specialty: "Medicina General"},
 		},
 	}
-	data1, err := ceseed.Load(m, "t1", up)
+	data1, err := ceseed.Load(m, "t1", opt)
 	if err != nil {
 		t.Fatalf("first seed.Load: %v", err)
 	}
-	data2, err := ceseed.Load(m, "t1", up)
+	data2, err := ceseed.Load(m, "t1", opt)
 	if err != nil {
 		t.Fatalf("second seed.Load: %v", err)
 	}

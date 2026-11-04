@@ -7,9 +7,9 @@ import (
 )
 
 type fakeRecipes struct {
-	fail bool
+	fail  bool
 	items []string
-	qtys []float64
+	qtys  []float64
 }
 
 func (f *fakeRecipes) ServiceRecipe(tenantId, serviceId string) ([]string, []float64, error) {
@@ -20,9 +20,9 @@ func (f *fakeRecipes) ServiceRecipe(tenantId, serviceId string) ([]string, []flo
 }
 
 type fakeRooms struct {
-	fail bool
+	fail   bool
 	roomId string
-	found bool
+	found  bool
 }
 
 func (f *fakeRooms) RoomOfOccupant(tenantID, occupantID string, at time.Unix) (string, bool, error) {
@@ -33,8 +33,8 @@ func (f *fakeRooms) RoomOfOccupant(tenantID, occupantID string, at time.Unix) (s
 }
 
 type fakeStock struct {
-	cost int64
-	err error
+	cost  int64
+	err   error
 	calls []string
 }
 

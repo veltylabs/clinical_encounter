@@ -15,32 +15,18 @@ import (
 // Ejemplo: ModelName == "clinical_encounter"
 const ModelName = "clinical_encounter"
 
-// Deps son los puertos de infraestructura del módulo — nunca una implementación concreta.
-
-// RecipeReader es la parte de service_catalog que este módulo utiliza.
-// Ejemplo: type MyRecipeReader struct{}
-type RecipeReader interface {
-	ServiceRecipe(tenantId, serviceId string) (itemIds []string, quantities []float64, err error)
-}
-
-// RoomFinder es la parte de room_layout que este módulo utiliza.
-// Ejemplo: type MyRoomFinder struct{}
-type RoomFinder interface {
-	RoomOfOccupant(tenantID, occupantID string, at time.Unix) (roomID string, found bool, err error)
-}
-
-// SupplyStock es la parte de supply_manager que este módulo utiliza.
-// Ejemplo: type MySupplyStock struct{}
-type SupplyStock interface {
-	UseInRoom(tenantId, roomId, itemId string, quantity float64, docType, docId, by string) (int64, error)
-}
 type Deps struct {
 	Publisher    events.Publisher  // opcional: nil deshabilita eventos y la alerta
 	IDs          model.IDGenerator // requerido cuando el uso de insumos está configurado (ids de las líneas)
 	Recipes      RecipeReader      // uso de insumos: los tres se configuran juntos o en lo absoluto
 	Rooms        RoomFinder
 	Supplies     SupplyStock
-	SuppliesArea string            // el código notify.Area de la aplicación del área de Insumos; requerido con uso de insumos
+	SuppliesArea string // el código notify.Area de la aplicación del área de Insumos; requerido con uso de insumos
+	TenantID     string
+	Zone         time.Zone
+	Doctors      DoctorReader
+	Agenda       AgendaReader
+	Patients     PatientReader
 }
 
 type Module struct {
@@ -52,6 +38,11 @@ type Module struct {
 	rooms        RoomFinder
 	supplies     SupplyStock
 	suppliesArea string
+	tenantID     string
+	zone         time.Zone
+	doctors      DoctorReader
+	agenda       AgendaReader
+	patients     PatientReader
 }
 
 func New(db *orm.DB, deps Deps) (*Module, error) {
@@ -63,6 +54,11 @@ func New(db *orm.DB, deps Deps) (*Module, error) {
 		rooms:        deps.Rooms,
 		supplies:     deps.Supplies,
 		suppliesArea: deps.SuppliesArea,
+		tenantID:     deps.TenantID,
+		zone:         deps.Zone,
+		doctors:      deps.Doctors,
+		agenda:       deps.Agenda,
+		patients:     deps.Patients,
 	}
 
 	hasRecipes := deps.Recipes != nil
