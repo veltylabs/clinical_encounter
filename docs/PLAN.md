@@ -1,7 +1,9 @@
 ---
-PLAN: "feat!: "today" on the installation clock in the screens (BrowserDeps.Zone)"
+PLAN: "feat!: \"today\" on the installation clock in the screens (BrowserDeps.Zone)"
 EXECUTOR: jules
 REVIEWER: none
+STATUS: running
+SESSION: 13002587872273730054
 ---
 
 > Read AGENTS.md at the repo root before any change.
