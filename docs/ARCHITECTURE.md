@@ -86,6 +86,17 @@ No existen operaciones de transición de estado (`arrive`/`triage`/`start`/`comp
 FSM" arriba. Añadirlas es un cambio a futuro con su propio plan, una vez que existan los métodos `*Module`
 correspondientes.
 
+## Importar historia
+
+El método `ImportVisit` permite importar una visita cerrada de un sistema previo con sus fechas reales (`AttentionAt`, `StartedAt`, `FinishedAt`). No usa la fecha actual "now", evitando que el historial de visitas pasadas aparezcan cerradas el día de la importación.
+
+Ejemplo:
+```go
+v, err := enc.ImportVisit(MedicalHistory{Id: "8000000000000000005", TenantId: t, PatientId: p,
+	DoctorId: d, AttentionAt: at, Reason: "control", PatientNameSnapshot: "Ana", PatientRutSnapshot: "12345678-5",
+	DoctorNameSnapshot: "Dra. Pérez"})
+```
+
 ## Ejemplo de Raíz de Composición
 
 ```go
