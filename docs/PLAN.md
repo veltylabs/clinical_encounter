@@ -2,8 +2,10 @@
 PLAN: "feat!: PatientReader uses patient_directory's GetPatient"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 18185247049495220193
+PR: https://github.com/veltylabs/clinical_encounter/pull/16
+REVIEWED_COMMIT: e5fe255fcbae209a6194bf2f5fbb93860a9f2081
 ---
 
 > Read AGENTS.md at the repo root before any change.
