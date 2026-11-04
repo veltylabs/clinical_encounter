@@ -2,8 +2,10 @@
 PLAN: "feat: ImportVisit — store a closed visit from a previous system with its real dates"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 16068151884085356589
+PR: https://github.com/veltylabs/clinical_encounter/pull/14
+REVIEWED_COMMIT: 87e7ac7a63524c3b9159bc9cf8b3aadf0d770746
 ---
 
 > Read AGENTS.md at the repo root before any change.
