@@ -2,7 +2,8 @@
 PLAN: "feat!: decouple clinical_encounter from sibling modules via interfaces.go and OpMyAgenda"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: dispatch
+STATUS: running
+SESSION: 17461163410382421214
 ---
 
 > Read AGENTS.md at the repo root before any change.
