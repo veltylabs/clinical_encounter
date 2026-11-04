@@ -2,6 +2,8 @@
 PLAN: "feat!: PatientReader uses patient_directory's GetPatient"
 EXECUTOR: jules
 REVIEWER: none
+STATUS: running
+SESSION: 18185247049495220193
 ---
 
 > Read AGENTS.md at the repo root before any change.
