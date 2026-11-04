@@ -2,6 +2,8 @@
 PLAN: "feat: ImportVisit — store a closed visit from a previous system with its real dates"
 EXECUTOR: jules
 REVIEWER: none
+STATUS: running
+SESSION: 16068151884085356589
 ---
 
 > Read AGENTS.md at the repo root before any change.
