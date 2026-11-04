@@ -13,3 +13,16 @@ Este módulo exporta su pantalla de navegador bajo `ui/` y datos de demostració
 - `seed.Load(module, upstream)`: puebla visitas de demostración utilizando los propios métodos del módulo.
 
 Ejecute `webtyp` en la raíz del repositorio para abrir la demostración — en el navegador, en memoria, sin inicio de sesión.
+
+## Importar historia
+
+El método `ImportVisit` permite importar una visita cerrada de un sistema previo con sus fechas reales (`AttentionAt`, `StartedAt`, `FinishedAt`). No usa la fecha actual "now", evitando que el historial de visitas pasadas aparezcan cerradas el día de la importación.
+
+Ejemplo:
+```go
+v, err := enc.ImportVisit(MedicalHistory{
+    Id: "8000000000000000005", TenantId: t, PatientId: p, DoctorId: d, AttentionAt: at,
+    Reason: "control", PatientNameSnapshot: "Ana", PatientRutSnapshot: "12345678-5",
+    DoctorNameSnapshot: "Dra. Pérez"
+})
+```

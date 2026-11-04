@@ -9,7 +9,6 @@
     "In triage": ["En triage", "分诊中", "ट्राइएज में", "في الفرز", "Na triagem", "Au triage", "In der Triage", "В сортировке"],
     "Medical History": ["Historial Clínico", "病史", "चिकित्सा इतिहास", "التاريخ الطبي", "Histórico Médico", "Antécédents Médicaux", "Krankengeschichte", "История Болезни"],
     "Medical history": ["Historial clínico", "病史", "चिकित्सा इतिहास", "التاريخ الطبي", "Histórico médico", "Antécédents médicaux", "Krankengeschichte", "История болезни"],
-    "Quantity": ["Cantidad", "", "", "", "", "", "", ""],
     "Scheduled": ["Agendada", "已安排", "निर्धारित", "مجدول", "Agendado", "Planifié", "Geplant", "Запланировано"],
     "Select a patient from today's agenda...": ["Seleccione un paciente de la agenda de hoy...", "从今天的日程中选择一位病人...", "आज के एजेंडे से एक मरीज का चयन करें...", "اختر مريضًا من جدول اليوم...", "Selecione um paciente da agenda de hoje...", "Sélectionnez un patient de l'agenda d'aujourd'hui...", "Wählen Sie einen Patienten aus der heutigen Agenda...", "Выберите пациента из сегодняшней повестки..."],
     "attention at": ["atención en", "", "", "", "", "", "", ""],

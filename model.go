@@ -121,6 +121,7 @@ const ErrCannotRead model.Invalid = "clinical_encounter: cannot read the request
 const (
 	ErrNotFound model.NotFound = "visit not found"
 	ErrMissingArgs model.Invalid = "missing required arguments"
+	ErrImportDate model.Invalid = "an imported visit needs the date it happened"
 	ErrIdTaken model.Conflict = "visit id already used by another patient"
 )
 
