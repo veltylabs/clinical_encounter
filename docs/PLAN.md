@@ -21,7 +21,7 @@ go install webtyp.com/devflow/cmd/gotest@latest
 ## Why
 
 `patient_directory` now exports only plain `<Verb><Entity>` methods (rule module-layout «Six verbs»);
-`PatientIdentity` does not exist there. In `interfaces.go` replace `PatientReader` with:
+`GetPatient` does not exist there. In `interfaces.go` replace `PatientReader` with:
 
 ```go
 // PatientReader es la parte de patient_directory que este módulo usa.
@@ -33,7 +33,7 @@ type PatientReader interface {
 
 ## Stage 1 — call site and fakes
 
-- `agenda.go:65`: `name, doc, ok, err := m.patients.PatientIdentity(tenantID, patID)` →
+- `agenda.go:65`: `name, doc, ok, err := m.patients.GetPatient(tenantID, patID)` →
   `name, doc, _, _, ok, err := m.patients.GetPatient(tenantID, patID)`.
 - `tests/agenda_test.go:44` `fakePatientReader` and `web/browser/main.go:41`: `GetPatient` with the new signature,
   same data (phone and email "").
@@ -45,7 +45,7 @@ type PatientReader interface {
 ## Delivery check
 
 1. `gotest` passes.
-2. `grep -rn "PatientIdentity" --include=*.go --include=*.md .` → empty.
+2. `grep -rn "GetPatient" --include=*.go --include=*.md .` → empty.
 
 Commit after every stage. Never edit `model_orm.go` by hand; a build error there means the hand-written code is wrong.
 Never run `git reset`, `git restore`, `git checkout -- <file>` or `git stash` on your own work. Stuck 30 minutes: open
@@ -59,3 +59,5 @@ If a signature in the published tag differs from what this plan states, stop and
 |---|---|---|
 | 1 | `interfaces.go`, `agenda.go`, `tests/agenda_test.go`, `web/browser/main.go` | tests pass |
 | 2 | `README.md`, `docs/ARCHITECTURE.md` | done |
+## Executor notes
+No unresolved issues or unmet tasks.

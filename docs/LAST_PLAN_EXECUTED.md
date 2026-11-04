@@ -35,7 +35,7 @@ Of the 18 modules in `veltylabs/modules/*`, 16 have zero cross-module imports. `
 ## Design gate
 
 1. Prior art: Hexagonal Architecture ports (Cockburn), Go standard library consumer-owned narrow interfaces (`io.Reader`), `veltylabs/modules/room_layout`.
-2. Novice-name test: `DoctorReader{StaffByUser}`, `AgendaReader{ConfirmedByStaff}`, `PatientReader{PatientIdentity}` (uses `documentNumber`, never `rut`), `OpMyAgenda` (`"my_agenda"`).
+2. Novice-name test: `DoctorReader{StaffByUser}`, `AgendaReader{ConfirmedByStaff}`, `PatientReader{GetPatient}` (uses `documentNumber`, never `rut`), `OpMyAgenda` (`"my_agenda"`).
 3. Complexity ledger:
    - Sibling module imports in `go.mod`: 0 (−6)
    - Cross-module RPC calls from browser `ui/`: 0 (−3; replaced by 1 call to `clinical_encounter.my_agenda`)
@@ -83,9 +83,9 @@ type AgendaReader interface {
 }
 
 // PatientReader obtiene el nombre y número de documento de un paciente por su ID.
-// Ejemplo: name, doc, ok, err := p.PatientIdentity("t1", "p1")
+// Ejemplo: name, doc, _, _, ok, err := p.GetPatient("t1", "p1")
 type PatientReader interface {
-	PatientIdentity(tenantID, patientID string) (name, documentNumber string, found bool, err error)
+	GetPatient(tenantID, patientID string) (name, documentNumber, phone, email string, found bool, err error)
 }
 ```
 
@@ -157,7 +157,7 @@ Create `agenda.go` at the root of `clinical_encounter`:
   - Call `resIDs, patIDs, svcIDs, starts, err := m.agenda.ConfirmedByStaff(args.TenantId, staffID, from, to)`. If `err != nil`, return `nil, err`.
   - For each index `i` in `resIDs`:
     - If `m.patients == nil`, continue.
-    - Call `patName, patDoc, ok, err := m.patients.PatientIdentity(args.TenantId, patIDs[i])`. If `err != nil || !ok`, continue (an unresolvable patient does not break the whole agenda).
+    - Call `patName, patDoc, ok, err := m.patients.GetPatient(args.TenantId, patIDs[i])`. If `err != nil || !ok`, continue (an unresolvable patient does not break the whole agenda).
     - Compute `timeLabel := ""` (if `m.zone.Name() != ""` and `i < len(starts)`, `timeLabel = m.zone.Clock(starts[i])`).
     - Append `AgendaEntry{PatientId: patIDs[i], PatientName: patName, PatientDocument: patDoc, TimeLabel: timeLabel, ReservationId: resIDs[i], ServiceId: svcIDs[i]}` to `out.Entries`.
   - Return `out, nil`.
