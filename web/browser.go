@@ -137,9 +137,10 @@ func main() {
 	}
 
 	// 3. Agregar una reserva confirmada para hoy a las 16:00 hora de Santiago si es posible (omitir si es fin de semana/feriado)
+	zone, _ := tinytime.LoadZone("America/Santiago")
 	nowSec := tinytime.NowUnix()
-	isoDate := tinytime.FormatISO8601(nowSec)[:10]
-	if daySec, err := tinytime.ParseDate(isoDate); err == nil {
+	isoDate := zone.Date(nowSec)
+	if daySec, err := tinytime.ParseDateUTC(isoDate); err == nil {
 		todaySec := daySec
 		if len(patientData.Patients) > 0 && len(bookingData.ServiceConfigs) > 0 {
 			resToday, err := abMod.CreateReservation(ab.CreateReservationCmd{
@@ -164,7 +165,7 @@ func main() {
 	caller := loopback.WithTenant(demoTenantID, ceMod, abMod, sm, dm, ic, pd, bc)
 
 	// 5. Construir vista del navegador WASM para la doctora 'demo-user-ana'
-	screens := ui.Screens(caller, ids, demoTenantID, "demo-user-ana")
+	screens := ui.Screens(caller, zone, ids, demoTenantID, "demo-user-ana")
 
 	steps := []ddl.Step{
 		{Name: devicemanager.ModelName, Run: devicemanagermigrate.Migrate},

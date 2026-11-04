@@ -3,20 +3,20 @@ module github.com/veltylabs/clinical_encounter
 go 1.26.8
 
 require (
-	github.com/veltylabs/appointment_booking v0.3.51
-	github.com/veltylabs/business_calendar v0.5.31
+	github.com/veltylabs/appointment_booking v0.3.75-0.20261104042736-0a0aa2981fff
+	github.com/veltylabs/business_calendar v0.5.40-0.20261104042520-f2e0b7313909
 	github.com/veltylabs/device_manager v0.2.89
 	github.com/veltylabs/patient_directory v0.1.86
 	github.com/veltylabs/service_catalog v0.6.44
 	github.com/veltylabs/staff_manager v0.1.158
 	webtyp.com/auth v0.0.102
-	webtyp.com/components v0.8.57
+	webtyp.com/components v0.8.63
 	webtyp.com/ddl v0.0.39
 	webtyp.com/dom v0.13.29
 	webtyp.com/events v0.1.7
 	webtyp.com/fmt v1.0.0
 	webtyp.com/form v0.4.61
-	webtyp.com/input v0.0.28
+	webtyp.com/input v0.0.33
 	webtyp.com/json v0.5.37
 	webtyp.com/layout v0.3.99
 	webtyp.com/model v0.2.13
@@ -27,7 +27,7 @@ require (
 	webtyp.com/rpc v0.2.15
 	webtyp.com/storage v0.1.18
 	webtyp.com/svg v0.3.33
-	webtyp.com/time v0.6.2
+	webtyp.com/time v0.6.3
 	webtyp.com/unixid v0.3.1
 	webtyp.com/view v0.6.55
 )

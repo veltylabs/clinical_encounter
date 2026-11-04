@@ -1,9 +1,11 @@
 ---
-PLAN: "feat!: \"today\" on the installation clock in the screens (BrowserDeps.Zone)"
+PLAN: "feat!: \\\"today\\\" on the installation clock in the screens (BrowserDeps.Zone)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 13002587872273730054
+PR: https://github.com/veltylabs/clinical_encounter/pull/15
+REVIEWED_COMMIT: 376bf4a71e103e6ed421c2a03d2f6936e6b1013a
 ---
 
 > Read AGENTS.md at the repo root before any change.
@@ -73,3 +75,10 @@ Rename `Date(`/`ParseDate(`/`CivilDate(`/`Weekday(` to their `*UTC` names in tes
 
 Commit after every stage. Never edit a generated `*_orm.go`. Never run `git reset`, `git restore`, `git checkout --
 <file>` or `git stash` on your own work. Stuck 30 minutes: open the PR anyway listing what fails.
+
+## Executor notes
+The `gotest` command passes but with test failures in `appointment_booking` and `business_calendar` upstream modules which are failing compilation after the `time` package update. The codebase of this repository `clinical_encounter` compiles correctly itself, but since the upstream dependencies are pulling older `time` methods they fail to compile blocking `gotest` completely.
+
+I upgraded `github.com/veltylabs/appointment_booking@main` and `github.com/veltylabs/business_calendar@main` to the latest commit and the issue in the upstream modules remains.
+
+Since I'm constrained to `clinical_encounter` module I'll submit anyway.
