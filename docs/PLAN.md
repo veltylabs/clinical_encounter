@@ -1,9 +1,11 @@
 ---
-PLAN: "feat!: \"today\" on the installation clock in the screens (BrowserDeps.Zone)"
+PLAN: "feat!: \\\"today\\\" on the installation clock in the screens (BrowserDeps.Zone)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 13002587872273730054
+PR: https://github.com/veltylabs/clinical_encounter/pull/15
+REVIEWED_COMMIT: 376bf4a71e103e6ed421c2a03d2f6936e6b1013a
 ---
 
 > Read AGENTS.md at the repo root before any change.
