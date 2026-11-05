@@ -41,11 +41,11 @@ type fakePatientReader struct {
 	}
 }
 
-func (f *fakePatientReader) PatientIdentity(tenantID, patientID string) (string, string, bool, error) {
+func (f *fakePatientReader) GetPatient(tenantID, patientID string) (string, string, string, string, bool, error) {
 	if p, ok := f.patients[patientID]; ok {
-		return p.name, p.doc, true, nil
+		return p.name, p.doc, "", "", true, nil
 	}
-	return "", "", false, nil
+	return "", "", "", "", false, nil
 }
 
 func TestMyAgenda(t *testing.T) {

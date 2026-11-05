@@ -38,14 +38,14 @@ func (fakeAgendaReader) ConfirmedByStaff(tenantID, staffID string, from, to time
 
 type fakePatientReader struct{}
 
-func (fakePatientReader) PatientIdentity(tenantID, patientID string) (string, string, bool, error) {
+func (fakePatientReader) GetPatient(tenantID, patientID string) (string, string, string, string, bool, error) {
 	switch patientID {
 	case "demo-pat-1":
-		return "Juan Pérez", "12.345.678-9", true, nil
+		return "Juan Pérez", "12.345.678-9", "", "", true, nil
 	case "demo-pat-2":
-		return "María López", "9.876.543-2", true, nil
+		return "María López", "9.876.543-2", "", "", true, nil
 	default:
-		return "", "", false, nil
+		return "", "", "", "", false, nil
 	}
 }
 

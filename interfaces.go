@@ -32,8 +32,8 @@ type AgendaReader interface {
 	ConfirmedByStaff(tenantID, staffID string, from, to time.Unix) (reservationIDs, patientIDs, serviceIDs []string, startTimes []time.Unix, err error)
 }
 
-// PatientReader obtiene el nombre y número de documento de un paciente por su ID.
-// Ejemplo: name, doc, ok, err := p.PatientIdentity("t1", "p1")
+// PatientReader es la parte de patient_directory que este módulo usa.
+// Ejemplo: name, doc, _, _, ok, err := p.GetPatient("t1", "p1")
 type PatientReader interface {
-	PatientIdentity(tenantID, patientID string) (name, documentNumber string, found bool, err error)
+	GetPatient(tenantID, id string) (name, documentNumber, phone, email string, found bool, err error)
 }

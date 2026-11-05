@@ -62,7 +62,7 @@ func (m *Module) MyAgenda(args MyAgendaArgs) (*MyAgendaResult, error) {
 		patName := ""
 		patDoc := ""
 		if m.patients != nil {
-			name, doc, ok, err := m.patients.PatientIdentity(tenantID, patID)
+			name, doc, _, _, ok, err := m.patients.GetPatient(tenantID, patID)
 			if err != nil || !ok {
 				continue
 			}
