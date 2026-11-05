@@ -57,7 +57,7 @@ require (
 	webtyp.com/html v0.0.30 // indirect
 	webtyp.com/icons v0.0.38 // indirect
 	webtyp.com/keyring v0.2.9 // indirect
-	webtyp.com/lang v0.1.11 // indirect
+	webtyp.com/lang v0.1.12 // indirect
 	webtyp.com/mcp v0.3.20 // indirect
 	webtyp.com/pwa v0.2.13 // indirect
 	webtyp.com/server v0.2.107 // indirect
