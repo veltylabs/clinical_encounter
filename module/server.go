@@ -9,10 +9,9 @@ import (
 	"webtyp.com/model"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
-	"github.com/veltylabs/clinical_encounter/migrate"
 )
 
-var server = appkit.ModuleServer{Migrate: migrate.Migrate, Build: build}
+var server = appkit.ModuleServer{Build: build}
 var browser appkit.ModuleBrowser
 
 func build(d appkit.Deps) (model.ModuleNaming, error) {
