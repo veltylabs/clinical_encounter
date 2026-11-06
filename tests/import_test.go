@@ -205,3 +205,24 @@ func TestImportVisitNoEvent(t *testing.T) {
 		t.Fatalf("expected 0 events, got %d", len(pub.Events))
 	}
 }
+
+// A patient may have no document (patient_directory: document_type "none") or a passport or foreign id: the visit
+// stores whatever the patient has as its snapshot, empty included. Before, such a patient could not be attended.
+func TestVisit_PatientWithoutRUT(t *testing.T) {
+	m := setup(t)
+	for i, doc := range []string{"", "AB123456"} {
+		id := "visit-doc-" + string(rune('a'+i))
+		if _, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
+			TenantId: "t1", Id: id, PatientId: "pat_1", DoctorId: "doc_1", Reason: "control", AttentionAt: 1,
+			PatientNameSnapshot: "Ana", PatientRutSnapshot: doc, DoctorNameSnapshot: "Dra. Pérez",
+		}); err != nil {
+			t.Errorf("CreateVisit with document %q: %v", doc, err)
+		}
+		if _, err := m.ImportVisit(clinicalencounter.MedicalHistory{
+			Id: "imp-" + id, TenantId: "t1", PatientId: "pat_1", DoctorId: "doc_1", Reason: "control",
+			AttentionAt: time.Unix(1520848800), PatientNameSnapshot: "Ana", PatientRutSnapshot: doc, DoctorNameSnapshot: "Dra. Pérez",
+		}); err != nil {
+			t.Errorf("ImportVisit with document %q: %v", doc, err)
+		}
+	}
+}

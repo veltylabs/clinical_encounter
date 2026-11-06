@@ -24,7 +24,7 @@ var MedicalHistoryModel = model.Definition{
 		{Name: "started_at", Type: model.NanoTime()},
 		{Name: "finished_at", Type: model.NanoTime()},
 		{Name: "patient_name_snapshot", Type: input.Text(), Label: "patient name", NotNull: true},
-		{Name: "patient_rut_snapshot", Type: input.Rut(), NotNull: true},
+		{Name: "patient_rut_snapshot", Type: model.Text()}, // el documento que tenga el paciente (RUT, pasaporte, extranjero) o vacío
 		{Name: "doctor_name_snapshot", Type: input.Text(), Label: "doctor name", NotNull: true},
 		{Name: "doctor_specialty_snapshot", Type: input.Text()},
 		{Name: "updated_at", Type: model.NanoTime(), NotNull: true},
@@ -41,7 +41,7 @@ var CreateVisitArgsModel = model.Definition{
 		{Name: "attention_at", Type: input.Number(), NotNull: true},
 		{Name: "reason", Type: input.Text(), NotNull: true},
 		{Name: "patient_name_snapshot", Type: input.Text(), Label: "patient name", NotNull: true},
-		{Name: "patient_rut_snapshot", Type: input.Text(), NotNull: true},
+		{Name: "patient_rut_snapshot", Type: input.Text()}, // vacío si el paciente no tiene documento
 		{Name: "doctor_name_snapshot", Type: input.Text(), Label: "doctor name", NotNull: true},
 		{Name: "reservation_id", Type: input.Text()},
 		{Name: "service_id", Type: input.Text()},

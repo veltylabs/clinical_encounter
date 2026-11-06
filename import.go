@@ -8,7 +8,7 @@ import (
 
 // ImportVisit stores a visit from a previous system already closed, with its own id and dates: it creates it, or
 // updates it when that id already exists, so importing twice leaves the same row. It requires what CreateVisit
-// requires (id, tenant, patient, doctor, reason, patient name and document snapshots, doctor name snapshot) and a
+// requires (id, tenant, patient, doctor, reason, patient name snapshot, doctor name snapshot) and a
 // real moment (AttentionAt > 0). It never uses "now" for a date, never expands supply recipes, publishes no event and
 // opens no transaction (the importer already runs inside one).
 //
@@ -21,7 +21,7 @@ func (m *Module) ImportVisit(v MedicalHistory) (*MedicalHistory, error) {
 		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 	if v.Id == "" || v.PatientId == "" || v.DoctorId == "" || v.Reason == "" ||
-		v.PatientNameSnapshot == "" || v.PatientRutSnapshot == "" || v.DoctorNameSnapshot == "" {
+		v.PatientNameSnapshot == "" || v.DoctorNameSnapshot == "" {
 		return nil, ErrMissingArgs
 	}
 	if v.AttentionAt <= 0 {

@@ -12,7 +12,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
 	}
 	if args.Id == "" || args.PatientId == "" || args.DoctorId == "" || args.Reason == "" ||
-		args.PatientNameSnapshot == "" || args.PatientRutSnapshot == "" || args.DoctorNameSnapshot == "" {
+		args.PatientNameSnapshot == "" || args.DoctorNameSnapshot == "" {
 		return nil, ErrMissingArgs
 	}
 
