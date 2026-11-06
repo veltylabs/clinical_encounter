@@ -26,7 +26,7 @@ func (m *Module) MountOperations(reg router.OperationRegistry) {
 	view.MountSave(reg, OpCreateVisit, func(rec *MedicalHistory) error {
 		out, err := m.CreateVisit(CreateVisitArgs{
 			Id:                      rec.Id,
-			TenantId:                rec.TenantId,
+			TenantId:                m.tenantID, // el tenant es de la instalación, nunca del cliente
 			PatientId:               rec.PatientId,
 			DoctorId:                rec.DoctorId,
 			AttentionAt:             int64(rec.AttentionAt),
@@ -67,6 +67,7 @@ func (m *Module) opGetVisit(ctx router.Context) {
 		rpc.WriteError(ctx, ErrCannotRead)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	record, err := m.GetVisit(args.TenantId, args.Id)
 	if err != nil {
 		rpc.WriteError(ctx, err)
@@ -83,6 +84,7 @@ func (m *Module) opListVisits(ctx router.Context) {
 		rpc.WriteError(ctx, ErrCannotRead)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	records, err := m.ListVisitsByPatient(args.TenantId, args.PatientId)
 	if err != nil {
 		rpc.WriteError(ctx, err)
@@ -103,6 +105,7 @@ func (m *Module) opListRecentPatients(ctx router.Context) {
 		rpc.WriteError(ctx, ErrCannotRead)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	records, err := m.ListRecentPatients(args.TenantId, int(args.Limit))
 	if err != nil {
 		rpc.WriteError(ctx, err)
@@ -123,6 +126,7 @@ func (m *Module) opMyAgenda(ctx router.Context) {
 		rpc.WriteError(ctx, ErrCannotRead)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	if args.UserId == "" {
 		args.UserId = ctx.UserID()
 	}
@@ -142,6 +146,7 @@ func (m *Module) opCompleteVisit(ctx router.Context) {
 		rpc.WriteError(ctx, err)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	record, _, err := m.CompleteVisit(args.TenantId, args.Id, ctx.UserID())
 	if err != nil {
 		rpc.WriteError(ctx, err)
@@ -158,6 +163,7 @@ func (m *Module) opListSupplyUse(ctx router.Context) {
 		rpc.WriteError(ctx, err)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	records, err := m.ListSupplyUse(args.TenantId, args.EncounterId)
 	if err != nil {
 		rpc.WriteError(ctx, err)
@@ -178,6 +184,7 @@ func (m *Module) opUpsertSupplyUse(ctx router.Context) {
 		rpc.WriteError(ctx, err)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	record, err := m.UpsertSupplyUse(args)
 	if err != nil {
 		rpc.WriteError(ctx, err)
@@ -194,6 +201,7 @@ func (m *Module) opDeleteSupplyUse(ctx router.Context) {
 		rpc.WriteError(ctx, err)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	err := m.DeleteSupplyUse(args.TenantId, args.Id)
 	if err != nil {
 		rpc.WriteError(ctx, err)
@@ -208,6 +216,7 @@ func (m *Module) opListPendingSupply(ctx router.Context) {
 		rpc.WriteError(ctx, err)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	records, err := m.ListPendingSupply(args.TenantId)
 	if err != nil {
 		rpc.WriteError(ctx, err)
@@ -228,6 +237,7 @@ func (m *Module) opRetrySupplyUse(ctx router.Context) {
 		rpc.WriteError(ctx, err)
 		return
 	}
+	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
 	record, err := m.RetrySupplyUse(args.TenantId, args.Id, ctx.UserID())
 	if err != nil {
 		rpc.WriteError(ctx, err)

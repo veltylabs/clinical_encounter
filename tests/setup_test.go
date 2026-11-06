@@ -22,7 +22,7 @@ var _ events.Publisher = (*mockPublisher)(nil)
 func setup(t *testing.T) *clinicalencounter.Module {
 	t.Helper()
 	db := orm.New(mem.New())
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{})
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1"})
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}

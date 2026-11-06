@@ -312,3 +312,36 @@ func TestMountOperations_SupplyOp_SupplyUseOff(t *testing.T) {
 		t.Fatalf("expected 400 when supply use is off, got %d", ctx.Status)
 	}
 }
+
+// El navegador no conoce el tenant (appkit.BrowserDeps no lo trae): lo pone el servidor
+// con el de la instalación, y un tenant ajeno enviado por el cliente se ignora.
+func TestMountOperations_TenantFromInstallation(t *testing.T) {
+	m, err := clinicalencounter.New(orm.New(mem.New()), clinicalencounter.Deps{TenantID: "t1"})
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	reg := &mock.Router{}
+	m.MountOperations(reg)
+	reg.Configure(mock.Config{
+		Authn:     func(next router.HandlerFunc) router.HandlerFunc { return next },
+		Authorize: func(userID string, resource model.Resource, action model.Action) bool { return true },
+	})
+
+	create := &mock.Context{
+		InBody: []byte(`{"records":[{"id":"visit_t","patient_id":"pat_1","doctor_id":"doc_1","reason":"Control","attention_at":1700000000,"patient_name_snapshot":"Juan","patient_rut_snapshot":"1-9","doctor_name_snapshot":"Dr. Soto"}]}`),
+	}
+	create.SetUserID("test-user")
+	reg.Invoke("OP", "/"+clinicalencounter.OpCreateVisit, create)
+	if create.Status != 0 && create.Status != 200 {
+		t.Fatalf("create_visit sin tenant: %d %s", create.Status, create.ResponseBody())
+	}
+
+	for _, sent := range []string{"", "otro-tenant"} {
+		get := &mock.Context{InBody: []byte(`{"tenant_id":"` + sent + `","id":"visit_t"}`)}
+		get.SetUserID("test-user")
+		reg.Invoke("OP", "/"+clinicalencounter.OpGetVisit, get)
+		if get.Status != 0 && get.Status != 200 {
+			t.Errorf("get_visit con tenant %q: %d %s", sent, get.Status, get.ResponseBody())
+		}
+	}
+}

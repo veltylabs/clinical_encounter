@@ -13,7 +13,7 @@ import (
 
 func TestScreenSave(t *testing.T) {
 	db := orm.New(mem.New())
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{Publisher: &mock.Broker{}})
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1", Publisher: &mock.Broker{}})
 	if err != nil {
 		t.Fatal(err)
 	}
