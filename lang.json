@@ -90,6 +90,16 @@
       "Krankengeschichte",
       "История болезни"
     ],
+    "Quantity": [
+      "Cantidad",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
     "Scheduled": [
       "Agendada",
       "已安排",
@@ -200,6 +210,16 @@
       "Name des Arztes",
       "имя врача"
     ],
+    "doctor specialty": [
+      "especialidad del médico",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
     "doctor specialty snapshot": [
       "captura de especialidad de doctor",
       "",
@@ -212,6 +232,16 @@
     ],
     "encounter id": [
       "id de encuentro",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "entries": [
+      "registros",
       "",
       "",
       "",
@@ -252,6 +282,16 @@
     ],
     "item id": [
       "id de ítem",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "patient document": [
+      "documento del paciente",
       "",
       "",
       "",
@@ -330,8 +370,38 @@
       "",
       ""
     ],
+    "staff id": [
+      "id de funcionario",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
     "started at": [
       "iniciado en",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "time label": [
+      "etiqueta de hora",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "Atenciones con insumos sin rebajar": [
+      "Atenciones con insumos sin rebajar",
       "",
       "",
       "",

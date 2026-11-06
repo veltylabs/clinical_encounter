@@ -111,7 +111,7 @@ func Screens(caller router.Caller, zone time.Zone, ids model.IDGenerator, tenant
 			})
 		}
 
-		picker := &selectsearch.SelectSearch{Placeholder: "Select a patient from today.s agenda..."}
+		picker := &selectsearch.SelectSearch{Placeholder: "Select a patient from today's agenda..."}
 		opts := make([]selectsearch.SsOption, len(agenda))
 		for i, a := range agenda {
 			opts[i] = selectsearch.SsOption{ID: a.ID, Label: a.Label, Sublabel: a.Sublabel, Description: a.Description}
