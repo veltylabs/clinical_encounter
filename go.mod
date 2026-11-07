@@ -11,7 +11,7 @@ require (
 	webtyp.com/fmt v1.0.0
 	webtyp.com/form v0.4.61
 	webtyp.com/input v0.0.36
-	webtyp.com/json v0.5.37
+	webtyp.com/json v0.5.40
 	webtyp.com/layout v0.3.108
 	webtyp.com/model v0.2.13
 	webtyp.com/msgtype v0.1.0
