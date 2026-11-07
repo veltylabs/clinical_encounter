@@ -37,22 +37,47 @@ type requirePatient struct {
 	chosen *agendaPatient
 }
 
-func (p requirePatient) Filter(term string) []model.Item {
+func (p requirePatient) Search(term string, done func(error)) {
 	if term == "" {
 		if p.chosen != nil {
 			*p.chosen = agendaPatient{}
 		}
-		return nil
+		if done != nil {
+			done(nil)
+		}
+		return
 	}
 	for _, a := range p.agenda {
 		if a.ID == term {
 			if p.chosen != nil {
 				*p.chosen = a
 			}
-			return a.History
+			if done != nil {
+				done(nil)
+			}
+			return
 		}
 	}
-	return nil
+	if p.chosen != nil {
+		*p.chosen = agendaPatient{}
+	}
+	if done != nil {
+		done(nil)
+	}
+}
+
+func (p requirePatient) Items() []model.Item {
+	if p.chosen == nil || p.chosen.ID == "" {
+		return nil
+	}
+	return p.chosen.History
+}
+
+func (p requirePatient) HasMore() bool { return false }
+func (p requirePatient) More(done func(error)) {
+	if done != nil {
+		done(nil)
+	}
 }
 
 func (p requirePatient) Save(recs []model.Model, done func(error)) {
@@ -94,7 +119,7 @@ func Screens(caller router.Caller, zone time.Zone, ids model.IDGenerator, tenant
 		for _, e := range myAgenda.Entries {
 			var history clinicalencounter.MedicalHistoryList
 			_ = blockingCall(caller, clinicalencounter.ModelName+"."+clinicalencounter.OpListVisitsByPatient,
-				&clinicalencounter.ListVisitsArgs{TenantId: tenantID, PatientId: e.PatientId}, &history)
+				&view.ListArgs{Search: e.PatientId}, &history)
 			items := make([]model.Item, len(history))
 			for i, h := range history {
 				items[i] = h.Item()

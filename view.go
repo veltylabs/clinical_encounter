@@ -15,7 +15,7 @@ const titleMedicalHistory = "Medical history"
 // Ejemplo: view := clinicalencounter.NewView(caller)
 func NewView(caller router.Caller) view.Presenter {
 	b := view.NewCallerLister(caller,
-		view.Ops{Module: ModelName, List: OpListVisitsByPatient, Save: OpCreateVisit},
+		view.Ops{Module: ModelName, List: OpListVisitsByPatient, Save: OpCreateVisit, Page: view.Page{First: view.All}},
 		func() model.ModelSlice { return &MedicalHistoryList{} })
 	return view.New(b, &MedicalHistory{}, view.WithTitle(titleMedicalHistory))
 }

@@ -117,3 +117,23 @@ func (m *Module) ListVisitsByPatient(tenantId, patientId string) ([]*MedicalHist
 	}
 	return results, nil // ReadAllX devuelve []*MedicalHistory directamente (igual que service_catalog) — nunca de-referenciarlo
 }
+
+func (m *Module) ListVisitsPaged(tenantId, patientId, after string, limit int64) ([]*MedicalHistory, error) {
+	if tenantId == "" {
+		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
+	}
+	var rec MedicalHistory
+	qb := m.db.Query(&rec).Where(MedicalHistory_.TenantId).Eq(tenantId)
+	if patientId != "" {
+		qb = qb.Where(MedicalHistory_.PatientId).Eq(patientId)
+	}
+	if after != "" {
+		qb = qb.Where(MedicalHistory_.Id).Gt(after)
+	}
+	qb = qb.OrderBy(MedicalHistory_.Id).Asc().Limit(int(limit))
+	results, err := ReadAllMedicalHistory(qb)
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
+}

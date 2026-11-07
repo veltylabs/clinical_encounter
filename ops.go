@@ -47,7 +47,7 @@ func (m *Module) MountOperations(reg router.OperationRegistry) {
 		return nil
 	}).Requires(model.ResourceOf(&MedicalHistoryModel), model.Create)
 	reg.Operation(OpGetVisit, m.opGetVisit).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&GetVisitArgs{})
-	reg.Operation(OpListVisitsByPatient, m.opListVisits).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&ListVisitsArgs{})
+	reg.Operation(OpListVisitsByPatient, m.opListVisits).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&view.ListArgs{})
 	reg.Operation(OpListRecentPatients, m.opListRecentPatients).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&ListRecentPatientsArgs{})
 	reg.Operation(OpMyAgenda, m.opMyAgenda).Requires(model.ResourceOf(&MedicalHistoryModel), model.Read).Accepts(&MyAgendaArgs{})
 
@@ -79,13 +79,12 @@ func (m *Module) opGetVisit(ctx router.Context) {
 }
 
 func (m *Module) opListVisits(ctx router.Context) {
-	var args ListVisitsArgs
+	var args view.ListArgs
 	if err := ctx.Decode(&args); err != nil {
 		rpc.WriteError(ctx, ErrCannotRead)
 		return
 	}
-	args.TenantId = m.tenantID // el tenant es de la instalación, nunca del cliente
-	records, err := m.ListVisitsByPatient(args.TenantId, args.PatientId)
+	records, err := m.ListVisitsPaged(m.tenantID, args.Search, args.After, view.Cap(args.Limit))
 	if err != nil {
 		rpc.WriteError(ctx, err)
 		return

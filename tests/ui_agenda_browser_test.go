@@ -54,6 +54,14 @@ func TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations(t *testing.
 			case clinicalencounter.ModelName + "." + clinicalencounter.OpMyAgenda:
 				return encodeInto(&agendaResult, into)
 			case clinicalencounter.ModelName + "." + clinicalencounter.OpListVisitsByPatient:
+				var listArgs view.ListArgs
+				encodeInto(args, &listArgs)
+				if listArgs.Search == "pat1" {
+					list := clinicalencounter.MedicalHistoryList{
+						{Id: "1", PatientId: "pat1", PatientNameSnapshot: "Juan Pérez", PatientRutSnapshot: "12.345.678-9"},
+					}
+					return encodeInto(&list, into)
+				}
 				empty := clinicalencounter.MedicalHistoryList{}
 				return encodeInto(&empty, into)
 			}
@@ -86,10 +94,16 @@ func TestWASM_ClinicalEncounter_TodayAgendaFromConfirmedReservations(t *testing.
 	}
 
 	// The confirmed reservation's patient is selectable; unknown patient is not.
-	if items := cv.Presenter.Filter("pat1"); items == nil {
+	cv.Presenter.Search("pat1", func(err error) {})
+	if m, ok := cv.Presenter.(interface{ More(func(error)) }); ok { m.More(func(err error) {}) }
+	items := cv.Presenter.Items()
+	if len(items) == 0 {
 		t.Error("expected pat1 to be selectable via Filter")
 	}
-	if items := cv.Presenter.Filter("pat2"); items != nil {
+	cv.Presenter.Search("pat2", func(err error) {})
+	if m, ok := cv.Presenter.(interface{ More(func(error)) }); ok { m.More(func(err error) {}) }
+	items2 := cv.Presenter.Items()
+	if len(items2) != 0 {
 		t.Errorf("expected pat2 to be absent from the agenda, got %v", items)
 	}
 }
@@ -147,6 +161,14 @@ func TestWASM_ClinicalEncounter_NewDraftIsSeededFromThePicker(t *testing.T) {
 			case clinicalencounter.ModelName + "." + clinicalencounter.OpMyAgenda:
 				return encodeInto(&agendaResult, into)
 			case clinicalencounter.ModelName + "." + clinicalencounter.OpListVisitsByPatient:
+				var listArgs view.ListArgs
+				encodeInto(args, &listArgs)
+				if listArgs.Search == "pat1" {
+					list := clinicalencounter.MedicalHistoryList{
+						{Id: "1", PatientId: "pat1", PatientNameSnapshot: "Juan Pérez", PatientRutSnapshot: "12.345.678-9"},
+					}
+					return encodeInto(&list, into)
+				}
 				empty := clinicalencounter.MedicalHistoryList{}
 				return encodeInto(&empty, into)
 			}
@@ -176,7 +198,8 @@ func TestWASM_ClinicalEncounter_NewDraftIsSeededFromThePicker(t *testing.T) {
 	}
 
 	// El picker elige a pat1 — crudview llama a Filter con ese término.
-	cv.Presenter.Filter("pat1")
+	cv.Presenter.Search("pat1", func(err error) {})
+	if m, ok := cv.Presenter.(interface{ More(func(error)) }); ok { m.More(func(err error) {}) }
 
 	seeded, _ := cv.NewRecord().(*clinicalencounter.MedicalHistory)
 	if seeded == nil {

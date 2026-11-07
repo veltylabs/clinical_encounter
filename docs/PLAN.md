@@ -2,8 +2,10 @@
 PLAN: "feat!: paged lists searched on the server (view v0.6.64)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 15331344406658677158
+PR: https://github.com/veltylabs/clinical_encounter/pull/17
+REVIEWED_COMMIT: b51e859fdc73ce913dc0a207b3de487815ef8641
 ---
 
 > Read AGENTS.md at the repo root before any change.

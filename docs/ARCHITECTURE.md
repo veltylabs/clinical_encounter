@@ -80,7 +80,7 @@ estados FSM que no tienen lógica de negocios correspondiente aún. Añadir éso
 |---|---|---|---|
 | `create_visit` | `c` | `medical_history` | Crear una nueva visita desde `CreateVisitArgs` — asigna `Status = StatusCreated`. Responde 409 con `ErrIdTaken` por colisión de ID. |
 | `get_medical_history` | `r` | `medical_history` | Obtener un registro de visita por ID |
-| `list_medical_history` | `r` | `medical_history` | Listar el historial de visitas de un paciente |
+| `list_medical_history` | `r` | `medical_history` | Listar el historial de visitas de un paciente (paginado y buscado en el servidor) |
 
 No existen operaciones de transición de estado (`arrive`/`triage`/`start`/`complete`/`cancel`) aún — ver "El Visit
 FSM" arriba. Añadirlas es un cambio a futuro con su propio plan, una vez que existan los métodos `*Module`
