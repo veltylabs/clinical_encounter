@@ -39,7 +39,7 @@ func TestView_ListPopulatesItems(t *testing.T) {
 	}
 	p := clinicalencounter.NewView(view.NewRecords().Caller(caller))
 	var rerr error
-	p.Reload(func(err error) { rerr = err })
+	p.Search("", func(err error) { rerr = err })
 	if rerr != nil {
 		t.Fatalf("Reload: %v", rerr)
 	}

@@ -20,7 +20,7 @@ func TestScreenSave(t *testing.T) {
 
 	caller := loopback.ActingAs("t1", "u1", m)
 	b := view.NewCallerLister(view.NewRecords().Caller(caller),
-		view.Ops{Module: clinicalencounter.ModelName, List: clinicalencounter.OpListVisitsByPatient, Save: clinicalencounter.OpCreateVisit},
+		view.Ops{Module: clinicalencounter.ModelName, List: clinicalencounter.OpListVisitsByPatient, Save: clinicalencounter.OpCreateVisit, Page: view.Page{First: view.All}},
 		func() model.ModelSlice { return &clinicalencounter.MedicalHistoryList{} })
 
 	rec := &clinicalencounter.MedicalHistory{
