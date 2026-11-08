@@ -2,7 +2,8 @@
 PLAN: "refactor!: clinical_encounter on the closed crud contract — server tenant, transactional batch, single declarative validation, seed.Demo"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: dispatch
+STATUS: running
+SESSION: 4384197113549986892
 ---
 
 > Read AGENTS.md at the repo root before any change.
