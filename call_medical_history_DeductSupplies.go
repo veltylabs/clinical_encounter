@@ -1,9 +1,11 @@
 package clinical_encounter
+
 import (
 	"webtyp.com/crud"
 	"webtyp.com/msgtype"
 	"webtyp.com/notify"
 )
+
 func (p *MedicalHistory) DeductSupplies(a crud.CurrentUser, m *Module, key crud.IdempotencyKey) (crud.FieldsToSave, error) {
 	lines, err := m.ListSupplyUse(p.TenantId, p.Id)
 	if err != nil {

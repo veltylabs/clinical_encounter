@@ -1,8 +1,10 @@
 package clinical_encounter
+
 import (
-    "webtyp.com/crud"
-    "webtyp.com/model"
+	"webtyp.com/crud"
+	"webtyp.com/model"
 )
+
 func (p *RecentPatients) Read(a crud.CurrentUser, filter *RecentPatients, args crud.ReadArgs, m *Module) (model.ModelSlice, error) {
 	limit := 50
 	if filter.Limit > 0 {

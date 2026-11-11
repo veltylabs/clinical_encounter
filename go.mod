@@ -5,7 +5,7 @@ go 1.26.8
 require (
 	webtyp.com/appkit v0.2.36
 	webtyp.com/components v0.8.71
-	webtyp.com/crud v0.0.15
+	webtyp.com/crud v0.0.14
 	webtyp.com/ddl v0.0.49
 	webtyp.com/dom v0.13.29
 	webtyp.com/events v0.1.8
@@ -17,7 +17,7 @@ require (
 	webtyp.com/msgtype v0.1.0
 	webtyp.com/notify v0.2.2
 	webtyp.com/orm v0.12.33
-	webtyp.com/router v0.5.0
+	webtyp.com/router v0.4.22
 	webtyp.com/storage v0.2.2
 	webtyp.com/svg v0.3.33
 	webtyp.com/time v0.6.5
@@ -64,7 +64,7 @@ require (
 	webtyp.com/pwa v0.2.13 // indirect
 	webtyp.com/rbac v0.0.37 // indirect
 	webtyp.com/rpc v0.2.21 // indirect
-	webtyp.com/server v0.2.122 // indirect
+	webtyp.com/server v0.2.121 // indirect
 	webtyp.com/user v0.3.14 // indirect
 	webtyp.com/webauthn v0.1.16 // indirect
 	webtyp.com/widget v0.6.46 // indirect

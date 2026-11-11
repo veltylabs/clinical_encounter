@@ -3,8 +3,8 @@
 package module
 
 import (
-	"webtyp.com/view"
 	"errors"
+	"webtyp.com/view"
 
 	"webtyp.com/appkit"
 	"webtyp.com/model"

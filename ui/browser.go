@@ -6,6 +6,7 @@ import (
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 	"webtyp.com/components/selectsearch"
 	"webtyp.com/components/targethour"
+	"webtyp.com/crud"
 	"webtyp.com/dom"
 	"webtyp.com/fmt"
 	"webtyp.com/layout/crudview"
@@ -19,7 +20,7 @@ import (
 // blockingCall awaits an async router.Caller.Call synchronously via a buffered channel.
 func blockingCall(caller router.Caller, op router.Operation, args model.Encodable, into model.Decodable) error {
 	done := make(chan error, 1)
-	d.Caller.Call(op, args, into, func(err error) { done <- err })
+	caller.Call(op, args, into, func(err error) { done <- err })
 	return <-done
 }
 
@@ -95,6 +96,7 @@ var _ view.Saver = requirePatient{}
 
 // Screens construye las pantallas de este módulo para el menú de la aplicación.
 func Screens(d view.BrowserDeps) []view.Screen {
+	caller := d.Caller
 	cfg := crudview.Config{
 		ParentID:  ID,
 		Presenter: clinicalencounter.NewView(caller),
@@ -110,7 +112,7 @@ func Screens(d view.BrowserDeps) []view.Screen {
 	}
 
 	var myAgenda clinicalencounter.MyAgendaResult
-	err := blockingCall(caller, clinicalencounter.ModelName+"."+router.Operation{Module: "clinical_encounter", Entity: "my_agenda_result", Action: model.Read},
+	err := blockingCall(caller, router.Operation{Module: "clinical_encounter", Entity: "my_agenda_result", Action: model.Read},
 		&clinicalencounter.MyAgendaArgs{TenantId: "", UserId: "", Date: dateStr}, &myAgenda)
 	if err != nil {
 		return nil
@@ -120,7 +122,7 @@ func Screens(d view.BrowserDeps) []view.Screen {
 		agenda := make([]agendaPatient, 0, len(myAgenda.Entries))
 		for _, e := range myAgenda.Entries {
 			var history clinicalencounter.MedicalHistoryList
-			_ = blockingCall(caller, clinicalencounter.ModelName+"."+router.Operation{Module: "clinical_encounter", Entity: "medical_history", Action: model.Read},
+			_ = blockingCall(caller, router.Operation{Module: "clinical_encounter", Entity: "medical_history", Action: model.Read},
 				&crud.ReadArgs{Search: e.PatientId}, &history)
 			items := make([]model.Item, len(history))
 			for i, h := range history {

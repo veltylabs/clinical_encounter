@@ -1,8 +1,10 @@
 package clinical_encounter
+
 import (
-    "webtyp.com/crud"
-    "webtyp.com/model"
+	"webtyp.com/crud"
+	"webtyp.com/model"
 )
+
 func (p *MyAgendaResult) Read(a crud.CurrentUser, filter *MyAgendaResult, args crud.ReadArgs, m *Module) (model.ModelSlice, error) {
 	if filter.Date == "" {
 		return nil, ErrMissingArgs
@@ -11,5 +13,5 @@ func (p *MyAgendaResult) Read(a crud.CurrentUser, filter *MyAgendaResult, args c
 	if err != nil {
 		return nil, err
 	}
-	return &MyAgendaResultList{*res}, nil
+	return &MyAgendaResultList{res}, nil
 }

@@ -2,8 +2,10 @@ package clinical_encounter
 
 import (
 	"webtyp.com/crud"
-	"webtyp.com/storage"
 	"webtyp.com/model"
+	"webtyp.com/orm"
+	"webtyp.com/storage"
+	"webtyp.com/time"
 )
 
 func (m *Module) ListSupplyUseold(tenantId, encounterId string) ([]*EncounterSupply, error) {
@@ -158,7 +160,8 @@ func (m *Module) RetrySupplyUseold(tenantId, id, by string) (*EncounterSupply, e
 		return nil, err
 	}
 
-	if err := m.deductLine(visit, &existing, by); err != nil {
+	m.deductLine(visit, &existing, by)
+	if err := m.store.UpdateFields(&existing, existing.Id, supplyDeductFields); err != nil {
 		return nil, err
 	}
 

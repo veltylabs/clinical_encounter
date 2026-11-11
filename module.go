@@ -29,7 +29,7 @@ type Deps struct {
 }
 
 type Module struct {
-	store *orm.Store
+	store        *orm.Store
 	db           *orm.DB
 	pub          events.Publisher
 	supplyOn     bool
@@ -80,4 +80,3 @@ func New(db *orm.DB, deps Deps) (*Module, error) {
 
 	return m, nil
 }
-

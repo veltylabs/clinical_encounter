@@ -1,4 +1,5 @@
 package clinical_encounter
+
 import "webtyp.com/crud"
 
 // StoreMedicalHistory is the store of medical_history.

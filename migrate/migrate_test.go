@@ -1,8 +1,8 @@
 package migrate_test
 
 import (
-	"webtyp.com/storage"
 	"testing"
+	"webtyp.com/storage"
 
 	"github.com/veltylabs/clinical_encounter/migrate"
 	"webtyp.com/ddl"

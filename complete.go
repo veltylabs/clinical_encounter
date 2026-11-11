@@ -2,13 +2,11 @@ package clinical_encounter
 
 import (
 	"webtyp.com/crud"
-	"webtyp.com/events"
+	"webtyp.com/model"
 	"webtyp.com/time"
 )
 
 const SupplyDocType = "medical_history"
-
-
 
 const msgNoShift = "the professional has no shift in a room at the attention time"
 

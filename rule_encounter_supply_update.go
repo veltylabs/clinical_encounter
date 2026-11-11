@@ -3,7 +3,7 @@ package clinical_encounter
 import "webtyp.com/crud"
 
 func (next *EncounterSupply) Update(a crud.CurrentUser, tx crud.Tx, old *EncounterSupply, fields []string, m *Module) (crud.RuleAnswer, error) {
-    hasStatus := false
+	hasStatus := false
 	for _, f := range fields {
 		if f == "status" {
 			hasStatus = true
@@ -11,12 +11,12 @@ func (next *EncounterSupply) Update(a crud.CurrentUser, tx crud.Tx, old *Encount
 		}
 	}
 
-    if hasStatus && next.Status == SupplyPendingDeduction {
-        if old.Status != SupplyPendingDeduction {
-            return crud.RuleAnswer{}, ErrLineNotPending
-        }
-        return crud.ApplyAndPublish(EncounterSupplyDeduct{}), nil
-    }
+	if hasStatus && next.Status == SupplyPendingDeduction {
+		if old.Status != SupplyPendingDeduction {
+			return crud.RuleAnswer{}, ErrLineNotPending
+		}
+		return crud.ApplyAndPublish(EncounterSupplyDeduct{}), nil
+	}
 
 	if next.Quantity <= 0 {
 		return crud.RuleAnswer{}, ErrQuantity

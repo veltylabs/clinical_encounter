@@ -1,7 +1,6 @@
 package clinical_encounter
 
 import (
-	"webtyp.com/fmt"
 	"webtyp.com/input"
 	"webtyp.com/model"
 )
@@ -55,9 +54,6 @@ var CreateVisitArgsModel = model.Definition{
 	},
 }
 
-
-
-
 var MyAgendaArgsModel = model.Definition{
 	Name: "my_agenda_args",
 	Wire: true,
@@ -81,18 +77,19 @@ var AgendaEntryModel = model.Definition{
 }
 
 var MyAgendaResultModel = model.Definition{
-	Name: "my_agenda_result",
+	Name:  "my_agenda_result",
 	Allow: model.Read,
 	Rules: model.Rules{Read: model.AddMyBusinessRule},
 	Fields: model.Fields{
 		{Name: "tenant_id", Type: model.Text(), OmitEmpty: true}, // filter
-		{Name: "date", Type: model.Text(), OmitEmpty: true}, // filter
+		{Name: "date", Type: model.Text(), OmitEmpty: true},      // filter
 		{Name: "staff_id", Type: model.Text()},
 		{Name: "doctor_name", Type: model.Text()},
 		{Name: "doctor_specialty", Type: model.Text()},
 		{Name: "entries", Type: model.StructSlice(&AgendaEntryModel)},
 	},
 }
+
 const (
 	ErrNotFound    model.NotFound = "visit not found"
 	ErrMissingArgs model.Invalid  = "missing required arguments"
@@ -122,7 +119,6 @@ var EncounterSupplyModel = model.Definition{
 	},
 }
 
-
 var UpsertSupplyUseArgsModel = model.Definition{
 	Name: "upsert_supply_use_args",
 	Wire: true,
@@ -136,16 +132,13 @@ var UpsertSupplyUseArgsModel = model.Definition{
 	},
 }
 
-
-
-
 var RecentPatientsModel = model.Definition{
-	Name: "recent_patients",
+	Name:  "recent_patients",
 	Allow: model.Read,
 	Rules: model.Rules{Read: model.AddMyBusinessRule},
 	Fields: model.Fields{
 		{Name: "tenant_id", Type: model.Text(), OmitEmpty: true}, // filter field
-		{Name: "limit", Type: model.Int(), OmitEmpty: true}, // filter field
+		{Name: "limit", Type: model.Int(), OmitEmpty: true},      // filter field
 	},
 }
 

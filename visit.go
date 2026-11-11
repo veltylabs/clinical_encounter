@@ -2,9 +2,9 @@ package clinical_encounter
 
 import (
 	"webtyp.com/crud"
-	"webtyp.com/storage"
 	"webtyp.com/events"
 	"webtyp.com/model"
+	"webtyp.com/storage"
 	"webtyp.com/time"
 )
 
@@ -87,8 +87,6 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 	return record, nil
 }
 
-
-
 func (m *Module) GetVisit(tenantId, id string) (*MedicalHistory, error) {
 	if tenantId == "" {
 		return nil, model.Invalid("tenant_id is required")
@@ -101,9 +99,9 @@ func (m *Module) GetVisit(tenantId, id string) (*MedicalHistory, error) {
 		}
 		return nil, err
 	}
-    if tenantId != "" && rec.TenantId != tenantId {
-        return nil, model.NotFound("visit not found")
-    }
+	if tenantId != "" && rec.TenantId != tenantId {
+		return nil, model.NotFound("visit not found")
+	}
 	return &rec, nil
 }
 
@@ -125,13 +123,13 @@ func (m *Module) ListVisitsPaged(tenantId, patientId, after string, limit int64)
 	if tenantId == "" {
 		return nil, model.Invalid("tenant_id is required")
 	}
-    q := crud.Query{Limit: limit}
-    if patientId != "" {
-        q.Conditions = append(q.Conditions, storage.Eq("patient_id", patientId))
-    }
-    if after != "" {
-        q.After = after
-    }
+	q := crud.Query{Limit: limit}
+	if patientId != "" {
+		q.Conditions = append(q.Conditions, storage.Eq("patient_id", patientId))
+	}
+	if after != "" {
+		q.After = after
+	}
 	var results []*MedicalHistory
 	err := m.store.ReadAll(func() model.Model { return &MedicalHistory{} }, q, func(rec model.Model) {
 		results = append(results, rec.(*MedicalHistory))
