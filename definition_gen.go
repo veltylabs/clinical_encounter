@@ -3,33 +3,33 @@
 package clinical_encounter
 
 import (
-	"webtyp.com/crud"
-	"webtyp.com/fmt"
 	"webtyp.com/model"
 	"webtyp.com/orm"
+	"webtyp.com/crud"
+	"webtyp.com/fmt"
 	"webtyp.com/time"
 )
 
 type MedicalHistory struct {
-	Id                      string
-	TenantId                string
-	PatientId               string
-	DoctorId                string
-	ReservationId           string
-	ServiceId               string
-	Status                  string
-	AttentionAt             time.Unix
-	Reason                  string
-	Diagnostic              string
-	Prescription            string
-	Cie10Code               string
-	StartedAt               time.Nano
-	FinishedAt              time.Nano
-	PatientNameSnapshot     string
-	PatientRutSnapshot      string
-	DoctorNameSnapshot      string
+	Id string
+	TenantId string
+	PatientId string
+	DoctorId string
+	ReservationId string
+	ServiceId string
+	Status string
+	AttentionAt time.Unix
+	Reason string
+	Diagnostic string
+	Prescription string
+	Cie10Code string
+	StartedAt time.Nano
+	FinishedAt time.Nano
+	PatientNameSnapshot string
+	PatientRutSnapshot string
+	DoctorNameSnapshot string
 	DoctorSpecialtySnapshot string
-	UpdatedAt               time.Nano
+	UpdatedAt time.Nano
 }
 
 func (m *MedicalHistory) ModelName() string { return "medical_history" }
@@ -41,9 +41,7 @@ func (MedicalHistoryDeductSupplies) ModelName() string { return "medical_history
 
 func (m *MedicalHistory) Schema() []model.Field { return MedicalHistoryModel.Fields }
 
-func (m *MedicalHistory) Pointers() []any {
-	return []any{&m.Id, &m.TenantId, &m.PatientId, &m.DoctorId, &m.ReservationId, &m.ServiceId, &m.Status, (*int64)(&m.AttentionAt), &m.Reason, &m.Diagnostic, &m.Prescription, &m.Cie10Code, (*int64)(&m.StartedAt), (*int64)(&m.FinishedAt), &m.PatientNameSnapshot, &m.PatientRutSnapshot, &m.DoctorNameSnapshot, &m.DoctorSpecialtySnapshot, (*int64)(&m.UpdatedAt)}
-}
+func (m *MedicalHistory) Pointers() []any { return []any{&m.Id, &m.TenantId, &m.PatientId, &m.DoctorId, &m.ReservationId, &m.ServiceId, &m.Status, (*int64)(&m.AttentionAt), &m.Reason, &m.Diagnostic, &m.Prescription, &m.Cie10Code, (*int64)(&m.StartedAt), (*int64)(&m.FinishedAt), &m.PatientNameSnapshot, &m.PatientRutSnapshot, &m.DoctorNameSnapshot, &m.DoctorSpecialtySnapshot, (*int64)(&m.UpdatedAt)} }
 
 func (m *MedicalHistory) IsNil() bool { return m == nil }
 
@@ -70,75 +68,33 @@ func (m *MedicalHistory) EncodeFields(w model.FieldWriter) {
 }
 
 func (m *MedicalHistory) DecodeFields(r model.FieldReader) {
-	if v, ok := r.String("id"); ok {
-		m.Id = v
-	}
-	if v, ok := r.String("tenant_id"); ok {
-		m.TenantId = v
-	}
-	if v, ok := r.String("patient_id"); ok {
-		m.PatientId = v
-	}
-	if v, ok := r.String("doctor_id"); ok {
-		m.DoctorId = v
-	}
-	if v, ok := r.String("reservation_id"); ok {
-		m.ReservationId = v
-	}
-	if v, ok := r.String("service_id"); ok {
-		m.ServiceId = v
-	}
-	if v, ok := r.String("status"); ok {
-		m.Status = v
-	}
-	if v, ok := r.Int("attention_at"); ok {
-		m.AttentionAt = time.Unix(v)
-	}
-	if v, ok := r.String("reason"); ok {
-		m.Reason = v
-	}
-	if v, ok := r.String("diagnostic"); ok {
-		m.Diagnostic = v
-	}
-	if v, ok := r.String("prescription"); ok {
-		m.Prescription = v
-	}
-	if v, ok := r.String("cie10_code"); ok {
-		m.Cie10Code = v
-	}
-	if v, ok := r.Int("started_at"); ok {
-		m.StartedAt = time.Nano(v)
-	}
-	if v, ok := r.Int("finished_at"); ok {
-		m.FinishedAt = time.Nano(v)
-	}
-	if v, ok := r.String("patient_name_snapshot"); ok {
-		m.PatientNameSnapshot = v
-	}
-	if v, ok := r.String("patient_rut_snapshot"); ok {
-		m.PatientRutSnapshot = v
-	}
-	if v, ok := r.String("doctor_name_snapshot"); ok {
-		m.DoctorNameSnapshot = v
-	}
-	if v, ok := r.String("doctor_specialty_snapshot"); ok {
-		m.DoctorSpecialtySnapshot = v
-	}
-	if v, ok := r.Int("updated_at"); ok {
-		m.UpdatedAt = time.Nano(v)
-	}
+	if v, ok := r.String("id"); ok { m.Id = v }
+	if v, ok := r.String("tenant_id"); ok { m.TenantId = v }
+	if v, ok := r.String("patient_id"); ok { m.PatientId = v }
+	if v, ok := r.String("doctor_id"); ok { m.DoctorId = v }
+	if v, ok := r.String("reservation_id"); ok { m.ReservationId = v }
+	if v, ok := r.String("service_id"); ok { m.ServiceId = v }
+	if v, ok := r.String("status"); ok { m.Status = v }
+	if v, ok := r.Int("attention_at"); ok { m.AttentionAt = time.Unix(v) }
+	if v, ok := r.String("reason"); ok { m.Reason = v }
+	if v, ok := r.String("diagnostic"); ok { m.Diagnostic = v }
+	if v, ok := r.String("prescription"); ok { m.Prescription = v }
+	if v, ok := r.String("cie10_code"); ok { m.Cie10Code = v }
+	if v, ok := r.Int("started_at"); ok { m.StartedAt = time.Nano(v) }
+	if v, ok := r.Int("finished_at"); ok { m.FinishedAt = time.Nano(v) }
+	if v, ok := r.String("patient_name_snapshot"); ok { m.PatientNameSnapshot = v }
+	if v, ok := r.String("patient_rut_snapshot"); ok { m.PatientRutSnapshot = v }
+	if v, ok := r.String("doctor_name_snapshot"); ok { m.DoctorNameSnapshot = v }
+	if v, ok := r.String("doctor_specialty_snapshot"); ok { m.DoctorSpecialtySnapshot = v }
+	if v, ok := r.Int("updated_at"); ok { m.UpdatedAt = time.Nano(v) }
 }
 
 type MedicalHistoryList []*MedicalHistory
 
-func (s *MedicalHistoryList) Len() int               { return len(*s) }
+func (s *MedicalHistoryList) Len() int             { return len(*s) }
 func (s *MedicalHistoryList) At(i int) model.Fielder { return (*s)[i] }
-func (s *MedicalHistoryList) Append() model.Fielder {
-	v := &MedicalHistory{}
-	*s = append(*s, v)
-	return v
-}
-func (s *MedicalHistoryList) IsNil() bool                      { return s == nil }
+func (s *MedicalHistoryList) Append() model.Fielder  { v := &MedicalHistory{}; *s = append(*s, v); return v }
+func (s *MedicalHistoryList) IsNil() bool          { return s == nil }
 func (s *MedicalHistoryList) EncodeFields(_ model.FieldWriter) {}
 func (s *MedicalHistoryList) DecodeFields(_ model.FieldReader) {}
 
@@ -154,45 +110,45 @@ func (m *MedicalHistory) Item() model.Item {
 }
 
 var MedicalHistory_ = struct {
-	Id                      string
-	TenantId                string
-	PatientId               string
-	DoctorId                string
-	ReservationId           string
-	ServiceId               string
-	Status                  string
-	AttentionAt             string
-	Reason                  string
-	Diagnostic              string
-	Prescription            string
-	Cie10Code               string
-	StartedAt               string
-	FinishedAt              string
-	PatientNameSnapshot     string
-	PatientRutSnapshot      string
-	DoctorNameSnapshot      string
+	Id string
+	TenantId string
+	PatientId string
+	DoctorId string
+	ReservationId string
+	ServiceId string
+	Status string
+	AttentionAt string
+	Reason string
+	Diagnostic string
+	Prescription string
+	Cie10Code string
+	StartedAt string
+	FinishedAt string
+	PatientNameSnapshot string
+	PatientRutSnapshot string
+	DoctorNameSnapshot string
 	DoctorSpecialtySnapshot string
-	UpdatedAt               string
+	UpdatedAt string
 }{
-	Id:                      "id",
-	TenantId:                "tenant_id",
-	PatientId:               "patient_id",
-	DoctorId:                "doctor_id",
-	ReservationId:           "reservation_id",
-	ServiceId:               "service_id",
-	Status:                  "status",
-	AttentionAt:             "attention_at",
-	Reason:                  "reason",
-	Diagnostic:              "diagnostic",
-	Prescription:            "prescription",
-	Cie10Code:               "cie10_code",
-	StartedAt:               "started_at",
-	FinishedAt:              "finished_at",
-	PatientNameSnapshot:     "patient_name_snapshot",
-	PatientRutSnapshot:      "patient_rut_snapshot",
-	DoctorNameSnapshot:      "doctor_name_snapshot",
+	Id: "id",
+	TenantId: "tenant_id",
+	PatientId: "patient_id",
+	DoctorId: "doctor_id",
+	ReservationId: "reservation_id",
+	ServiceId: "service_id",
+	Status: "status",
+	AttentionAt: "attention_at",
+	Reason: "reason",
+	Diagnostic: "diagnostic",
+	Prescription: "prescription",
+	Cie10Code: "cie10_code",
+	StartedAt: "started_at",
+	FinishedAt: "finished_at",
+	PatientNameSnapshot: "patient_name_snapshot",
+	PatientRutSnapshot: "patient_rut_snapshot",
+	DoctorNameSnapshot: "doctor_name_snapshot",
 	DoctorSpecialtySnapshot: "doctor_specialty_snapshot",
-	UpdatedAt:               "updated_at",
+	UpdatedAt: "updated_at",
 }
 
 func ReadOneMedicalHistory(qb *orm.QB, model *MedicalHistory) (*MedicalHistory, error) {
@@ -213,19 +169,19 @@ func ReadAllMedicalHistory(qb *orm.QB) (MedicalHistoryList, error) {
 }
 
 type CreateVisitArgs struct {
-	Id                      string
-	TenantId                string
-	PatientId               string
-	DoctorId                string
-	AttentionAt             int64
-	Reason                  string
-	PatientNameSnapshot     string
-	PatientRutSnapshot      string
-	DoctorNameSnapshot      string
-	ReservationId           string
-	ServiceId               string
-	Diagnostic              string
-	Prescription            string
+	Id string
+	TenantId string
+	PatientId string
+	DoctorId string
+	AttentionAt int64
+	Reason string
+	PatientNameSnapshot string
+	PatientRutSnapshot string
+	DoctorNameSnapshot string
+	ReservationId string
+	ServiceId string
+	Diagnostic string
+	Prescription string
 	DoctorSpecialtySnapshot string
 }
 
@@ -235,9 +191,7 @@ func (m *CreateVisitArgs) Wire() bool { return true }
 
 func (m *CreateVisitArgs) Schema() []model.Field { return CreateVisitArgsModel.Fields }
 
-func (m *CreateVisitArgs) Pointers() []any {
-	return []any{&m.Id, &m.TenantId, &m.PatientId, &m.DoctorId, &m.AttentionAt, &m.Reason, &m.PatientNameSnapshot, &m.PatientRutSnapshot, &m.DoctorNameSnapshot, &m.ReservationId, &m.ServiceId, &m.Diagnostic, &m.Prescription, &m.DoctorSpecialtySnapshot}
-}
+func (m *CreateVisitArgs) Pointers() []any { return []any{&m.Id, &m.TenantId, &m.PatientId, &m.DoctorId, &m.AttentionAt, &m.Reason, &m.PatientNameSnapshot, &m.PatientRutSnapshot, &m.DoctorNameSnapshot, &m.ReservationId, &m.ServiceId, &m.Diagnostic, &m.Prescription, &m.DoctorSpecialtySnapshot} }
 
 func (m *CreateVisitArgs) IsNil() bool { return m == nil }
 
@@ -259,60 +213,28 @@ func (m *CreateVisitArgs) EncodeFields(w model.FieldWriter) {
 }
 
 func (m *CreateVisitArgs) DecodeFields(r model.FieldReader) {
-	if v, ok := r.String("id"); ok {
-		m.Id = v
-	}
-	if v, ok := r.String("tenant_id"); ok {
-		m.TenantId = v
-	}
-	if v, ok := r.String("patient_id"); ok {
-		m.PatientId = v
-	}
-	if v, ok := r.String("doctor_id"); ok {
-		m.DoctorId = v
-	}
-	if v, ok := r.Int("attention_at"); ok {
-		m.AttentionAt = v
-	}
-	if v, ok := r.String("reason"); ok {
-		m.Reason = v
-	}
-	if v, ok := r.String("patient_name_snapshot"); ok {
-		m.PatientNameSnapshot = v
-	}
-	if v, ok := r.String("patient_rut_snapshot"); ok {
-		m.PatientRutSnapshot = v
-	}
-	if v, ok := r.String("doctor_name_snapshot"); ok {
-		m.DoctorNameSnapshot = v
-	}
-	if v, ok := r.String("reservation_id"); ok {
-		m.ReservationId = v
-	}
-	if v, ok := r.String("service_id"); ok {
-		m.ServiceId = v
-	}
-	if v, ok := r.String("diagnostic"); ok {
-		m.Diagnostic = v
-	}
-	if v, ok := r.String("prescription"); ok {
-		m.Prescription = v
-	}
-	if v, ok := r.String("doctor_specialty_snapshot"); ok {
-		m.DoctorSpecialtySnapshot = v
-	}
+	if v, ok := r.String("id"); ok { m.Id = v }
+	if v, ok := r.String("tenant_id"); ok { m.TenantId = v }
+	if v, ok := r.String("patient_id"); ok { m.PatientId = v }
+	if v, ok := r.String("doctor_id"); ok { m.DoctorId = v }
+	if v, ok := r.Int("attention_at"); ok { m.AttentionAt = v }
+	if v, ok := r.String("reason"); ok { m.Reason = v }
+	if v, ok := r.String("patient_name_snapshot"); ok { m.PatientNameSnapshot = v }
+	if v, ok := r.String("patient_rut_snapshot"); ok { m.PatientRutSnapshot = v }
+	if v, ok := r.String("doctor_name_snapshot"); ok { m.DoctorNameSnapshot = v }
+	if v, ok := r.String("reservation_id"); ok { m.ReservationId = v }
+	if v, ok := r.String("service_id"); ok { m.ServiceId = v }
+	if v, ok := r.String("diagnostic"); ok { m.Diagnostic = v }
+	if v, ok := r.String("prescription"); ok { m.Prescription = v }
+	if v, ok := r.String("doctor_specialty_snapshot"); ok { m.DoctorSpecialtySnapshot = v }
 }
 
 type CreateVisitArgsList []*CreateVisitArgs
 
-func (s *CreateVisitArgsList) Len() int               { return len(*s) }
+func (s *CreateVisitArgsList) Len() int             { return len(*s) }
 func (s *CreateVisitArgsList) At(i int) model.Fielder { return (*s)[i] }
-func (s *CreateVisitArgsList) Append() model.Fielder {
-	v := &CreateVisitArgs{}
-	*s = append(*s, v)
-	return v
-}
-func (s *CreateVisitArgsList) IsNil() bool                      { return s == nil }
+func (s *CreateVisitArgsList) Append() model.Fielder  { v := &CreateVisitArgs{}; *s = append(*s, v); return v }
+func (s *CreateVisitArgsList) IsNil() bool          { return s == nil }
 func (s *CreateVisitArgsList) EncodeFields(_ model.FieldWriter) {}
 func (s *CreateVisitArgsList) DecodeFields(_ model.FieldReader) {}
 
@@ -321,34 +243,34 @@ func (m *CreateVisitArgs) Validate(action byte) error {
 }
 
 var CreateVisitArgs_ = struct {
-	Id                      string
-	TenantId                string
-	PatientId               string
-	DoctorId                string
-	AttentionAt             string
-	Reason                  string
-	PatientNameSnapshot     string
-	PatientRutSnapshot      string
-	DoctorNameSnapshot      string
-	ReservationId           string
-	ServiceId               string
-	Diagnostic              string
-	Prescription            string
+	Id string
+	TenantId string
+	PatientId string
+	DoctorId string
+	AttentionAt string
+	Reason string
+	PatientNameSnapshot string
+	PatientRutSnapshot string
+	DoctorNameSnapshot string
+	ReservationId string
+	ServiceId string
+	Diagnostic string
+	Prescription string
 	DoctorSpecialtySnapshot string
 }{
-	Id:                      "id",
-	TenantId:                "tenant_id",
-	PatientId:               "patient_id",
-	DoctorId:                "doctor_id",
-	AttentionAt:             "attention_at",
-	Reason:                  "reason",
-	PatientNameSnapshot:     "patient_name_snapshot",
-	PatientRutSnapshot:      "patient_rut_snapshot",
-	DoctorNameSnapshot:      "doctor_name_snapshot",
-	ReservationId:           "reservation_id",
-	ServiceId:               "service_id",
-	Diagnostic:              "diagnostic",
-	Prescription:            "prescription",
+	Id: "id",
+	TenantId: "tenant_id",
+	PatientId: "patient_id",
+	DoctorId: "doctor_id",
+	AttentionAt: "attention_at",
+	Reason: "reason",
+	PatientNameSnapshot: "patient_name_snapshot",
+	PatientRutSnapshot: "patient_rut_snapshot",
+	DoctorNameSnapshot: "doctor_name_snapshot",
+	ReservationId: "reservation_id",
+	ServiceId: "service_id",
+	Diagnostic: "diagnostic",
+	Prescription: "prescription",
 	DoctorSpecialtySnapshot: "doctor_specialty_snapshot",
 }
 
@@ -371,8 +293,8 @@ func ReadAllCreateVisitArgs(qb *orm.QB) (CreateVisitArgsList, error) {
 
 type MyAgendaArgs struct {
 	TenantId string
-	UserId   string
-	Date     string
+	UserId string
+	Date string
 }
 
 func (m *MyAgendaArgs) ModelName() string { return "my_agenda_args" }
@@ -392,23 +314,17 @@ func (m *MyAgendaArgs) EncodeFields(w model.FieldWriter) {
 }
 
 func (m *MyAgendaArgs) DecodeFields(r model.FieldReader) {
-	if v, ok := r.String("tenant_id"); ok {
-		m.TenantId = v
-	}
-	if v, ok := r.String("user_id"); ok {
-		m.UserId = v
-	}
-	if v, ok := r.String("date"); ok {
-		m.Date = v
-	}
+	if v, ok := r.String("tenant_id"); ok { m.TenantId = v }
+	if v, ok := r.String("user_id"); ok { m.UserId = v }
+	if v, ok := r.String("date"); ok { m.Date = v }
 }
 
 type MyAgendaArgsList []*MyAgendaArgs
 
-func (s *MyAgendaArgsList) Len() int                         { return len(*s) }
-func (s *MyAgendaArgsList) At(i int) model.Fielder           { return (*s)[i] }
-func (s *MyAgendaArgsList) Append() model.Fielder            { v := &MyAgendaArgs{}; *s = append(*s, v); return v }
-func (s *MyAgendaArgsList) IsNil() bool                      { return s == nil }
+func (s *MyAgendaArgsList) Len() int             { return len(*s) }
+func (s *MyAgendaArgsList) At(i int) model.Fielder { return (*s)[i] }
+func (s *MyAgendaArgsList) Append() model.Fielder  { v := &MyAgendaArgs{}; *s = append(*s, v); return v }
+func (s *MyAgendaArgsList) IsNil() bool          { return s == nil }
 func (s *MyAgendaArgsList) EncodeFields(_ model.FieldWriter) {}
 func (s *MyAgendaArgsList) DecodeFields(_ model.FieldReader) {}
 
@@ -417,21 +333,19 @@ func (m *MyAgendaArgs) Validate(action byte) error {
 }
 
 type AgendaEntry struct {
-	PatientId       string
-	PatientName     string
+	PatientId string
+	PatientName string
 	PatientDocument string
-	TimeLabel       string
-	ReservationId   string
-	ServiceId       string
+	TimeLabel string
+	ReservationId string
+	ServiceId string
 }
 
 func (m *AgendaEntry) ModelName() string { return "agenda_entry" }
 
 func (m *AgendaEntry) Schema() []model.Field { return AgendaEntryModel.Fields }
 
-func (m *AgendaEntry) Pointers() []any {
-	return []any{&m.PatientId, &m.PatientName, &m.PatientDocument, &m.TimeLabel, &m.ReservationId, &m.ServiceId}
-}
+func (m *AgendaEntry) Pointers() []any { return []any{&m.PatientId, &m.PatientName, &m.PatientDocument, &m.TimeLabel, &m.ReservationId, &m.ServiceId} }
 
 func (m *AgendaEntry) IsNil() bool { return m == nil }
 
@@ -445,32 +359,20 @@ func (m *AgendaEntry) EncodeFields(w model.FieldWriter) {
 }
 
 func (m *AgendaEntry) DecodeFields(r model.FieldReader) {
-	if v, ok := r.String("patient_id"); ok {
-		m.PatientId = v
-	}
-	if v, ok := r.String("patient_name"); ok {
-		m.PatientName = v
-	}
-	if v, ok := r.String("patient_document"); ok {
-		m.PatientDocument = v
-	}
-	if v, ok := r.String("time_label"); ok {
-		m.TimeLabel = v
-	}
-	if v, ok := r.String("reservation_id"); ok {
-		m.ReservationId = v
-	}
-	if v, ok := r.String("service_id"); ok {
-		m.ServiceId = v
-	}
+	if v, ok := r.String("patient_id"); ok { m.PatientId = v }
+	if v, ok := r.String("patient_name"); ok { m.PatientName = v }
+	if v, ok := r.String("patient_document"); ok { m.PatientDocument = v }
+	if v, ok := r.String("time_label"); ok { m.TimeLabel = v }
+	if v, ok := r.String("reservation_id"); ok { m.ReservationId = v }
+	if v, ok := r.String("service_id"); ok { m.ServiceId = v }
 }
 
 type AgendaEntryList []*AgendaEntry
 
-func (s *AgendaEntryList) Len() int                         { return len(*s) }
-func (s *AgendaEntryList) At(i int) model.Fielder           { return (*s)[i] }
-func (s *AgendaEntryList) Append() model.Fielder            { v := &AgendaEntry{}; *s = append(*s, v); return v }
-func (s *AgendaEntryList) IsNil() bool                      { return s == nil }
+func (s *AgendaEntryList) Len() int             { return len(*s) }
+func (s *AgendaEntryList) At(i int) model.Fielder { return (*s)[i] }
+func (s *AgendaEntryList) Append() model.Fielder  { v := &AgendaEntry{}; *s = append(*s, v); return v }
+func (s *AgendaEntryList) IsNil() bool          { return s == nil }
 func (s *AgendaEntryList) EncodeFields(_ model.FieldWriter) {}
 func (s *AgendaEntryList) DecodeFields(_ model.FieldReader) {}
 
@@ -479,58 +381,42 @@ func (m *AgendaEntry) Validate(action byte) error {
 }
 
 type MyAgendaResult struct {
-	TenantId        string
-	Date            string
-	StaffId         string
-	DoctorName      string
+	TenantId string
+	Date string
+	StaffId string
+	DoctorName string
 	DoctorSpecialty string
-	Entries         []AgendaEntry
+	Entries []AgendaEntry
 }
 
 func (m *MyAgendaResult) ModelName() string { return "my_agenda_result" }
 
 func (m *MyAgendaResult) Schema() []model.Field { return MyAgendaResultModel.Fields }
 
-func (m *MyAgendaResult) Pointers() []any {
-	return []any{&m.TenantId, &m.Date, &m.StaffId, &m.DoctorName, &m.DoctorSpecialty, &m.Entries}
-}
+func (m *MyAgendaResult) Pointers() []any { return []any{&m.TenantId, &m.Date, &m.StaffId, &m.DoctorName, &m.DoctorSpecialty, &m.Entries} }
 
 func (m *MyAgendaResult) IsNil() bool { return m == nil }
 
 func (m *MyAgendaResult) EncodeFields(w model.FieldWriter) {
-	if m.TenantId != "" {
-		w.String("tenant_id", m.TenantId)
-	}
-	if m.Date != "" {
-		w.String("date", m.Date)
-	}
+	if m.TenantId != "" { w.String("tenant_id", m.TenantId) }
+	if m.Date != "" { w.String("date", m.Date) }
 	w.String("staff_id", m.StaffId)
 	w.String("doctor_name", m.DoctorName)
 	w.String("doctor_specialty", m.DoctorSpecialty)
-	{
-		arr := w.Array("entries", len(m.Entries))
-		for _, x := range m.Entries {
-			arr.Object(&x)
+		{
+			arr := w.Array("entries", len(m.Entries))
+			for _, x := range m.Entries {
+				arr.Object(&x)
+			}
 		}
-	}
 }
 
 func (m *MyAgendaResult) DecodeFields(r model.FieldReader) {
-	if v, ok := r.String("tenant_id"); ok {
-		m.TenantId = v
-	}
-	if v, ok := r.String("date"); ok {
-		m.Date = v
-	}
-	if v, ok := r.String("staff_id"); ok {
-		m.StaffId = v
-	}
-	if v, ok := r.String("doctor_name"); ok {
-		m.DoctorName = v
-	}
-	if v, ok := r.String("doctor_specialty"); ok {
-		m.DoctorSpecialty = v
-	}
+	if v, ok := r.String("tenant_id"); ok { m.TenantId = v }
+	if v, ok := r.String("date"); ok { m.Date = v }
+	if v, ok := r.String("staff_id"); ok { m.StaffId = v }
+	if v, ok := r.String("doctor_name"); ok { m.DoctorName = v }
+	if v, ok := r.String("doctor_specialty"); ok { m.DoctorSpecialty = v }
 	if arr, ok := r.Array("entries"); ok {
 		n := arr.Len()
 		m.Entries = make([]AgendaEntry, n)
@@ -542,14 +428,10 @@ func (m *MyAgendaResult) DecodeFields(r model.FieldReader) {
 
 type MyAgendaResultList []*MyAgendaResult
 
-func (s *MyAgendaResultList) Len() int               { return len(*s) }
+func (s *MyAgendaResultList) Len() int             { return len(*s) }
 func (s *MyAgendaResultList) At(i int) model.Fielder { return (*s)[i] }
-func (s *MyAgendaResultList) Append() model.Fielder {
-	v := &MyAgendaResult{}
-	*s = append(*s, v)
-	return v
-}
-func (s *MyAgendaResultList) IsNil() bool                      { return s == nil }
+func (s *MyAgendaResultList) Append() model.Fielder  { v := &MyAgendaResult{}; *s = append(*s, v); return v }
+func (s *MyAgendaResultList) IsNil() bool          { return s == nil }
 func (s *MyAgendaResultList) EncodeFields(_ model.FieldWriter) {}
 func (s *MyAgendaResultList) DecodeFields(_ model.FieldReader) {}
 
@@ -561,19 +443,19 @@ func (*MyAgendaResult) Allow() model.Action     { return MyAgendaResultModel.All
 func (*MyAgendaResultList) Allow() model.Action { return MyAgendaResultModel.Allow }
 
 type EncounterSupply struct {
-	Id          string
-	TenantId    string
+	Id string
+	TenantId string
 	EncounterId string
-	ItemId      string
-	Quantity    float64
-	Billable    bool
-	FromRecipe  bool
-	Status      string
-	RoomId      string
-	Cost        int64
-	Failure     string
-	DeductedAt  time.Nano
-	UpdatedAt   time.Nano
+	ItemId string
+	Quantity float64
+	Billable bool
+	FromRecipe bool
+	Status string
+	RoomId string
+	Cost int64
+	Failure string
+	DeductedAt time.Nano
+	UpdatedAt time.Nano
 }
 
 func (m *EncounterSupply) ModelName() string { return "encounter_supply" }
@@ -585,16 +467,12 @@ func (EncounterSupplyDeduct) ModelName() string { return "encounter_supply.Deduc
 
 func (m *EncounterSupply) Schema() []model.Field { return EncounterSupplyModel.Fields }
 
-func (m *EncounterSupply) Pointers() []any {
-	return []any{&m.Id, &m.TenantId, &m.EncounterId, &m.ItemId, &m.Quantity, &m.Billable, &m.FromRecipe, &m.Status, &m.RoomId, &m.Cost, &m.Failure, (*int64)(&m.DeductedAt), (*int64)(&m.UpdatedAt)}
-}
+func (m *EncounterSupply) Pointers() []any { return []any{&m.Id, &m.TenantId, &m.EncounterId, &m.ItemId, &m.Quantity, &m.Billable, &m.FromRecipe, &m.Status, &m.RoomId, &m.Cost, &m.Failure, (*int64)(&m.DeductedAt), (*int64)(&m.UpdatedAt)} }
 
 func (m *EncounterSupply) IsNil() bool { return m == nil }
 
 func (m *EncounterSupply) EncodeFields(w model.FieldWriter) {
-	if m.Id != "" {
-		w.String("id", m.Id)
-	}
+	if m.Id != "" { w.String("id", m.Id) }
 	w.String("tenant_id", m.TenantId)
 	w.String("encounter_id", m.EncounterId)
 	w.String("item_id", m.ItemId)
@@ -605,66 +483,32 @@ func (m *EncounterSupply) EncodeFields(w model.FieldWriter) {
 	w.String("room_id", m.RoomId)
 	w.Int("cost", m.Cost)
 	w.String("failure", m.Failure)
-	if m.DeductedAt != 0 {
-		w.Int("deducted_at", int64(m.DeductedAt))
-	}
-	if m.UpdatedAt != 0 {
-		w.Int("updated_at", int64(m.UpdatedAt))
-	}
+	if m.DeductedAt != 0 { w.Int("deducted_at", int64(m.DeductedAt)) }
+	if m.UpdatedAt != 0 { w.Int("updated_at", int64(m.UpdatedAt)) }
 }
 
 func (m *EncounterSupply) DecodeFields(r model.FieldReader) {
-	if v, ok := r.String("id"); ok {
-		m.Id = v
-	}
-	if v, ok := r.String("tenant_id"); ok {
-		m.TenantId = v
-	}
-	if v, ok := r.String("encounter_id"); ok {
-		m.EncounterId = v
-	}
-	if v, ok := r.String("item_id"); ok {
-		m.ItemId = v
-	}
-	if v, ok := r.Float("quantity"); ok {
-		m.Quantity = v
-	}
-	if v, ok := r.Bool("billable"); ok {
-		m.Billable = v
-	}
-	if v, ok := r.Bool("from_recipe"); ok {
-		m.FromRecipe = v
-	}
-	if v, ok := r.String("status"); ok {
-		m.Status = v
-	}
-	if v, ok := r.String("room_id"); ok {
-		m.RoomId = v
-	}
-	if v, ok := r.Int("cost"); ok {
-		m.Cost = v
-	}
-	if v, ok := r.String("failure"); ok {
-		m.Failure = v
-	}
-	if v, ok := r.Int("deducted_at"); ok {
-		m.DeductedAt = time.Nano(v)
-	}
-	if v, ok := r.Int("updated_at"); ok {
-		m.UpdatedAt = time.Nano(v)
-	}
+	if v, ok := r.String("id"); ok { m.Id = v }
+	if v, ok := r.String("tenant_id"); ok { m.TenantId = v }
+	if v, ok := r.String("encounter_id"); ok { m.EncounterId = v }
+	if v, ok := r.String("item_id"); ok { m.ItemId = v }
+	if v, ok := r.Float("quantity"); ok { m.Quantity = v }
+	if v, ok := r.Bool("billable"); ok { m.Billable = v }
+	if v, ok := r.Bool("from_recipe"); ok { m.FromRecipe = v }
+	if v, ok := r.String("status"); ok { m.Status = v }
+	if v, ok := r.String("room_id"); ok { m.RoomId = v }
+	if v, ok := r.Int("cost"); ok { m.Cost = v }
+	if v, ok := r.String("failure"); ok { m.Failure = v }
+	if v, ok := r.Int("deducted_at"); ok { m.DeductedAt = time.Nano(v) }
+	if v, ok := r.Int("updated_at"); ok { m.UpdatedAt = time.Nano(v) }
 }
 
 type EncounterSupplyList []*EncounterSupply
 
-func (s *EncounterSupplyList) Len() int               { return len(*s) }
+func (s *EncounterSupplyList) Len() int             { return len(*s) }
 func (s *EncounterSupplyList) At(i int) model.Fielder { return (*s)[i] }
-func (s *EncounterSupplyList) Append() model.Fielder {
-	v := &EncounterSupply{}
-	*s = append(*s, v)
-	return v
-}
-func (s *EncounterSupplyList) IsNil() bool                      { return s == nil }
+func (s *EncounterSupplyList) Append() model.Fielder  { v := &EncounterSupply{}; *s = append(*s, v); return v }
+func (s *EncounterSupplyList) IsNil() bool          { return s == nil }
 func (s *EncounterSupplyList) EncodeFields(_ model.FieldWriter) {}
 func (s *EncounterSupplyList) DecodeFields(_ model.FieldReader) {}
 
@@ -676,33 +520,33 @@ func (*EncounterSupply) Allow() model.Action     { return EncounterSupplyModel.A
 func (*EncounterSupplyList) Allow() model.Action { return EncounterSupplyModel.Allow }
 
 var EncounterSupply_ = struct {
-	Id          string
-	TenantId    string
+	Id string
+	TenantId string
 	EncounterId string
-	ItemId      string
-	Quantity    string
-	Billable    string
-	FromRecipe  string
-	Status      string
-	RoomId      string
-	Cost        string
-	Failure     string
-	DeductedAt  string
-	UpdatedAt   string
+	ItemId string
+	Quantity string
+	Billable string
+	FromRecipe string
+	Status string
+	RoomId string
+	Cost string
+	Failure string
+	DeductedAt string
+	UpdatedAt string
 }{
-	Id:          "id",
-	TenantId:    "tenant_id",
+	Id: "id",
+	TenantId: "tenant_id",
 	EncounterId: "encounter_id",
-	ItemId:      "item_id",
-	Quantity:    "quantity",
-	Billable:    "billable",
-	FromRecipe:  "from_recipe",
-	Status:      "status",
-	RoomId:      "room_id",
-	Cost:        "cost",
-	Failure:     "failure",
-	DeductedAt:  "deducted_at",
-	UpdatedAt:   "updated_at",
+	ItemId: "item_id",
+	Quantity: "quantity",
+	Billable: "billable",
+	FromRecipe: "from_recipe",
+	Status: "status",
+	RoomId: "room_id",
+	Cost: "cost",
+	Failure: "failure",
+	DeductedAt: "deducted_at",
+	UpdatedAt: "updated_at",
 }
 
 func ReadOneEncounterSupply(qb *orm.QB, model *EncounterSupply) (*EncounterSupply, error) {
@@ -729,12 +573,12 @@ func (m *EncounterSupply) SchemaExt() []model.FieldExt {
 }
 
 type UpsertSupplyUseArgs struct {
-	TenantId    string
+	TenantId string
 	EncounterId string
-	Id          string
-	ItemId      string
-	Quantity    float64
-	Billable    bool
+	Id string
+	ItemId string
+	Quantity float64
+	Billable bool
 }
 
 func (m *UpsertSupplyUseArgs) ModelName() string { return "upsert_supply_use_args" }
@@ -743,9 +587,7 @@ func (m *UpsertSupplyUseArgs) Wire() bool { return true }
 
 func (m *UpsertSupplyUseArgs) Schema() []model.Field { return UpsertSupplyUseArgsModel.Fields }
 
-func (m *UpsertSupplyUseArgs) Pointers() []any {
-	return []any{&m.TenantId, &m.EncounterId, &m.Id, &m.ItemId, &m.Quantity, &m.Billable}
-}
+func (m *UpsertSupplyUseArgs) Pointers() []any { return []any{&m.TenantId, &m.EncounterId, &m.Id, &m.ItemId, &m.Quantity, &m.Billable} }
 
 func (m *UpsertSupplyUseArgs) IsNil() bool { return m == nil }
 
@@ -759,36 +601,20 @@ func (m *UpsertSupplyUseArgs) EncodeFields(w model.FieldWriter) {
 }
 
 func (m *UpsertSupplyUseArgs) DecodeFields(r model.FieldReader) {
-	if v, ok := r.String("tenant_id"); ok {
-		m.TenantId = v
-	}
-	if v, ok := r.String("encounter_id"); ok {
-		m.EncounterId = v
-	}
-	if v, ok := r.String("id"); ok {
-		m.Id = v
-	}
-	if v, ok := r.String("item_id"); ok {
-		m.ItemId = v
-	}
-	if v, ok := r.Float("quantity"); ok {
-		m.Quantity = v
-	}
-	if v, ok := r.Bool("billable"); ok {
-		m.Billable = v
-	}
+	if v, ok := r.String("tenant_id"); ok { m.TenantId = v }
+	if v, ok := r.String("encounter_id"); ok { m.EncounterId = v }
+	if v, ok := r.String("id"); ok { m.Id = v }
+	if v, ok := r.String("item_id"); ok { m.ItemId = v }
+	if v, ok := r.Float("quantity"); ok { m.Quantity = v }
+	if v, ok := r.Bool("billable"); ok { m.Billable = v }
 }
 
 type UpsertSupplyUseArgsList []*UpsertSupplyUseArgs
 
-func (s *UpsertSupplyUseArgsList) Len() int               { return len(*s) }
+func (s *UpsertSupplyUseArgsList) Len() int             { return len(*s) }
 func (s *UpsertSupplyUseArgsList) At(i int) model.Fielder { return (*s)[i] }
-func (s *UpsertSupplyUseArgsList) Append() model.Fielder {
-	v := &UpsertSupplyUseArgs{}
-	*s = append(*s, v)
-	return v
-}
-func (s *UpsertSupplyUseArgsList) IsNil() bool                      { return s == nil }
+func (s *UpsertSupplyUseArgsList) Append() model.Fielder  { v := &UpsertSupplyUseArgs{}; *s = append(*s, v); return v }
+func (s *UpsertSupplyUseArgsList) IsNil() bool          { return s == nil }
 func (s *UpsertSupplyUseArgsList) EncodeFields(_ model.FieldWriter) {}
 func (s *UpsertSupplyUseArgsList) DecodeFields(_ model.FieldReader) {}
 
@@ -798,7 +624,7 @@ func (m *UpsertSupplyUseArgs) Validate(action byte) error {
 
 type RecentPatients struct {
 	TenantId string
-	Limit    int64
+	Limit int64
 }
 
 func (m *RecentPatients) ModelName() string { return "recent_patients" }
@@ -810,33 +636,21 @@ func (m *RecentPatients) Pointers() []any { return []any{&m.TenantId, &m.Limit} 
 func (m *RecentPatients) IsNil() bool { return m == nil }
 
 func (m *RecentPatients) EncodeFields(w model.FieldWriter) {
-	if m.TenantId != "" {
-		w.String("tenant_id", m.TenantId)
-	}
-	if m.Limit != 0 {
-		w.Int("limit", m.Limit)
-	}
+	if m.TenantId != "" { w.String("tenant_id", m.TenantId) }
+	if m.Limit != 0 { w.Int("limit", m.Limit) }
 }
 
 func (m *RecentPatients) DecodeFields(r model.FieldReader) {
-	if v, ok := r.String("tenant_id"); ok {
-		m.TenantId = v
-	}
-	if v, ok := r.Int("limit"); ok {
-		m.Limit = v
-	}
+	if v, ok := r.String("tenant_id"); ok { m.TenantId = v }
+	if v, ok := r.Int("limit"); ok { m.Limit = v }
 }
 
 type RecentPatientsList []*RecentPatients
 
-func (s *RecentPatientsList) Len() int               { return len(*s) }
+func (s *RecentPatientsList) Len() int             { return len(*s) }
 func (s *RecentPatientsList) At(i int) model.Fielder { return (*s)[i] }
-func (s *RecentPatientsList) Append() model.Fielder {
-	v := &RecentPatients{}
-	*s = append(*s, v)
-	return v
-}
-func (s *RecentPatientsList) IsNil() bool                      { return s == nil }
+func (s *RecentPatientsList) Append() model.Fielder  { v := &RecentPatients{}; *s = append(*s, v); return v }
+func (s *RecentPatientsList) IsNil() bool          { return s == nil }
 func (s *RecentPatientsList) EncodeFields(_ model.FieldWriter) {}
 func (s *RecentPatientsList) DecodeFields(_ model.FieldReader) {}
 
@@ -858,11 +672,11 @@ func (m *Module) Definition() model.ModuleDefinition { return Definition }
 // MountOperations offers every entity of the module: the actions its model allows, with crud's validation and the rules written in rule_*.go.
 func (m *Module) MountOperations(reg crud.Registry) {
 	reg.AddStoredEntity(crud.StoredEntity{
-		Model:   &MedicalHistory{},
+		Model: &MedicalHistory{},
 		NewList: func() model.ModelSlice { return &MedicalHistoryList{} },
-		Store:   m.StoreMedicalHistory(),
-		Rules:   MedicalHistoryModel.Rules,
-		MFA:     MedicalHistoryModel.MFA,
+		Store: m.StoreMedicalHistory(),
+		Rules: MedicalHistoryModel.Rules,
+		MFA: MedicalHistoryModel.MFA,
 		Update: func(a crud.CurrentUser, tx crud.Tx, old, next model.Model, fields []string) (crud.RuleAnswer, error) {
 			return next.(*MedicalHistory).Update(a, tx, old.(*MedicalHistory), fields, m)
 		},
@@ -874,11 +688,11 @@ func (m *Module) MountOperations(reg crud.Registry) {
 		},
 	})
 	reg.AddStoredEntity(crud.StoredEntity{
-		Model:   &EncounterSupply{},
+		Model: &EncounterSupply{},
 		NewList: func() model.ModelSlice { return &EncounterSupplyList{} },
-		Store:   m.StoreEncounterSupply(),
-		Rules:   EncounterSupplyModel.Rules,
-		MFA:     EncounterSupplyModel.MFA,
+		Store: m.StoreEncounterSupply(),
+		Rules: EncounterSupplyModel.Rules,
+		MFA: EncounterSupplyModel.MFA,
 		Create: func(a crud.CurrentUser, tx crud.Tx, rec model.Model) (crud.RuleAnswer, error) {
 			return rec.(*EncounterSupply).Create(a, tx, m)
 		},
