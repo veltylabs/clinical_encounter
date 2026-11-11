@@ -2,8 +2,10 @@
 PLAN: "refactor!: clinical_encounter on the crud-by-declaration framework — Allow, Rules and ExternalCalls in definition.go, persistence by crud, only domain rules in rule files"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 11246970568991890284
+PR: https://github.com/veltylabs/clinical_encounter/pull/18
+REVIEWED_COMMIT: ad392372dde0cad3868dc17bc1756b29c3f37143
 ---
 
 > Read AGENTS.md at the repo root before any change.
