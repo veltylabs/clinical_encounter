@@ -14,3 +14,27 @@
 - **Keep every `*Args` model that an exported reader's signature still uses** (`grep -n "^func (m \*Module) [A-Z][A-Za-z]*([^)]*Args" *.go` lists them): mark each `Wire: true`; delete only the `*Args` no remaining signature uses.
 - D52 (the entity is its own filter): a filter model (`*Filter`, `*FilterModel`, an `*ArgsModel` that only carried filter values) is not kept: its fields become fields of the read model or table (`OmitEmpty`), and the rule reads them from its receiver; delete the filter type and its `Wire`/`NewFilter` plumbing.
 - Add `var Definition = model.ModuleDefinition{Name: "clinical_encounter", Entities: []model.Definition{…every table and read model of this plan…}}` and, on every table and read model, `Rules` as «Tables, stores and rules» says (`AddMyBusinessRule` where a rule is named, `HaveNoBusinessRule` for the other allowed actions; a read model: `Read: model.AddMyBusinessRule`). Delete the hand topics (`Topic*`) and `Err*`/resources no code uses any more.
+
+## Exact declaration format (definitionc v0.1.43)
+
+Each table is a package-level `var … = model.Definition{…}` **and is listed in `Definition.Entities`**; without that, no skeleton is written for it. `Allow` must include every action whose `Rules` entry is set.
+
+```go
+var MedicalHistoryModel = model.Definition{
+	Name:          "medical_history",
+	Allow:         model.Read | model.Update,
+	Rules:         model.Rules{Read: model.HaveNoBusinessRule, Update: model.AddMyBusinessRule},
+	ExternalCalls: []model.ExternalCallDefinition{{Name: "DeductSupplies", Mode: model.RetryInBackground, MaxAttempts: 3}},
+	Fields:        model.Fields{ /* as today */ },
+}
+var EncounterSupplyModel = model.Definition{
+	Name:          "encounter_supply",
+	Allow:         model.Create | model.Read | model.Update | model.Delete,
+	Rules:         model.Rules{Create: model.AddMyBusinessRule, Read: model.HaveNoBusinessRule, Update: model.AddMyBusinessRule, Delete: model.AddMyBusinessRule},
+	ExternalCalls: []model.ExternalCallDefinition{{Name: "Deduct", Mode: model.RetryInBackground, MaxAttempts: 3}},
+	Fields:        model.Fields{ /* as today */ },
+}
+var Definition = model.ModuleDefinition{Name: "clinical_encounter", Entities: []model.Definition{MedicalHistoryModel, EncounterSupplyModel /* , the read models */}}
+```
+
+`definitionc` (run at the module root, with `export PATH="$PATH:$(go env GOPATH)/bin"`) prints any error and writes once, never overwriting: `rule_medical_history_update.go`, `rule_encounter_supply_create.go`, `_update.go`, `_delete.go`, `call_medical_history_deduct_supplies.go`, `call_encounter_supply_deduct.go`.
