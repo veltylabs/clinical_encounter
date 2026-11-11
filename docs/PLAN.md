@@ -2,8 +2,6 @@
 PLAN: "refactor!: clinical_encounter on the crud-by-declaration framework — Allow, Rules and ExternalCalls in definition.go, persistence by crud, only domain rules in rule files"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
-SESSION: 3767225023142556775
 ---
 
 > Read AGENTS.md at the repo root before any change.
@@ -117,4 +115,4 @@ A read model is a `model.Definition` **without** `DB:` marks, with `Allow: model
 
 ## Delivery check (part 2 of 2)
 
-Part 1 is already merged: `git pull` first. Stages 1–5 are DONE; do only the stages of this plan's table. `gotest` passes on every destination, `langc sync .` is clean, every test row exists in `docs/TESTS.md`. Submit as soon as it is green (git add -A; `git diff --stat main` lists the stage files).
+Part 1 is already merged: `git pull` first. Stages 1–5 are DONE (v0.2.79 is published); do only the stages of this plan's table. `gotest` passes on every destination, `langc sync .` is clean, every test row exists in `docs/TESTS.md`. Submit as soon as it is green (git add -A; `git diff --stat main` lists the stage files).
