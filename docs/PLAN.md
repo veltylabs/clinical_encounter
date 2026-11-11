@@ -2,8 +2,10 @@
 PLAN: "test: clinical_encounter rule tests, part 2a (queue double and four tests)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
+STATUS: review
 SESSION: 18023957337203884021
+PR: https://github.com/veltylabs/clinical_encounter/pull/19
+REVIEWED_COMMIT: 6ba9c1c54f9a8df5a701c533e676d719e8b7591b
 ---
 
 > Read AGENTS.md at the repo root before any change.
