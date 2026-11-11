@@ -3,6 +3,7 @@
 package module
 
 import (
+	"webtyp.com/view"
 	"errors"
 
 	"webtyp.com/appkit"
@@ -12,7 +13,7 @@ import (
 )
 
 var server = appkit.ModuleServer{Build: build}
-var browser appkit.ModuleBrowser
+var browser view.ModuleBrowser
 
 func build(d appkit.Deps) (model.ModuleNaming, error) {
 	doc, err := appkit.Find[clinicalencounter.DoctorReader](d)

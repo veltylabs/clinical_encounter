@@ -1,12 +1,12 @@
 package clinical_encounter
 
 import (
+	"webtyp.com/crud"
+	"webtyp.com/storage"
 	"webtyp.com/model"
-	"webtyp.com/orm"
-	"webtyp.com/time"
 )
 
-func (m *Module) ListSupplyUse(tenantId, encounterId string) ([]*EncounterSupply, error) {
+func (m *Module) ListSupplyUseold(tenantId, encounterId string) ([]*EncounterSupply, error) {
 	if !m.supplyOn {
 		return nil, ErrSupplyUseOff
 	}
@@ -20,7 +20,7 @@ func (m *Module) ListSupplyUse(tenantId, encounterId string) ([]*EncounterSupply
 	return ReadAllEncounterSupply(qb)
 }
 
-func (m *Module) UpsertSupplyUse(args UpsertSupplyUseArgs) (*EncounterSupply, error) {
+func (m *Module) UpsertSupplyUseold(args UpsertSupplyUseArgs) (*EncounterSupply, error) {
 	if !m.supplyOn {
 		return nil, ErrSupplyUseOff
 	}
@@ -84,7 +84,7 @@ func (m *Module) UpsertSupplyUse(args UpsertSupplyUseArgs) (*EncounterSupply, er
 	return &existing, nil
 }
 
-func (m *Module) DeleteSupplyUse(tenantId, id string) error {
+func (m *Module) DeleteSupplyUseold(tenantId, id string) error {
 	if !m.supplyOn {
 		return ErrSupplyUseOff
 	}
@@ -115,7 +115,7 @@ func (m *Module) DeleteSupplyUse(tenantId, id string) error {
 	return m.db.Delete(&EncounterSupply{}, orm.Eq(EncounterSupply_.Id, id), orm.Eq(EncounterSupply_.TenantId, tenantId))
 }
 
-func (m *Module) ListPendingSupply(tenantId string) ([]*EncounterSupply, error) {
+func (m *Module) ListPendingSupplyold(tenantId string) ([]*EncounterSupply, error) {
 	if !m.supplyOn {
 		return nil, ErrSupplyUseOff
 	}
@@ -129,7 +129,7 @@ func (m *Module) ListPendingSupply(tenantId string) ([]*EncounterSupply, error) 
 	return ReadAllEncounterSupply(qb)
 }
 
-func (m *Module) RetrySupplyUse(tenantId, id, by string) (*EncounterSupply, error) {
+func (m *Module) RetrySupplyUseold(tenantId, id, by string) (*EncounterSupply, error) {
 	if !m.supplyOn {
 		return nil, ErrSupplyUseOff
 	}
@@ -163,4 +163,147 @@ func (m *Module) RetrySupplyUse(tenantId, id, by string) (*EncounterSupply, erro
 	}
 
 	return &existing, nil
+}
+
+func (m *Module) ListSupplyUse(tenantId, encounterId string) ([]*EncounterSupply, error) {
+	if !m.supplyOn {
+		return nil, ErrSupplyUseOff
+	}
+	if tenantId == "" {
+		return nil, model.Invalid("tenant_id is required")
+	}
+	var results []*EncounterSupply
+	err := m.store.ReadAll(func() model.Model { return &EncounterSupply{} }, crud.Query{Conditions: []storage.Condition{storage.Eq("encounter_id", encounterId)}}, func(rec model.Model) {
+		results = append(results, rec.(*EncounterSupply))
+	})
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
+func (m *Module) UpsertSupplyUse(args UpsertSupplyUseArgs) (*EncounterSupply, error) {
+	if !m.supplyOn {
+		return nil, ErrSupplyUseOff
+	}
+	if args.TenantId == "" {
+		return nil, model.Invalid("tenant_id is required")
+	}
+	var out *EncounterSupply
+	err := m.store.Atomic(func(tx crud.Tx) error {
+		if args.Id == "" {
+			args.Id = m.ids.NewID()
+			line := &EncounterSupply{
+				Id:          args.Id,
+				TenantId:    args.TenantId,
+				EncounterId: args.EncounterId,
+				ItemId:      args.ItemId,
+				Quantity:    args.Quantity,
+				Billable:    args.Billable,
+				FromRecipe:  false,
+			}
+			_, err := line.Create(crud.CurrentUser{}, tx, m)
+			if err != nil {
+				return err
+			}
+			if err := tx.Create(line); err != nil {
+				return err
+			}
+			out = line
+			return nil
+		}
+
+		var existing EncounterSupply
+		err := tx.ReadOne(&existing, args.Id)
+		if err != nil {
+			return err
+		}
+
+		next := existing
+		next.ItemId = args.ItemId
+		next.Quantity = args.Quantity
+		next.Billable = args.Billable
+
+		_, err = next.Update(crud.CurrentUser{}, tx, &existing, []string{"item_id", "quantity", "billable"}, m)
+		if err != nil {
+			return err
+		}
+		if err := tx.UpdateFields(&next, next.Id, []string{"item_id", "quantity", "billable"}); err != nil {
+			return err
+		}
+		out = &next
+		return nil
+	})
+	return out, err
+}
+
+func (m *Module) DeleteSupplyUse(tenantId, id string) error {
+	if !m.supplyOn {
+		return ErrSupplyUseOff
+	}
+	if tenantId == "" {
+		return model.Invalid("tenant_id is required")
+	}
+	return m.store.Atomic(func(tx crud.Tx) error {
+		var existing EncounterSupply
+		err := tx.ReadOne(&existing, id)
+		if err != nil {
+			return err
+		}
+		_, err = existing.Delete(crud.CurrentUser{}, tx, m)
+		if err != nil {
+			return err
+		}
+		if err := tx.Delete(&existing, existing.Id); err != nil {
+			return err
+		}
+		return nil
+	})
+}
+
+func (m *Module) ListPendingSupply(tenantId string) ([]*EncounterSupply, error) {
+	if !m.supplyOn {
+		return nil, ErrSupplyUseOff
+	}
+	if tenantId == "" {
+		return nil, model.Invalid("tenant_id is required")
+	}
+	var results []*EncounterSupply
+	err := m.store.ReadAll(func() model.Model { return &EncounterSupply{} }, crud.Query{Conditions: []storage.Condition{storage.Eq("status", SupplyPendingDeduction)}}, func(rec model.Model) {
+		results = append(results, rec.(*EncounterSupply))
+	})
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
+func (m *Module) RetrySupplyUse(tenantId, id, by string) (*EncounterSupply, error) {
+	if !m.supplyOn {
+		return nil, ErrSupplyUseOff
+	}
+	if tenantId == "" {
+		return nil, model.Invalid("tenant_id is required")
+	}
+	var out *EncounterSupply
+	err := m.store.Atomic(func(tx crud.Tx) error {
+		var existing EncounterSupply
+		err := tx.ReadOne(&existing, id)
+		if err != nil {
+			return err
+		}
+
+		next := existing
+		next.Status = SupplyPendingDeduction
+		_, err = next.Update(crud.CurrentUser{UserID: by}, tx, &existing, []string{"status"}, m)
+		if err != nil {
+			return err
+		}
+		if err := tx.UpdateFields(&next, next.Id, []string{"status"}); err != nil {
+			return err
+		}
+		out = &next
+		return nil
+	})
+	return out, err
 }

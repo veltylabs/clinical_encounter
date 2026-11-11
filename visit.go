@@ -1,9 +1,10 @@
 package clinical_encounter
 
 import (
+	"webtyp.com/crud"
+	"webtyp.com/storage"
 	"webtyp.com/events"
 	"webtyp.com/model"
-	"webtyp.com/orm"
 	"webtyp.com/time"
 )
 
@@ -59,7 +60,7 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 		return nil, err
 	}
 	if m.pub != nil {
-		m.pub.Publish(events.Event{Topic: TopicVisitCreated, Payload: record})
+		m.pub.Publish(events.Event{Topic: "clinical_encounter.medical_history.created", Payload: record})
 	}
 	if m.supplyOn && record.ServiceId != "" {
 		itemIds, quantities, err := m.recipes.ServiceRecipe(record.TenantId, record.ServiceId)
@@ -86,52 +87,55 @@ func (m *Module) CreateVisit(args CreateVisitArgs) (*MedicalHistory, error) {
 	return record, nil
 }
 
+
+
 func (m *Module) GetVisit(tenantId, id string) (*MedicalHistory, error) {
 	if tenantId == "" {
-		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
+		return nil, model.Invalid("tenant_id is required")
 	}
 	var rec MedicalHistory
-	qb := m.db.Query(&rec).Where(MedicalHistory_.Id).Eq(id).Where(MedicalHistory_.TenantId).Eq(tenantId)
-	_, err := ReadOneMedicalHistory(qb, &rec)
+	err := m.store.ReadOne(&rec, id)
 	if err != nil {
-		if orm.IsNotFound(err) {
-			return nil, ErrNotFound
+		if model.KindOf(err) == model.ErrorNotFound {
+			return nil, model.NotFound("visit not found")
 		}
 		return nil, err
 	}
+    if tenantId != "" && rec.TenantId != tenantId {
+        return nil, model.NotFound("visit not found")
+    }
 	return &rec, nil
 }
 
 func (m *Module) ListVisitsByPatient(tenantId, patientId string) ([]*MedicalHistory, error) {
 	if tenantId == "" {
-		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
+		return nil, model.Invalid("tenant_id is required")
 	}
-	var rec MedicalHistory
-	qb := m.db.Query(&rec).
-		Where(MedicalHistory_.PatientId).Eq(patientId).
-		Where(MedicalHistory_.TenantId).Eq(tenantId).
-		OrderBy(MedicalHistory_.AttentionAt).Desc()
-	results, err := ReadAllMedicalHistory(qb)
+	var results []*MedicalHistory
+	err := m.store.ReadAll(func() model.Model { return &MedicalHistory{} }, crud.Query{Conditions: []storage.Condition{storage.Eq("patient_id", patientId)}, Order: []storage.Order{storage.Desc("attention_at")}}, func(rec model.Model) {
+		results = append(results, rec.(*MedicalHistory))
+	})
 	if err != nil {
 		return nil, err
 	}
-	return results, nil // ReadAllX devuelve []*MedicalHistory directamente (igual que service_catalog) — nunca de-referenciarlo
+	return results, nil
 }
 
 func (m *Module) ListVisitsPaged(tenantId, patientId, after string, limit int64) ([]*MedicalHistory, error) {
 	if tenantId == "" {
-		return nil, &model.FieldError{Field: "tenant_id", Err: ErrTenantRequired}
+		return nil, model.Invalid("tenant_id is required")
 	}
-	var rec MedicalHistory
-	qb := m.db.Query(&rec).Where(MedicalHistory_.TenantId).Eq(tenantId)
-	if patientId != "" {
-		qb = qb.Where(MedicalHistory_.PatientId).Eq(patientId)
-	}
-	if after != "" {
-		qb = qb.Where(MedicalHistory_.Id).Gt(after)
-	}
-	qb = qb.OrderBy(MedicalHistory_.Id).Asc().Limit(int(limit))
-	results, err := ReadAllMedicalHistory(qb)
+    q := crud.Query{Limit: limit}
+    if patientId != "" {
+        q.Conditions = append(q.Conditions, storage.Eq("patient_id", patientId))
+    }
+    if after != "" {
+        q.After = after
+    }
+	var results []*MedicalHistory
+	err := m.store.ReadAll(func() model.Model { return &MedicalHistory{} }, q, func(rec model.Model) {
+		results = append(results, rec.(*MedicalHistory))
+	})
 	if err != nil {
 		return nil, err
 	}

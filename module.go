@@ -13,7 +13,6 @@ import (
 // pasa esta misma constante como view.Ops.Module para que el cliente componga el
 // nombre calificado idéntico.
 // Ejemplo: ModelName == "clinical_encounter"
-const ModelName = "clinical_encounter"
 
 type Deps struct {
 	Publisher    events.Publisher  // opcional: nil deshabilita eventos y la alerta
@@ -30,6 +29,7 @@ type Deps struct {
 }
 
 type Module struct {
+	store *orm.Store
 	db           *orm.DB
 	pub          events.Publisher
 	supplyOn     bool
@@ -47,6 +47,7 @@ type Module struct {
 
 func New(db *orm.DB, deps Deps) (*Module, error) {
 	m := &Module{
+		store:        orm.TenantStore(db, deps.TenantID, deps.IDs),
 		db:           db,
 		pub:          deps.Publisher,
 		ids:          deps.IDs,
@@ -80,6 +81,3 @@ func New(db *orm.DB, deps Deps) (*Module, error) {
 	return m, nil
 }
 
-func (m *Module) ModelName() string {
-	return ModelName
-}

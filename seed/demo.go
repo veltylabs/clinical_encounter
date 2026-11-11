@@ -1,11 +1,12 @@
-package main
+//go:build wasm
+package seed
 
 import (
 	. "webtyp.com/dom"
 	"webtyp.com/events/mock"
 	"webtyp.com/layout/platformd"
 	"webtyp.com/orm"
-	"webtyp.com/router/loopback"
+
 	"webtyp.com/storage/mem"
 	"webtyp.com/time"
 	"webtyp.com/unixid"
@@ -49,7 +50,7 @@ func (fakePatientReader) GetPatient(tenantID, patientID string) (string, string,
 	}
 }
 
-func main() {
+func Demo() view.Demo  {
 	ids, err := unixid.NewUnixID()
 	if err != nil {
 		panic(err)
@@ -79,7 +80,17 @@ func main() {
 	caller := loopback.WithTenant(demoTenantID, ceMod)
 	screens := ui.Screens(caller, zone, ids, demoTenantID, "demo-user-ana")
 
-	p := &platformd.Platform{
+	return view.Demo{
+		Label:      ui.Label,
+		Timezone:   "America/Santiago",
+		ActingAs:   "demo-user-ana",
+		Modules:    []crud.Module{ceMod},
+		Migrations: nil,
+		Screens: func(d view.BrowserDeps) []view.Screen {
+			return ui.Screens(d)
+		},
+	}
+
 		AppName:   ui.Label + " — demo",
 		User:      demoUser{},
 		DefaultID: ui.ID,

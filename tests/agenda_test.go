@@ -80,7 +80,7 @@ func TestMyAgenda(t *testing.T) {
 		},
 	}
 
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1",
 		Publisher: broker,
 		Zone:      zone,
 		Doctors:   docFake,

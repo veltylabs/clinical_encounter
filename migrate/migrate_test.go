@@ -1,6 +1,7 @@
 package migrate_test
 
 import (
+	"webtyp.com/storage"
 	"testing"
 
 	"github.com/veltylabs/clinical_encounter/migrate"
@@ -10,9 +11,9 @@ import (
 
 type dummyExecer struct{ calls []string }
 
-func (d *dummyExecer) Exec(query string, args ...any) error {
+func (d *dummyExecer) Exec(query string, args ...any) (storage.Result, error) {
 	d.calls = append(d.calls, query)
-	return nil
+	return nil, nil
 }
 
 type dummyCompiler struct{}
