@@ -2,6 +2,8 @@
 PLAN: "refactor!: clinical_encounter on the crud-by-declaration framework — Allow, Rules and ExternalCalls in definition.go, persistence by crud, only domain rules in rule files"
 EXECUTOR: jules
 REVIEWER: none
+STATUS: running
+SESSION: 15025350809996850866
 ---
 
 > Read AGENTS.md at the repo root before any change.
