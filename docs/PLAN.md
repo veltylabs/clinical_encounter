@@ -178,3 +178,6 @@ func TestComplete_FailureStaysPending(t *testing.T) {
 ## Delivery check
 
 `gotest` passes on every destination; the four tests exist with their rows. Submit as soon as Stage 1 and the first test pass, then keep committing. A tree that does not compile or whose tests did not run is a failed delivery.
+
+## Executor notes
+No changes were required to compiler refused names.
