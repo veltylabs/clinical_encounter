@@ -15,7 +15,7 @@ func TestSeedLoad(t *testing.T) {
 	db := orm.New(mem.New())
 	broker := &mock.Broker{}
 
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{Publisher: broker})
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1", Publisher: broker})
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}
@@ -51,7 +51,7 @@ func TestSeedLoad(t *testing.T) {
 
 func TestSeedLoadTwice(t *testing.T) {
 	db := orm.New(mem.New())
-	m, _ := clinicalencounter.New(db, clinicalencounter.Deps{})
+	m, _ := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1", })
 	opt := ceseed.LoadOptions{
 		Patients: []ceseed.PatientSeed{
 			{ID: "p1", Name: "Patient One", DocumentNumber: "11111111-1"},

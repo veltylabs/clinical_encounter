@@ -96,7 +96,7 @@ func TestListVisitsByPatient(t *testing.T) {
 func TestCreateVisit_RetryIdempotency(t *testing.T) {
 	db := orm.New(mem.New())
 	pub := &mockPublisher{}
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{Publisher: pub})
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1", Publisher: pub})
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}

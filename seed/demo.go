@@ -1,27 +1,22 @@
-package main
+//go:build wasm
+
+package seed
 
 import (
-	. "webtyp.com/dom"
+	clinicalencounter "github.com/veltylabs/clinical_encounter"
+	"github.com/veltylabs/clinical_encounter/migrate"
+	"github.com/veltylabs/clinical_encounter/ui"
+	"webtyp.com/crud"
+	"webtyp.com/ddl"
 	"webtyp.com/events/mock"
-	"webtyp.com/layout/platformd"
 	"webtyp.com/orm"
-	"webtyp.com/router/loopback"
 	"webtyp.com/storage/mem"
 	"webtyp.com/time"
 	"webtyp.com/unixid"
-
-	clinicalencounter "github.com/veltylabs/clinical_encounter"
-	ceseed "github.com/veltylabs/clinical_encounter/seed"
-	"github.com/veltylabs/clinical_encounter/ui"
+	"webtyp.com/view"
 )
 
 const demoTenantID = "demo"
-
-type demoUser struct{}
-
-func (demoUser) UserName() string    { return "Demo" }
-func (demoUser) UserAvatar() string  { return "" }
-func (demoUser) UserRoles() []string { return []string{"Doctor"} }
 
 type fakeDoctorReader struct{}
 
@@ -49,18 +44,21 @@ func (fakePatientReader) GetPatient(tenantID, patientID string) (string, string,
 	}
 }
 
-func main() {
+// Demo crea una demostración ejecutable del módulo clinical_encounter sobre una base en memoria con datos semilla.
+//
+// Ejemplo: demo, err := seed.Demo()
+func Demo() (view.Demo, error) {
 	ids, err := unixid.NewUnixID()
 	if err != nil {
-		panic(err)
+		return view.Demo{}, err
 	}
 	db := orm.New(mem.New())
-	broker := &mock.Broker{}
-
-	zone, _ := time.LoadZone("America/Santiago")
-
-	ceMod, err := clinicalencounter.New(db, clinicalencounter.Deps{
-		Publisher: broker,
+	zone, err := time.LoadZone("America/Santiago")
+	if err != nil {
+		return view.Demo{}, err
+	}
+	mod, err := clinicalencounter.New(db, clinicalencounter.Deps{
+		Publisher: &mock.Broker{},
 		IDs:       ids,
 		TenantID:  demoTenantID,
 		Zone:      zone,
@@ -69,22 +67,19 @@ func main() {
 		Patients:  fakePatientReader{},
 	})
 	if err != nil {
-		panic(err)
+		return view.Demo{}, err
 	}
-
-	if _, err := ceseed.Load(ceMod, demoTenantID); err != nil {
-		panic(err)
+	if _, err := Load(mod, demoTenantID); err != nil {
+		return view.Demo{}, err
 	}
-
-	caller := loopback.WithTenant(demoTenantID, ceMod)
-	screens := ui.Screens(caller, zone, ids, demoTenantID, "demo-user-ana")
-
-	p := &platformd.Platform{
-		AppName:   ui.Label + " — demo",
-		User:      demoUser{},
-		DefaultID: ui.ID,
-	}
-	_ = screens
-	Append("body", p)
-	select {}
+	return view.Demo{
+		Label:      ui.Label,
+		Timezone:   "America/Santiago",
+		ActingAs:   "demo-user-ana",
+		Modules:    []crud.Module{mod},
+		Migrations: []ddl.Step{{Name: clinicalencounter.Definition.Name, Run: migrate.Migrate}},
+		Screens: func(d view.BrowserDeps) []view.Screen {
+			return ui.Screens(d)
+		},
+	}, nil
 }

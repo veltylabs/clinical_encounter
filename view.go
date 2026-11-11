@@ -1,3 +1,5 @@
+//go:build browser
+
 package clinical_encounter
 
 import (
@@ -8,14 +10,9 @@ import (
 
 const titleMedicalHistory = "Medical history"
 
-// NewView construye el Presenter del historial médico — el motor agnóstico de
-// tecnología que envuelve un renderer (rightpanel, o cualquier otro). Este
-// módulo lo construye (view + model + router); la app decide qué renderer lo
-// dibuja.
-// Ejemplo: view := clinicalencounter.NewView(caller)
 func NewView(caller router.Caller) view.Presenter {
 	b := view.NewCallerLister(caller,
-		view.Ops{Module: ModelName, List: OpListVisitsByPatient, Save: OpCreateVisit, Page: view.Page{First: view.All}},
-		func() model.ModelSlice { return &MedicalHistoryList{} })
+		view.Ops{Module: "clinical_encounter", Page: view.Page{First: view.All}},
+		func() model.TableSlice { return &MedicalHistoryList{} })
 	return view.New(b, &MedicalHistory{}, view.WithTitle(titleMedicalHistory))
 }

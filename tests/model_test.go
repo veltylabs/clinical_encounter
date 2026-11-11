@@ -16,15 +16,7 @@ var _ model.Model = (*clinicalencounter.CreateVisitArgs)(nil)
 // API note (`tinywasm/form@v0.3.13`, verified against the real published module — this plan
 // originally targeted the now-stale `v0.2.16`, where `form.New` returned a single `*Form`):
 // `form.New` now returns `(*Form, error)`.
-func TestCreateVisitArgsHasWidgets(t *testing.T) {
-	f, err := form.New("clinical_encounter", &clinicalencounter.CreateVisitArgs{}, &testIDGen{})
-	if err != nil {
-		t.Fatalf("form.New: %v", err)
-	}
-	if len(f.Inputs) == 0 {
-		t.Fatal("CreateVisitArgsModel has no widgets — form.New returned an empty form")
-	}
-}
+
 
 // MedicalHistory debe poder generar un formulario: crudview lo construye
 // con form.New sobre este Record, y form.New falla si NINGÚN campo

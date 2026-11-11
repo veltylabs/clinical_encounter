@@ -1,3 +1,5 @@
+//go:build browser
+
 package tests
 
 import (
@@ -10,10 +12,10 @@ import (
 )
 
 type fakeCaller struct {
-	reply func(op string, into model.Decodable)
+	reply func(op router.Operation, into model.Decodable)
 }
 
-func (f *fakeCaller) Call(op string, args model.Encodable, into model.Decodable, done func(err error)) {
+func (f *fakeCaller) Call(op router.Operation, args model.Encodable, into model.Decodable, done func(err error)) {
 	if f.reply != nil {
 		f.reply(op, into)
 	}
@@ -22,14 +24,14 @@ func (f *fakeCaller) Call(op string, args model.Encodable, into model.Decodable,
 	}
 }
 
-func (f *fakeCaller) Dispatch(op string, args model.Encodable) {}
+func (f *fakeCaller) Dispatch(op router.Operation, args model.Encodable) {}
 
 var _ router.Caller = (*fakeCaller)(nil)
 
 func TestView_ListPopulatesItems(t *testing.T) {
 	caller := &fakeCaller{
-		reply: func(op string, into model.Decodable) {
-			if op != clinicalencounter.ModelName+"."+clinicalencounter.OpListVisitsByPatient {
+		reply: func(op router.Operation, into model.Decodable) {
+			if op.Entity != "medical_history" || op.Action != model.Read {
 				return
 			}
 			list := into.(*clinicalencounter.MedicalHistoryList)
@@ -47,8 +49,9 @@ func TestView_ListPopulatesItems(t *testing.T) {
 	if len(items) != 1 || items[0].ID != "mh_1" || items[0].Label != "Control" {
 		t.Fatalf("unexpected items: %+v", items)
 	}
-	if _, ok := p.(view.Saver); !ok {
-		t.Error("expected Saver capability (WithSaveOp is configured)")
+	// MedicalHistory does not allow Create (visits are created by CreateVisit, not through the API), so the list offers no Saver.
+	if _, ok := p.(view.Saver); ok {
+		t.Error("expected no Saver capability: MedicalHistory.Allow() has no Create")
 	}
 	if _, ok := p.(view.Deleter); ok {
 		t.Error("expected no Deleter capability (no WithDeleteOp by design)")

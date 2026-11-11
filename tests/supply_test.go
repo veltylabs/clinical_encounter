@@ -10,7 +10,7 @@ import (
 
 func setupSupplyModule(t *testing.T, recipes *fakeRecipes) *clinicalencounter.Module {
 	db := orm.New(mem.New())
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1",
 		Recipes:      recipes,
 		Rooms:        &fakeRooms{},
 		Supplies:     &fakeStock{},

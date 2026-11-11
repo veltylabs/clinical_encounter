@@ -24,12 +24,12 @@ func TestNew_ConfigValidation(t *testing.T) {
 	}{
 		{
 			name:    "no supply deps -> ok, supplyOff",
-			deps:    clinicalencounter.Deps{},
+			deps:    clinicalencounter.Deps{TenantID: "t1", },
 			wantErr: false,
 		},
 		{
 			name: "all supply deps -> ok, supplyOn",
-			deps: clinicalencounter.Deps{
+			deps: clinicalencounter.Deps{TenantID: "t1",
 				Recipes:      fakeRecipes,
 				Rooms:        fakeRooms,
 				Supplies:     fakeStock,
@@ -40,7 +40,7 @@ func TestNew_ConfigValidation(t *testing.T) {
 		},
 		{
 			name: "missing Rooms -> error",
-			deps: clinicalencounter.Deps{
+			deps: clinicalencounter.Deps{TenantID: "t1",
 				Recipes:  fakeRecipes,
 				Supplies: fakeStock,
 			},
@@ -49,7 +49,7 @@ func TestNew_ConfigValidation(t *testing.T) {
 		},
 		{
 			name: "missing IDs when supplyOn -> error",
-			deps: clinicalencounter.Deps{
+			deps: clinicalencounter.Deps{TenantID: "t1",
 				Recipes:      fakeRecipes,
 				Rooms:        fakeRooms,
 				Supplies:     fakeStock,
@@ -60,7 +60,7 @@ func TestNew_ConfigValidation(t *testing.T) {
 		},
 		{
 			name: "missing SuppliesArea when supplyOn -> error",
-			deps: clinicalencounter.Deps{
+			deps: clinicalencounter.Deps{TenantID: "t1",
 				Recipes:  fakeRecipes,
 				Rooms:    fakeRooms,
 				Supplies: fakeStock,

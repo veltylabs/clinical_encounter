@@ -179,7 +179,7 @@ func TestImportVisitNoSupplies(t *testing.T) {
 func TestImportVisitNoEvent(t *testing.T) {
 	pub := &mockPublisher{}
 	db := orm.New(mem.New())
-	m, err := clinicalencounter.New(db, clinicalencounter.Deps{Publisher: pub})
+	m, err := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1", Publisher: pub})
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}
