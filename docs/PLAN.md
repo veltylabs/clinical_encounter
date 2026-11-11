@@ -1,120 +1,178 @@
 ---
-PLAN: "refactor!: clinical_encounter on the crud-by-declaration framework — Allow, Rules and ExternalCalls in definition.go, persistence by crud, only domain rules in rule files"
+PLAN: "test: clinical_encounter rule tests, part 2a (queue double and four tests)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
-SESSION: 15800407535150538476
 ---
 
 > Read AGENTS.md at the repo root before any change.
 > **Finish by yourself:** when the delivery check passes, commit, push and open the pull request. Never ask whether to
 > proceed or finalize — nobody answers, and a session that waits ends without your work. Commit after every stage.
 > Never run `git reset`, `git restore`, `git checkout -- <file>` or `git stash` on your own work.
-> **Publishing:** you publish only by OPENING THE PULL REQUEST (a `git push` from your sandbox does not reach GitHub). Open it after Stage 3 with whatever compiles and keep committing to it.
+> **Publishing:** you publish only by OPENING THE PULL REQUEST (a `git push` from your sandbox does not reach GitHub). Submit after EACH test file that compiles and keep committing.
 > **Never ask a yes/no question about progress**; ask only when a signature in this plan is wrong, and name the symbol.
-> **Before you submit:** `git status` must be clean and `git diff --stat main` must list the stage files (definition.go, rule_*.go, call_*.go, store.go, module.go, tests, docs). A pull request that carries only go.mod, go.sum or docs/PLAN.md is a failed delivery: if that is what your submit shows, `git add -A`, commit and submit again.
-> Never edit `definition_gen.go`: a build error there means `definition.go`, a rule file or a call file is wrong; fix that and run `definitionc` again.
+> **Before you submit:** `git status` must be clean and `git diff --stat main` must list the files of the plan. A pull request that carries only go.mod, go.sum or docs/PLAN.md is a failed delivery: `git add -A`, commit and submit again.
 
-# Plan (part 2 of 2): `clinical_encounter` on the crud-by-declaration framework — tests and documentation
+# Plan: `clinical_encounter` — the first four tests (part 2a)
 
-Today 10 operations. Completing a visit deducts its supplies in another module through `Deps.Supplies` via `ExternalCalls` (D36, D58, D60): each supply row records `deducted`/`failed` with `RetryInBackground`. Visits are created by `CreateVisit` (called by the app's booking flow), not through the API.
-
-Reference implementation of the same migration (read it first, copy its shape): `patient_directory` — `definition.go` (`Definition`, `Allow`, `Rules`), `rule_patient_create.go`/`rule_patient_update.go`/`rule_patient_search.go` (the rules), `store.go`, `readers.go` (signatures kept, bodies on `m.store`).
+The module is migrated and published (v0.2.79). Its old tests of removed code are gone; this plan writes the first four tests, small and exact. Nothing else: no translations, no docs (part 2b). Never edit `definition_gen.go`.
 
 ## Tools
 
 ```bash
 go install webtyp.com/devflow/cmd/gotest@latest
-go install webtyp.com/lang/cmd/langc@latest
-go install webtyp.com/definitionc/cmd/definitionc@v0.1.43
-go get webtyp.com/model@v0.2.20 webtyp.com/crud@v0.0.14 webtyp.com/orm@v0.12.33 webtyp.com/storage@v0.2.2 webtyp.com/ddl@v0.0.49 webtyp.com/router@v0.4.22 webtyp.com/definitionc@v0.1.43 webtyp.com/view@v0.6.74 webtyp.com/appkit@v0.2.36 webtyp.com/rpc@v0.2.21 webtyp.com/externalcalls@v0.2.0
 ```
-Remove every `replace` from `go.mod`; `go mod tidy`.
-`definitionc` is installed in `$(go env GOPATH)/bin`, which is not on the PATH of a fresh shell: write `export PATH="$PATH:$(go env GOPATH)/bin"` in the SAME command that runs it. **`definitionc` rewrites `go.mod` to older versions on every run: after EVERY run repeat the `go get` line above and `go mod tidy`.** If a module cannot be fetched, stop and say so in the PR; never write a hash by hand.
-Before any change check, with `go doc`, that these exist: `model.ModuleDefinition`, `model.Rules` (`model.AddMyBusinessRule`, `model.HaveNoBusinessRule`), `model.ExternalCallDefinition`, `crud.CurrentUser`, `crud.RuleAnswer`, `crud.ApplyAndPublish`, `crud.ApplyWithoutPublishing`, `crud.Topic`, `crud.LoopbackActingAsWithQueue`, and that `definitionc` writes a `definition_gen.go` containing `func (m *Module) MountOperations(`. If one is missing, stop and say so in the PR.
+No `go get`, no `replace`. Read files by ranges (`sed -n 1,80p file`).
 
-## Lessons of the reference module (`patient_directory`, executed locally)
+## Stage 1 — `tests/queue_double_test.go` (new, copy as is)
 
-- Needs `crud` ≥ v0.0.14 (a filter has no required field) and `definitionc` ≥ v0.1.43. `Search(a, filter *X, text, m)`: a text of `""` is normal (the rule runs on every read).
-- Running `definitionc` rewrites `go.mod` to older versions: run the `go get` list of «Tools» again after it, then `go mod tidy`; raise stale indirect dependencies (`rbac`, `mcp`, `appkit`) to the published ones.
-- In tests, events reach the publisher given to `crud.LoopbackActingAs(pub, "u1", mod)`, not `Deps.Publisher`; a caller double takes `router.Operation`; a `ddl.Execer` double returns `(storage.Result, error)`; a rule that rejects answers `return crud.RuleAnswer{}, err` (assert the refusal and that nothing was stored).
-- `langc sync .` can warn that other languages are untranslated: that is the repo's `lang.json`, not this plan.
+```go
+package tests
 
-## The rule of this plan (decisions D28–D50, D58, D60 of the architecture master)
+import (
+	"webtyp.com/crud"
+	"webtyp.com/fmt"
+	"webtyp.com/model"
+)
 
-The framework persists; the module declares and writes only domain rules.
+// callQueue is the test double of crud.CallQueue: it records what crud asks and stores nothing.
+type callQueue struct {
+	added  []crud.CallRequest
+	done   []string
+	failed []string // the reasons
+}
 
-| The module no longer writes | Who does it now |
-|---|---|
-| id, `tenant_id`, `created_at`/`updated_at`, the transaction loop, create/update/delete bodies, «not found», batch atomicity, idempotent retry by id, paging by `After`, `tenant_id` in every query, schema checks repeated from the model | `crud` + `orm.TenantStore` / `orm.GlobalStore` |
-| an operation per verb (`list_*`, `save_*`, `upsert_*`, `delete_*`), its handler, `ops.go`, the permission resources and the event topics | `Allow` + `Rules` in `definition.go`; `definitionc` writes `MountOperations`; `crud` names the operation (`router.Operation{Module, Entity, Action}`; on the wire `GET\|POST\|PATCH\|DELETE /api/<module>/<entity>`, in MCP `<module>.<entity>.read\|create\|update\|delete`) and publishes `<module>.<entity>.created\|updated\|deleted` with a `*crud.Change` after the commit |
-| an action with its own permission (approve, settle, receive stock…) | a **record created** in its own table, or a **read model** with its own name (D18) |
-| external system calls, outbox tables, retry loops | `Definition.ExternalCalls` + `crud.ApplyAndPublish(calls...)`; `crud` records the call within `tx` and orchestrates execution (`WaitForReply`, `RetryInBackground`, `WaitForConfirmation`) |
+func (q *callQueue) Add(tx crud.Tx, r crud.CallRequest) (string, error) {
+	q.added = append(q.added, r)
+	return fmt.Sprintf("call-%d", len(q.added)), nil
+}
+func (q *callQueue) MarkDone(id string) error { q.done = append(q.done, id); return nil }
+func (q *callQueue) MarkFailedAttempt(id string, call model.ExternalCallDefinition, reason string) error {
+	q.failed = append(q.failed, reason)
+	return nil
+}
+func (q *callQueue) ConfirmCall(id string) error        { return nil }
+func (q *callQueue) RejectCall(id, reason string) error { return nil }
+```
 
-A module writes: `definition.go` (`var Definition = model.ModuleDefinition{…}` and, per table, `Allow`, `Rules`, and `ExternalCalls`), one `rule_<entity>_<verb>.go` for every action declared `model.AddMyBusinessRule` (created once by `definitionc`; the skeleton does not compile until completed), one `call_<entity>_<call>.go` for every external call declared, and `store.go` (`func (m *Module) Store<Entity>() crud.Store`, one line per table). Every allowed action that has no rule below is declared `model.HaveNoBusinessRule`: `crud` alone checks it. Read the reference first: `patient_directory` (`definition.go`, `rule_patient_*.go`, `store.go`).
+## Stage 2 — `tests/rules_test.go` (new)
 
-| Rule | Form (the receiver is the entity) |
-|---|---|
-| Create | `func (p *X) Create(a crud.CurrentUser, tx crud.Tx, m *Module) (crud.RuleAnswer, error)` |
-| Update | `func (next *X) Update(a crud.CurrentUser, tx crud.Tx, old *X, fields []string, m *Module) (crud.RuleAnswer, error)` (`next` carries only the sent `fields`) |
-| Delete | `func (p *X) Delete(a crud.CurrentUser, tx crud.Tx, m *Module) (crud.RuleAnswer, error)` (`p` is the stored row) |
-| Search (Read of a table) | `func (p *X) Search(a crud.CurrentUser, filter *X, text string, m *Module) ([]storage.Condition, error)` — AND conditions only; it runs on every read, `text` may be `""`, and `filter` is a record of the entity with only the fields the caller sent (D52: the entity is its own filter) |
-| Read (model without a table) | `func (p *X) Read(a crud.CurrentUser, filter *X, args crud.ReadArgs, m *Module) (model.ModelSlice, error)` (`filter` carries the fields the caller sent, D52) |
-| External Call | `func (p *X) CallName(a crud.CurrentUser, m *Module, key crud.IdempotencyKey) (crud.FieldsToSave, error)` |
+The fixtures `fakeRecipes`, `fakeRooms`, `fakeStock`, `fakeIDs` already exist in `tests/supply_fakes_test.go`; `setup(t)` in `tests/setup_test.go`. Write exactly (adapt only a name the compiler refuses, and say which in the PR):
 
-A rule ends with `return crud.ApplyAndPublish(calls...), nil` (saves, announces, and enqueues external calls) or `crud.ApplyWithoutPublishing(calls...)` (saves and enqueues without announcing); a rejection is `return crud.RuleAnswer{}, err`. It queries with `tx`, never with `m.db`. To write another row it calls `tx.Create`/`tx.UpdateFields`. The old `Committed` hook does not exist.
+```go
+package tests
 
-**External calls (verified against `crud` v0.0.14).** A rule asks for a call with `return crud.ApplyAndPublish(<Entity><Call>{}), nil`; `definitionc` writes the type `<Entity><Call>` and the skeleton `call_<entity>_<call>.go`. The call is a **method on the stored record** `p`: it **sets fields on `p`** and returns their column names, `p.Status = StatusDone; return crud.Fields("status"), nil` (`crud.FieldsToSave` is `[]string`, never a map; `crud` saves exactly those columns). On failure return `nil, err`: `crud` marks the attempt failed in the queue and the record keeps its old values (a call cannot write a `failed` status; the reason lives in the queue row). A `WaitForReply` call runs inside the request. A `RetryInBackground` call runs later with an **empty `crud.CurrentUser{}`**: it never uses `a.UserID`. A module that declares calls needs a queue: the app passes `appkit.NewCallQueue(q)`; the tests pass the double of Stage 6.
+import (
+	"testing"
 
+	clinicalencounter "github.com/veltylabs/clinical_encounter"
+	"webtyp.com/crud"
+	"webtyp.com/model"
+	"webtyp.com/orm"
+	"webtyp.com/router"
+	"webtyp.com/router/mock"
+	"webtyp.com/storage/mem"
+)
 
-## Tables, stores and rules
+// moduleWithSupplies builds the module with the recipe, the room and the stock fakes the visit needs.
+func moduleWithSupplies(t *testing.T, rooms *fakeRooms, stock *fakeStock) *clinicalencounter.Module {
+	t.Helper()
+	m, err := clinicalencounter.New(orm.New(mem.New()), clinicalencounter.Deps{
+		TenantID:     "t1",
+		Recipes:      &fakeRecipes{items: []string{"i1"}, qtys: []float64{1}},
+		Rooms:        rooms,
+		Supplies:     stock,
+		IDs:          &fakeIDs{},
+		SuppliesArea: "supplies_area",
+	})
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	return m
+}
 
-An action with a rule below is declared `model.AddMyBusinessRule` in the table's `Rules`; every other allowed action is `model.HaveNoBusinessRule`. A `Search` below is the rule of `Read`.
+// newVisit creates visit v1 of doctor d1 with one planned supply line.
+func newVisit(t *testing.T, m *clinicalencounter.Module) {
+	t.Helper()
+	_, err := m.CreateVisit(clinicalencounter.CreateVisitArgs{
+		TenantId: "t1", Id: "v1", PatientId: "p1", DoctorId: "d1", Reason: "control", AttentionAt: 100,
+		PatientNameSnapshot: "P", PatientRutSnapshot: "1-9", DoctorNameSnapshot: "D", ServiceId: "s1",
+	})
+	if err != nil {
+		t.Fatalf("CreateVisit: %v", err)
+	}
+}
 
-| Table (`<X>Model`) | Store | `Allow` | Rules (`rule_<entity>_<verb>.go`) & ExternalCalls |
-|---|---|---|---|
-| `MedicalHistory` | `orm.TenantStore` | `model.Read \| model.Update` | `Update`: clinical fields, and `["status"]` to completed with the checks of `CompleteVisit` (only by its professional); when completed and `m.supplyOn`, `crud.ApplyAndPublish(MedicalHistoryDeductSupplies{})`. ExternalCall: `DeductSupplies` (`RetryInBackground`, `MaxAttempts: 3`) |
-| `EncounterSupply` | `orm.TenantStore` | `model.Create \| model.Read \| model.Update \| model.Delete` | `Create`/`Update`: checks of `UpsertSupplyUse`; `Update` with `["status"]` = `SupplyPendingDeduction` on a row already in that status (else `ErrLineNotPending`): retry, returns `crud.ApplyAndPublish(EncounterSupplyDeduct{})`. ExternalCall: `Deduct` (`RetryInBackground`, `MaxAttempts: 3`), enqueued by the retry; `Delete`: checks of `DeleteSupplyUse` (not yet deducted) |
+// complete asks, as `user`, to complete visit v1 and answers the callback error.
+func complete(m *clinicalencounter.Module, q *callQueue, user string) error {
+	var callErr error
+	crud.LoopbackActingAsWithQueue(nil, user, q, m).Call(
+		router.Operation{Module: clinicalencounter.ModelName, Entity: "medical_history", Action: model.Update},
+		&crud.UpdateArgs{IDs: []string{"v1"}, Fields: []string{"status"}, Record: &clinicalencounter.MedicalHistory{Status: clinicalencounter.StatusCompleted}},
+		nil, func(err error) { callErr = err })
+	return callErr
+}
 
-## Read models (D18 — no table, `Allow: model.Read` only, `Rules.Read: model.AddMyBusinessRule`)
+func TestMount_MatchesDefinition(t *testing.T) {
+	m := moduleWithSupplies(t, &fakeRooms{}, &fakeStock{})
+	if err := crud.MountWithQueue(&mock.Router{}, nil, nil, &callQueue{}, m); err != nil {
+		t.Fatalf("the generated mount does not match the definition: %v", err)
+	}
+}
 
-| Model | Filter | Answered by |
-|---|---|---|
-| `MyAgendaResult` (existing) | `MyAgendaFilter{date int64}` (from `MyAgendaArgsModel`) | `MyAgenda` with the professional = `a.UserID` |
-| `recent_patients` (a `model.ModuleNaming` value named `recent_patients` returning `MedicalHistoryList`) | none | `ListRecentPatients(tenant, limit)` |
+func TestComplete_OnlyOwnProfessional(t *testing.T) {
+	m := moduleWithSupplies(t, &fakeRooms{roomId: "r1", found: true}, &fakeStock{cost: 500})
+	newVisit(t, m)
+	q := &callQueue{}
+	if err := complete(m, q, "u2"); err == nil {
+		t.Fatal("another user completed the visit")
+	}
+	if len(q.added) != 0 {
+		t.Fatalf("a refused completion must not queue a call, got %d", len(q.added))
+	}
+}
 
-A read model is a `model.Definition` **without** `DB:` marks, with `Allow: model.Read` and `Rules: model.Rules{Read: model.AddMyBusinessRule}`, listed in `Definition.Entities`; `definitionc` mounts it and creates its `rule_<model name>_read.go`. Its permission resource is its own `ModelName`: list it in the README permissions table (roles must be granted it).
+func TestComplete_DeductsViaExternalCall(t *testing.T) {
+	m := moduleWithSupplies(t, &fakeRooms{roomId: "r1", found: true}, &fakeStock{cost: 500})
+	newVisit(t, m)
+	q := &callQueue{}
+	if err := complete(m, q, "d1"); err != nil {
+		t.Fatalf("complete: %v", err)
+	}
+	if len(q.added) != 1 || q.added[0].Call != "DeductSupplies" {
+		t.Fatalf("expected one DeductSupplies call, got %+v", q.added)
+	}
+	visit, err := m.GetVisit("t1", "v1")
+	if err != nil {
+		t.Fatalf("GetVisit: %v", err)
+	}
+	if _, err := visit.DeductSupplies(crud.CurrentUser{}, m, "k"); err != nil {
+		t.Fatalf("DeductSupplies: %v", err)
+	}
+	lines, err := m.ListSupplyUse("t1", "v1")
+	if err != nil || len(lines) != 1 || lines[0].Status != clinicalencounter.SupplyDeducted {
+		t.Fatalf("expected one deducted line, got %+v, %v", lines, err)
+	}
+}
 
-## Operation mapping (every operation of today has exactly one row)
+func TestComplete_FailureStaysPending(t *testing.T) {
+	m := moduleWithSupplies(t, &fakeRooms{found: false}, &fakeStock{})
+	newVisit(t, m)
+	q := &callQueue{}
+	if err := complete(m, q, "d1"); err != nil {
+		t.Fatalf("complete: %v", err)
+	}
+	visit, _ := m.GetVisit("t1", "v1")
+	if _, err := visit.DeductSupplies(crud.CurrentUser{}, m, "k"); err != nil {
+		t.Fatalf("DeductSupplies: %v", err)
+	}
+	lines, _ := m.ListSupplyUse("t1", "v1")
+	if len(lines) != 1 || lines[0].Status != clinicalencounter.SupplyPendingDeduction || lines[0].Failure == "" {
+		t.Fatalf("expected one pending line with the failure text, got %+v", lines)
+	}
+}
+```
+(`GetVisit` answers a `*MedicalHistory` or a value: use `&visit` if it is a value. `mock.Router` is `webtyp.com/router/mock`.) Each test has its row in `docs/TESTS.md` (`| [Name](../tests/rules_test.go) | rule |`, header `| Test | Rule |`).
 
-«After» is `router.Operation{Module, Entity, Action}` written `<entity>.<verb>`; the wire form is `crud`'s (REST `/api/<module>/<entity>` by method, MCP `<module>.<entity>.<verb>`).
+## Delivery check
 
-| Today | After |
-|---|---|
-| `get_medical_history / list_medical_history` | `medical_history.read` |
-| `list_recent_patients` | read model `recent_patients` |
-| `my_agenda` | read model `MyAgendaResult` |
-| `complete_visit` | `medical_history.update` with `["status"]` = completed |
-| `list_supply_use` | `encounter_supply.read` with filter `{encounter_id}` |
-| `upsert_supply_use` | `encounter_supply.create` / `_u` |
-| `delete_supply_use` | `encounter_supply.delete` |
-| `list_pending_supply` | `encounter_supply.read` with filter `{status:"pending"}` |
-| `retry_supply_use` | `encounter_supply.update` with `["status"]` = `SupplyPendingDeduction` |
-
-## Rules learned from the failed sessions of this wave (read before starting)
-
-1. **Do not write, summarize or iterate on a plan.** This index and the stage files are the finished spec. Start Stage 1 now.
-2. **Read files by ranges** (`sed -n 1,80p file`, then `sed -n 81,160p file`); never one huge `cat`: its output is cut.
-3. **A field a rule uses is the one in `definition_gen.go`:** `grep -n "type <Entity> struct" -A25 definition_gen.go`. `ServerOnly` only blocks the CLIENT: a rule may set any field of its receiver and of rows it creates with `tx.Create`. A field that does not exist is a question for the PR (name it), never an invention.
-4. **No python or regex over the source:** edit file by file; `gotest` after each stage.
-
-## Stages (do them in order; commit after each)
-
-| Stage | File |
-|---|---|
-| 6 — tests (`tests/`, through `crud.LoopbackActingAsWithQueue(nil, "u1", &callQueue{}, mod)`; rows in `docs/TESTS.md`) | [PLAN_STAGE_6_tests.md](PLAN_STAGE_6_tests.md) |
-| 7 — translations and documentation (Spanish, veltylabs) | [PLAN_STAGE_7_translations_and_documentati.md](PLAN_STAGE_7_translations_and_documentati.md) |
-
-## Delivery check (part 2 of 2)
-
-Part 1 is already merged: `git pull` first. Stages 1–5 are DONE (v0.2.79 is published); do only the stages of this plan's table. `gotest` passes on every destination, `langc sync .` is clean, every test row exists in `docs/TESTS.md`. Submit as soon as it is green (git add -A; `git diff --stat main` lists the stage files).
+`gotest` passes on every destination; the four tests exist with their rows. Submit as soon as Stage 1 and the first test pass, then keep committing. A tree that does not compile or whose tests did not run is a failed delivery.
