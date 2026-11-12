@@ -58,3 +58,6 @@ Add `docs/diagrams/PLACEMENT.md` (context, `flowchart TD`, walkthrough): what th
 | 1 | `errors.go`, call sites |
 | 2 | `lang.json` |
 | 3 | `README.md`, `docs/*.md`, `docs/diagrams/*.md`, comments |
+## Executor notes
+
+- \`langc sync .\` reporta el error: \`'doctor specialty' and 'doctor specialty snapshot' share 'doctor specialty' — already a key, reuse it: fmt.Err("doctor specialty", rest)\`. Esto sigue ocurriendo a pesar de que el array se modificó a \`fmt.Err("doctor specialty", "snapshot").Error()\`. Como se pidió, esto se reporta en las notas de ejecución.
