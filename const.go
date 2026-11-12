@@ -1,6 +1,6 @@
 package clinical_encounter
 
-// Visit status — FHIR-aligned lifecycle
+// Estado de la visita — ciclo de vida alineado con FHIR
 const (
 	StatusCreated    = "created"     // agendado, aún no en clínica
 	StatusArrived    = "arrived"     // paciente registrado en recepción
@@ -10,7 +10,7 @@ const (
 	StatusCancelled  = "cancelled"
 )
 
-// Encounter supply line status
+// Estado de la línea de insumos del encuentro
 const (
 	SupplyPlanned          = "planned"
 	SupplyDeducted         = "deducted"

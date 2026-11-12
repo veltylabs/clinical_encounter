@@ -5,6 +5,7 @@ import (
 )
 
 // MyAgenda resuelve la agenda del día para un profesional identificado por su usuario.
+// Ejemplo: res, err := m.MyAgenda("tenant1", "user1", "2023-10-27")
 func (m *Module) MyAgenda(args MyAgendaArgs) (*MyAgendaResult, error) {
 	tenantID := args.TenantId
 	if tenantID == "" {

@@ -6,13 +6,13 @@ import (
 	"webtyp.com/time"
 )
 
-// ImportVisit stores a visit from a previous system already closed, with its own id and dates: it creates it, or
-// updates it when that id already exists, so importing twice leaves the same row. It requires what CreateVisit
-// requires (id, tenant, patient, doctor, reason, patient name snapshot, doctor name snapshot) and a
-// real moment (AttentionAt > 0). It never uses "now" for a date, never expands supply recipes, publishes no event and
-// opens no transaction (the importer already runs inside one).
+// ImportVisit guarda una visita de un sistema anterior ya cerrada, con su propio id y fechas: la crea, o
+// la actualiza cuando ese id ya existe, de modo que importar dos veces deja la misma fila. Requiere lo que requiere
+// CreateVisit (id, tenant, paciente, doctor, motivo, captura del nombre del paciente, captura del nombre del doctor) y un
+// momento real (AttentionAt > 0). Nunca usa "ahora" para una fecha, nunca expande recetas de insumos, no publica ningún evento y
+// no abre ninguna transacción (el importador ya se ejecuta dentro de una).
 //
-// Example: v, err := enc.ImportVisit(MedicalHistory{Id: "8000000000000000005", TenantId: t, PatientId: p,
+// Ejemplo: v, err := enc.ImportVisit(MedicalHistory{Id: "8000000000000000005", TenantId: t, PatientId: p,
 //
 //	DoctorId: d, AttentionAt: at, Reason: "control", PatientNameSnapshot: "Ana", PatientRutSnapshot: "12345678-5",
 //	DoctorNameSnapshot: "Dra. Pérez"})

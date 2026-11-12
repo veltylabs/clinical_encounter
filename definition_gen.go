@@ -34,7 +34,8 @@ type MedicalHistory struct {
 
 func (m *MedicalHistory) ModelName() string { return "medical_history" }
 
-// MedicalHistoryDeductSupplies is the ExternalCall type for medical_history.DeductSupplies.
+// MedicalHistoryDeductSupplies es el tipo ExternalCall para medical_history.DeductSupplies.
+// Ejemplo: call := &MedicalHistoryDeductSupplies{ID: "123"}
 type MedicalHistoryDeductSupplies struct{}
 
 func (MedicalHistoryDeductSupplies) ModelName() string { return "medical_history.DeductSupplies" }
@@ -460,7 +461,8 @@ type EncounterSupply struct {
 
 func (m *EncounterSupply) ModelName() string { return "encounter_supply" }
 
-// EncounterSupplyDeduct is the ExternalCall type for encounter_supply.Deduct.
+// EncounterSupplyDeduct es el tipo ExternalCall para encounter_supply.Deduct.
+// Ejemplo: call := &EncounterSupplyDeduct{ID: "123"}
 type EncounterSupplyDeduct struct{}
 
 func (EncounterSupplyDeduct) ModelName() string { return "encounter_supply.Deduct" }
@@ -661,15 +663,18 @@ func (m *RecentPatients) Validate(action byte) error {
 func (*RecentPatients) Allow() model.Action     { return RecentPatientsModel.Allow }
 func (*RecentPatientsList) Allow() model.Action { return RecentPatientsModel.Allow }
 
-// ModelName is the module identity: Definition.Name.
+// ModelName es la identidad del módulo: Definition.Name.
+// Ejemplo: name := ModelName
 const ModelName = "clinical_encounter"
 
 func (m *Module) ModelName() string { return ModelName }
 
-// Definition is the module's declaration (definition.go); crud.Mount compares it with what MountOperations mounted.
+// Definition es la declaración del módulo (definition.go); crud.Mount la compara con lo que montó MountOperations.
+// Ejemplo: def := Definition
 func (m *Module) Definition() model.ModuleDefinition { return Definition }
 
-// MountOperations offers every entity of the module: the actions its model allows, with crud's validation and the rules written in rule_*.go.
+// MountOperations ofrece cada entidad del módulo: las acciones que su modelo permite, con validación de crud y las reglas escritas en rule_*.go.
+// Ejemplo: MountOperations(reg)
 func (m *Module) MountOperations(reg crud.Registry) {
 	reg.AddStoredEntity(crud.StoredEntity{
 		Model: &MedicalHistory{},
