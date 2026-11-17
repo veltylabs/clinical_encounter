@@ -1,5 +1,3 @@
-//go:build browser
-
 package clinical_encounter
 
 import (
