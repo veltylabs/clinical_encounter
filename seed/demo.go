@@ -8,7 +8,7 @@ import (
 	"github.com/veltylabs/clinical_encounter/ui"
 	"webtyp.com/crud"
 	"webtyp.com/ddl"
-	"webtyp.com/events/mock"
+	"webtyp.com/events/inprocess"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
 	"webtyp.com/time"
@@ -58,7 +58,7 @@ func Demo() (view.Demo, error) {
 		return view.Demo{}, err
 	}
 	mod, err := clinicalencounter.New(db, clinicalencounter.Deps{
-		Publisher: &mock.Broker{},
+		Publisher: &inprocess.Broker{},
 		IDs:       ids,
 		TenantID:  demoTenantID,
 		Zone:      zone,

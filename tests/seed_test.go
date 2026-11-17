@@ -6,14 +6,14 @@ import (
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 	ceseed "github.com/veltylabs/clinical_encounter/seed"
-	"webtyp.com/events/mock"
+	"webtyp.com/events/inprocess"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
 )
 
 func TestSeedLoad(t *testing.T) {
 	db := orm.New(mem.New())
-	broker := &mock.Broker{}
+	broker := &inprocess.Broker{}
 
 	m, err := clinicalencounter.New(db, clinicalencounter.Deps{TenantID: "t1", Publisher: broker})
 	if err != nil {

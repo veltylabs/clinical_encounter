@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
-	"webtyp.com/events/mock"
+	"webtyp.com/events/inprocess"
 	"webtyp.com/orm"
 	"webtyp.com/storage/mem"
 	"webtyp.com/time"
@@ -50,7 +50,7 @@ func (f *fakePatientReader) GetPatient(tenantID, patientID string) (string, stri
 
 func TestMyAgenda(t *testing.T) {
 	db := orm.New(mem.New())
-	broker := &mock.Broker{}
+	broker := &inprocess.Broker{}
 
 	zone, err := time.LoadZone("America/Santiago")
 	if err != nil {

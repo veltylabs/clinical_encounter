@@ -2,8 +2,8 @@
 PLAN: "chore: clinical_encounter part 2b (reuse warnings, translations, Spanish docs)"
 EXECUTOR: jules
 REVIEWER: none
-STATUS: running
-SESSION: 7220420923211271352
+STATUS: review
+PR: https://github.com/veltylabs/clinical_encounter/pull/20
 ---
 
 > Read AGENTS.md at the repo root before any change.
