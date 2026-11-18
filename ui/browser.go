@@ -111,7 +111,7 @@ func Screens(d view.BrowserDeps) []view.Screen {
 
 	var myAgenda clinicalencounter.MyAgendaResult
 	err := blockingCall(caller, router.Operation{Module: "clinical_encounter", Entity: "my_agenda_result", Action: model.Read},
-		&clinicalencounter.MyAgendaArgs{TenantId: "", UserId: "", Date: dateStr}, &myAgenda)
+		&crud.ReadArgs{Filter: &clinicalencounter.MyAgendaResult{Date: dateStr}}, &myAgenda)
 	if err != nil {
 		return nil
 	}
