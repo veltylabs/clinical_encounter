@@ -109,11 +109,16 @@ func Screens(d view.BrowserDeps) []view.Screen {
 		dateStr = d.Zone.Date(time.NowUnix())
 	}
 
-	var myAgenda clinicalencounter.MyAgendaResult
+	// A crud read answers a list; my_agenda_result has one row, the agenda of the caller.
+	var agendas clinicalencounter.MyAgendaResultList
 	err := blockingCall(caller, router.Operation{Module: "clinical_encounter", Entity: "my_agenda_result", Action: model.Read},
-		&crud.ReadArgs{Filter: &clinicalencounter.MyAgendaResult{Date: dateStr}}, &myAgenda)
+		&crud.ReadArgs{Filter: &clinicalencounter.MyAgendaResult{Date: dateStr}}, &agendas)
 	if err != nil {
 		return nil
+	}
+	var myAgenda clinicalencounter.MyAgendaResult
+	if len(agendas) > 0 && agendas[0] != nil {
+		myAgenda = *agendas[0]
 	}
 
 	if myAgenda.StaffId != "" {
