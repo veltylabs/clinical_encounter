@@ -1,9 +1,13 @@
 # clinical_encounter
 <img src="docs/img/badges.svg">
 
-Contexto de límite de gestión de encuentros clínicos para el ecosistema Velty.
+Contexto de gestión de encuentros clínicos para el ecosistema Velty.
 
-## Vista y demo
+## ¿Por qué existe?
+
+Este módulo gestiona la historia clínica y las visitas de pacientes, permitiendo crear y gestionar encuentros, suministros médicos y atención en salud.
+
+## Antes de comenzar
 
 Este módulo exporta su pantalla de navegador bajo `ui/` y datos de demostración bajo `seed/`:
 
@@ -14,7 +18,7 @@ Este módulo exporta su pantalla de navegador bajo `ui/` y datos de demostració
 
 Ejecute `webtyp` en la raíz del repositorio para abrir la demostración — en el navegador, en memoria, sin inicio de sesión.
 
-## Importar historia
+## Guía paso a paso
 
 El método `ImportVisit` permite importar una visita cerrada de un sistema previo con sus fechas reales (`AttentionAt`, `StartedAt`, `FinishedAt`). No usa la fecha actual "now", evitando que el historial de visitas pasadas aparezcan cerradas el día de la importación.
 
@@ -26,3 +30,9 @@ v, err := enc.ImportVisit(MedicalHistory{
     DoctorNameSnapshot: "Dra. Pérez"
 })
 ```
+
+## Mapa de documentación
+
+- [Arquitectura (ARCHITECTURE.md)](docs/ARCHITECTURE.md)
+- [Pruebas (TESTS.md)](docs/TESTS.md)
+- [UI (UI.md)](docs/UI.md)

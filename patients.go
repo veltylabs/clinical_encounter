@@ -3,6 +3,7 @@ package clinical_encounter
 import "webtyp.com/orm"
 
 // defaultRecentPatientsLimit limita el escaneo cuando el llamador pasa Limit<=0.
+// Ejemplo: const l = defaultRecentPatientsLimit
 // medical_history comienza vacío en producción (ver docs/PLAN_MODEL_MIGRATION.md
 // — este módulo no hereda las filas de la tabla heredada medicalhistory), por lo que
 // un escaneo completo de tabla y deduplicación en Go es barato hoy; revisar con una

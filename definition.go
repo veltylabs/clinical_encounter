@@ -1,6 +1,7 @@
 package clinical_encounter
 
 import (
+	"webtyp.com/fmt"
 	"webtyp.com/input"
 	"webtyp.com/model"
 )
@@ -28,7 +29,7 @@ var MedicalHistoryModel = model.Definition{
 		{Name: "patient_name_snapshot", Type: input.Text(), Label: "patient name", NotNull: true},
 		{Name: "patient_rut_snapshot", Type: model.Text()},
 		{Name: "doctor_name_snapshot", Type: input.Text(), Label: "doctor name", NotNull: true},
-		{Name: "doctor_specialty_snapshot", Type: input.Text()},
+		{Name: "doctor_specialty_snapshot", Type: input.Text(), Label: fmt.Err("doctor", "specialty", "snapshot").Error()},
 		{Name: "updated_at", Type: model.NanoTime(), NotNull: true, ServerOnly: true},
 	},
 }
@@ -50,7 +51,7 @@ var CreateVisitArgsModel = model.Definition{
 		{Name: "service_id", Type: input.Text()},
 		{Name: "diagnostic", Type: input.Textarea()},
 		{Name: "prescription", Type: input.Textarea()},
-		{Name: "doctor_specialty_snapshot", Type: input.Text()},
+		{Name: "doctor_specialty_snapshot", Type: input.Text(), Label: fmt.Err("doctor", "specialty", "snapshot").Error()},
 	},
 }
 
@@ -90,8 +91,11 @@ var MyAgendaResultModel = model.Definition{
 	},
 }
 
+var (
+	ErrNotFound = model.NotFound(fmt.Err("visit", "not", "found").Error())
+)
+
 const (
-	ErrNotFound    model.NotFound = "visit not found"
 	ErrMissingArgs model.Invalid  = "missing required arguments"
 	ErrImportDate  model.Invalid  = "an imported visit needs the date it happened"
 	ErrIdTaken     model.Conflict = "visit id already used by another patient"

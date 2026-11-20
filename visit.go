@@ -95,12 +95,12 @@ func (m *Module) GetVisit(tenantId, id string) (*MedicalHistory, error) {
 	err := m.store.ReadOne(&rec, id)
 	if err != nil {
 		if model.KindOf(err) == model.ErrorNotFound {
-			return nil, model.NotFound("visit not found")
+			return nil, ErrNotFound
 		}
 		return nil, err
 	}
 	if tenantId != "" && rec.TenantId != tenantId {
-		return nil, model.NotFound("visit not found")
+		return nil, ErrNotFound
 	}
 	return &rec, nil
 }
