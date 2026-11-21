@@ -8,7 +8,7 @@ import (
 var MedicalHistoryModel = model.Definition{
 	Name:          "medical_history",
 	Allow:         model.Read | model.Update,
-	Rules:         model.Rules{Read: model.HaveNoBusinessRule, Update: model.AddMyBusinessRule},
+	Rules:         model.Rules{Read: model.AddMyBusinessRule, Update: model.AddMyBusinessRule},
 	ExternalCalls: []model.ExternalCallDefinition{{Name: "DeductSupplies", Mode: model.RetryInBackground, MaxAttempts: 3}},
 	Fields: model.Fields{
 		{Name: "id", Type: model.Text(), DB: &model.FieldDB{PK: true}},
@@ -17,7 +17,7 @@ var MedicalHistoryModel = model.Definition{
 		{Name: "doctor_id", Type: input.Text(), NotNull: true},
 		{Name: "reservation_id", Type: input.Text()},
 		{Name: "service_id", Type: input.Text()},
-		{Name: "status", Type: input.Select(), NotNull: true, Item: model.ItemDescription},
+		{Name: "status", Type: input.Select(), NotNull: true},
 		{Name: "attention_at", Type: model.UnixTime(), NotNull: true, Item: model.ItemBadge},
 		{Name: "reason", Type: input.Textarea(), NotNull: true, Item: model.ItemLabel},
 		{Name: "diagnostic", Type: input.Textarea()},
@@ -27,7 +27,7 @@ var MedicalHistoryModel = model.Definition{
 		{Name: "finished_at", Type: model.NanoTime()},
 		{Name: "patient_name_snapshot", Type: input.Text(), Label: "patient name", NotNull: true},
 		{Name: "patient_rut_snapshot", Type: model.Text()},
-		{Name: "doctor_name_snapshot", Type: input.Text(), Label: "doctor name", NotNull: true},
+		{Name: "doctor_name_snapshot", Type: input.Text(), Label: "doctor name", NotNull: true, Item: model.ItemDescription},
 		{Name: "doctor_specialty_snapshot", Type: input.Text()},
 		{Name: "updated_at", Type: model.NanoTime(), NotNull: true, ServerOnly: true},
 	},
@@ -73,6 +73,9 @@ var AgendaEntryModel = model.Definition{
 		{Name: "time_label", Type: model.Text()},
 		{Name: "reservation_id", Type: model.Text()},
 		{Name: "service_id", Type: model.Text()},
+		{Name: "service_name", Type: model.Text()},
+		{Name: "patient_age", Type: model.Int()},  // años cumplidos; 0 si no hay fecha de nacimiento
+		{Name: "reservation_status", Type: model.Text()}, // uno de los Reservation* de const.go
 	},
 }
 
@@ -83,10 +86,11 @@ var MyAgendaResultModel = model.Definition{
 	Fields: model.Fields{
 		{Name: "tenant_id", Type: model.Text(), OmitEmpty: true}, // filter
 		{Name: "date", Type: model.Text(), OmitEmpty: true},      // filter
-		{Name: "staff_id", Type: model.Text()},
-		{Name: "doctor_name", Type: model.Text()},
-		{Name: "doctor_specialty", Type: model.Text()},
-		{Name: "entries", Type: model.StructSlice(&AgendaEntryModel)},
+		// Resultado: OmitEmpty para que el filtro (solo date) viaje en la query de un GET sin campos vacíos ni un array.
+		{Name: "staff_id", Type: model.Text(), OmitEmpty: true},
+		{Name: "doctor_name", Type: model.Text(), OmitEmpty: true},
+		{Name: "doctor_specialty", Type: model.Text(), OmitEmpty: true},
+		{Name: "entries", Type: model.StructSlice(&AgendaEntryModel), OmitEmpty: true},
 	},
 }
 

@@ -7,6 +7,7 @@ import (
 	"webtyp.com/orm"
 	"webtyp.com/crud"
 	"webtyp.com/fmt"
+	"webtyp.com/storage"
 	"webtyp.com/time"
 )
 
@@ -106,7 +107,7 @@ func (*MedicalHistory) Allow() model.Action     { return MedicalHistoryModel.All
 func (*MedicalHistoryList) Allow() model.Action { return MedicalHistoryModel.Allow }
 
 func (m *MedicalHistory) Item() model.Item {
-	return model.Item{ID: m.Id, Label: m.Reason, Description: m.Status, Badge: fmt.Convert(int64(m.AttentionAt)).String()}
+	return model.Item{ID: m.Id, Label: m.Reason, Description: m.DoctorNameSnapshot, Badge: fmt.Convert(int64(m.AttentionAt)).String()}
 }
 
 var MedicalHistory_ = struct {
@@ -339,13 +340,16 @@ type AgendaEntry struct {
 	TimeLabel string
 	ReservationId string
 	ServiceId string
+	ServiceName string
+	PatientAge int64
+	ReservationStatus string
 }
 
 func (m *AgendaEntry) ModelName() string { return "agenda_entry" }
 
 func (m *AgendaEntry) Schema() []model.Field { return AgendaEntryModel.Fields }
 
-func (m *AgendaEntry) Pointers() []any { return []any{&m.PatientId, &m.PatientName, &m.PatientDocument, &m.TimeLabel, &m.ReservationId, &m.ServiceId} }
+func (m *AgendaEntry) Pointers() []any { return []any{&m.PatientId, &m.PatientName, &m.PatientDocument, &m.TimeLabel, &m.ReservationId, &m.ServiceId, &m.ServiceName, &m.PatientAge, &m.ReservationStatus} }
 
 func (m *AgendaEntry) IsNil() bool { return m == nil }
 
@@ -356,6 +360,9 @@ func (m *AgendaEntry) EncodeFields(w model.FieldWriter) {
 	w.String("time_label", m.TimeLabel)
 	w.String("reservation_id", m.ReservationId)
 	w.String("service_id", m.ServiceId)
+	w.String("service_name", m.ServiceName)
+	w.Int("patient_age", m.PatientAge)
+	w.String("reservation_status", m.ReservationStatus)
 }
 
 func (m *AgendaEntry) DecodeFields(r model.FieldReader) {
@@ -365,6 +372,9 @@ func (m *AgendaEntry) DecodeFields(r model.FieldReader) {
 	if v, ok := r.String("time_label"); ok { m.TimeLabel = v }
 	if v, ok := r.String("reservation_id"); ok { m.ReservationId = v }
 	if v, ok := r.String("service_id"); ok { m.ServiceId = v }
+	if v, ok := r.String("service_name"); ok { m.ServiceName = v }
+	if v, ok := r.Int("patient_age"); ok { m.PatientAge = v }
+	if v, ok := r.String("reservation_status"); ok { m.ReservationStatus = v }
 }
 
 type AgendaEntryList []*AgendaEntry
@@ -400,15 +410,17 @@ func (m *MyAgendaResult) IsNil() bool { return m == nil }
 func (m *MyAgendaResult) EncodeFields(w model.FieldWriter) {
 	if m.TenantId != "" { w.String("tenant_id", m.TenantId) }
 	if m.Date != "" { w.String("date", m.Date) }
-	w.String("staff_id", m.StaffId)
-	w.String("doctor_name", m.DoctorName)
-	w.String("doctor_specialty", m.DoctorSpecialty)
+	if m.StaffId != "" { w.String("staff_id", m.StaffId) }
+	if m.DoctorName != "" { w.String("doctor_name", m.DoctorName) }
+	if m.DoctorSpecialty != "" { w.String("doctor_specialty", m.DoctorSpecialty) }
+	if len(m.Entries) != 0 {
 		{
 			arr := w.Array("entries", len(m.Entries))
 			for _, x := range m.Entries {
 				arr.Object(&x)
 			}
 		}
+	}
 }
 
 func (m *MyAgendaResult) DecodeFields(r model.FieldReader) {
@@ -679,6 +691,9 @@ func (m *Module) MountOperations(reg crud.Registry) {
 		MFA: MedicalHistoryModel.MFA,
 		Update: func(a crud.CurrentUser, tx crud.Tx, old, next model.Model, fields []string) (crud.RuleAnswer, error) {
 			return next.(*MedicalHistory).Update(a, tx, old.(*MedicalHistory), fields, m)
+		},
+		Search: func(a crud.CurrentUser, filter model.Model) ([]storage.Condition, error) {
+			return (&MedicalHistory{}).Search(a, filter.(*MedicalHistory), m)
 		},
 		ExternalCalls: MedicalHistoryModel.ExternalCalls,
 		Calls: map[string]crud.ExternalCallFunc{

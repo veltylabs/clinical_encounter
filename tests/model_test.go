@@ -13,10 +13,9 @@ var _ model.Model = (*clinicalencounter.CreateVisitArgs)(nil)
 // TestCreateVisitArgsHasWidgets guards against CreateVisitArgsModel silently losing its
 // widgets again — form.New must never render an empty form for it.
 //
-// API note (`tinywasm/form@v0.3.13`, verified against the real published module — this plan
+// API note (`webtyp/form@v0.3.13`, verified against the real published module — this plan
 // originally targeted the now-stale `v0.2.16`, where `form.New` returned a single `*Form`):
 // `form.New` now returns `(*Form, error)`.
-
 
 // MedicalHistory debe poder generar un formulario: crudview lo construye
 // con form.New sobre este Record, y form.New falla si NINGÚN campo

@@ -8,9 +8,12 @@ import (
 
 const titleMedicalHistory = "Medical history"
 
-func NewView(caller router.Caller) view.Presenter {
+// NewView construye el Presenter de las fichas; opts agrega opciones de view (p. ej. view.WithFilter por paciente).
+//
+// Ejemplo: p := NewView(caller, view.WithFilter(func() model.Model { return &MedicalHistory{PatientId: id} }))
+func NewView(caller router.Caller, opts ...view.Option) view.Presenter {
 	b := view.NewCallerLister(caller,
-		view.Ops{Module: "clinical_encounter", Page: view.Page{First: view.All}},
+		view.Ops{Module: ModelName, Page: view.Page{First: view.All}},
 		func() model.TableSlice { return &MedicalHistoryList{} })
-	return view.New(b, &MedicalHistory{}, view.WithTitle(titleMedicalHistory))
+	return view.New(b, &MedicalHistory{}, append([]view.Option{view.WithTitle(titleMedicalHistory)}, opts...)...)
 }

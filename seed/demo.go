@@ -24,12 +24,19 @@ func (fakeDoctorReader) StaffByUser(tenantID, userID string) (string, string, st
 	return "demo-doc-1", "Dra. Soto", "Pediatría", true, nil
 }
 
+func (fakeDoctorReader) UserByStaff(tenantID, staffID string) (string, bool, error) {
+	return "demo-user-ana", true, nil
+}
+
 type fakeAgendaReader struct{}
 
-func (fakeAgendaReader) ConfirmedByStaff(tenantID, staffID string, from, to time.Unix) ([]string, []string, []string, []time.Unix, error) {
+func (fakeAgendaReader) ActiveByStaff(tenantID, staffID string, from, to time.Unix) ([]string, []string, []string, []time.Unix, []string, error) {
 	now := time.NowUnix()
-	return []string{"res-1", "res-2"}, []string{"demo-pat-1", "demo-pat-2"}, []string{"svc-1", "svc-1"}, []time.Unix{now, now + 1800}, nil
+	return []string{"res-1", "res-2"}, []string{"demo-pat-1", "demo-pat-2"}, []string{"svc-1", "svc-1"}, []time.Unix{now, now + 1800},
+		[]string{clinicalencounter.ReservationConfirmed, clinicalencounter.ReservationPending}, nil
 }
+
+func (fakeAgendaReader) WatchStaffAgenda(func(string)) {}
 
 type fakePatientReader struct{}
 
@@ -41,6 +48,17 @@ func (fakePatientReader) GetPatient(tenantID, patientID string) (string, string,
 		return "María López", "9.876.543-2", "", "", true, nil
 	default:
 		return "", "", "", "", false, nil
+	}
+}
+
+func (fakePatientReader) PatientBirthdate(tenantID, patientID string) (string, bool, error) {
+	switch patientID {
+	case "demo-pat-1":
+		return "1958-04-02", true, nil
+	case "demo-pat-2":
+		return "1980-09-15", true, nil
+	default:
+		return "", false, nil
 	}
 }
 

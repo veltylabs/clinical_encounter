@@ -34,3 +34,5 @@
 | [TestGetVisit_NotFound](../tests/visit_test.go) | rule |
 | [TestGetVisit_TenantIsolation](../tests/visit_test.go) | rule |
 | [TestListVisitsByPatient](../tests/visit_test.go) | rule |
+| [TestAgendaChange_NotifiesTheDoctor](../tests/agenda_test.go) | Cambio de agenda notifica al profesional |
+| [TestAttendable](../tests/agenda_test.go) | Solo atenciones atendibles aparecen en agenda |

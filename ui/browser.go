@@ -3,10 +3,13 @@ package ui
 import (
 	clinicalencounter "github.com/veltylabs/clinical_encounter"
 	"webtyp.com/components/selectsearch"
-	"webtyp.com/components/targethour"
+	"webtyp.com/components/targetdate"
 	"webtyp.com/crud"
 	"webtyp.com/dom"
+	"webtyp.com/events"
 	"webtyp.com/fmt"
+	"webtyp.com/html"
+	"webtyp.com/lang"
 	"webtyp.com/layout/crudview"
 	"webtyp.com/model"
 	"webtyp.com/router"
@@ -15,168 +18,172 @@ import (
 	"webtyp.com/view"
 )
 
-// blockingCall awaits an async router.Caller.Call synchronously via a buffered channel.
-func blockingCall(caller router.Caller, op router.Operation, args model.Encodable, into model.Decodable) error {
-	done := make(chan error, 1)
-	caller.Call(op, args, into, func(err error) { done <- err })
-	return <-done
-}
+// Textos fijos de la pantalla (claves en inglés, traducidas en lang.json).
+const (
+	textPickPatient lang.Text = "Select a patient from today's agenda..."
+	textYears       lang.Text = "years"
+	textPending     lang.Text = "Pending"
+	textConfirmed   lang.Text = "Confirmed"
+	textCompleted   lang.Text = "Completed"
+	textNoShow      lang.Text = "No show"
+	textConflicted  lang.Text = "Conflict"
+)
 
-type agendaPatient struct {
-	ID            string
-	Label         string
-	Sublabel      string
-	Description   string
-	ReservationID string
-	ServiceID     string
-	History       []model.Item
-}
-
-type requirePatient struct {
-	view.Presenter
-	agenda []agendaPatient
-	chosen *agendaPatient
-}
-
-func (p requirePatient) Search(term string, done func(error)) {
-	if term == "" {
-		if p.chosen != nil {
-			*p.chosen = agendaPatient{}
-		}
-		if done != nil {
-			done(nil)
-		}
-		return
+// statusText es la etiqueta visible de un estado de reserva.
+func statusText(status string) string {
+	switch status {
+	case clinicalencounter.ReservationPending:
+		return lang.Translate(textPending).String()
+	case clinicalencounter.ReservationConfirmed:
+		return lang.Translate(textConfirmed).String()
+	case clinicalencounter.ReservationCompleted:
+		return lang.Translate(textCompleted).String()
+	case clinicalencounter.ReservationNoShow:
+		return lang.Translate(textNoShow).String()
+	case clinicalencounter.ReservationConflicted:
+		return lang.Translate(textConflicted).String()
 	}
-	for _, a := range p.agenda {
-		if a.ID == term {
-			if p.chosen != nil {
-				*p.chosen = a
+	return status
+}
+
+// optionOf es la fila del selector para una reserva del día: «Nombre, 66 años» / RUT (lo que el doctor usa en sus
+// documentos) / «09:35 · Confirmada». Solo una reserva que se atiende se puede elegir.
+func optionOf(e clinicalencounter.AgendaEntry) selectsearch.SsOption {
+	label := e.PatientName
+	if e.PatientAge > 0 {
+		label += ", " + fmt.Convert(e.PatientAge).String() + " " + lang.Translate(textYears).String()
+	}
+	return selectsearch.SsOption{
+		ID:          e.ReservationId,
+		Label:       label,
+		Sublabel:    e.PatientDocument,
+		Description: e.TimeLabel + " · " + statusText(e.ReservationStatus),
+		Disabled:    !clinicalencounter.Attendable(e.ReservationStatus),
+	}
+}
+
+// doctorAgenda es la agenda del día del profesional con sesión y la reserva elegida. La lista de fichas es el
+// presenter estándar de medical_history filtrado por el paciente de esa reserva (view.WithFilter).
+type doctorAgenda struct {
+	caller router.Caller
+	zone   time.Zone
+	picker *selectsearch.SelectSearch
+	list   *crudview.CrudView
+
+	opened bool
+	agenda clinicalencounter.MyAgendaResult
+	chosen clinicalencounter.AgendaEntry
+}
+
+// loadAgenda lee la agenda del día y rellena el selector. Si la reserva elegida dejó de poder atenderse, se suelta.
+func (a *doctorAgenda) loadAgenda() {
+	date := ""
+	if a.zone.Name() != "" {
+		date = a.zone.Date(time.NowUnix())
+	}
+	var rows clinicalencounter.MyAgendaResultList
+	a.caller.Call(router.Operation{Module: clinicalencounter.ModelName, Entity: clinicalencounter.MyAgendaResultModel.Name, Action: model.Read},
+		&crud.ReadArgs{Filter: &clinicalencounter.MyAgendaResult{Date: date}}, &rows, func(err error) {
+			if err != nil || len(rows) == 0 || rows[0] == nil {
+				return
 			}
-			if done != nil {
-				done(nil)
+			a.agenda = *rows[0]
+			opts := make([]selectsearch.SsOption, len(a.agenda.Entries))
+			still := false
+			for i, e := range a.agenda.Entries {
+				opts[i] = optionOf(e)
+				if e.ReservationId == a.chosen.ReservationId && clinicalencounter.Attendable(e.ReservationStatus) {
+					a.chosen, still = e, true
+				}
 			}
-			return
+			a.picker.SetOptions(opts)
+			if a.chosen.ReservationId != "" && !still {
+				a.choose("")
+			}
+		})
+}
+
+// choose fija la reserva elegida y recarga la lista: el filtro ahora es su paciente.
+func (a *doctorAgenda) choose(reservationID string) {
+	a.chosen = clinicalencounter.AgendaEntry{}
+	for _, e := range a.agenda.Entries {
+		if e.ReservationId == reservationID && clinicalencounter.Attendable(e.ReservationStatus) {
+			a.chosen = e
 		}
 	}
-	if p.chosen != nil {
-		*p.chosen = agendaPatient{}
-	}
-	if done != nil {
-		done(nil)
+	if a.list != nil {
+		a.list.Reload(nil)
 	}
 }
 
-func (p requirePatient) Items() []model.Item {
-	if p.chosen == nil || p.chosen.ID == "" {
-		return nil
-	}
-	return p.chosen.History
+// patientFilter es el filtro de cada lectura de fichas: el paciente elegido (ninguno = ninguna ficha).
+func (a *doctorAgenda) patientFilter() model.Model {
+	return &clinicalencounter.MedicalHistory{PatientId: a.chosen.PatientId}
 }
 
-func (p requirePatient) HasMore() bool { return false }
-func (p requirePatient) More(done func(error)) {
-	if done != nil {
-		done(nil)
+// opening carga la agenda la primera vez que crudview recarga la lista, es decir, al abrir la pantalla.
+func (a *doctorAgenda) opening(crudview.ListView) {
+	if !a.opened {
+		a.opened = true
+		a.loadAgenda()
 	}
 }
 
-func (p requirePatient) Save(recs []model.Model, done func(error)) {
-	if s, ok := p.Presenter.(view.Saver); ok {
-		s.Save(recs, done)
-		return
+// newRecord siembra la ficha nueva con el profesional y la reserva elegida: el doctor no escribe lo que el sistema
+// ya sabe.
+func (a *doctorAgenda) newRecord() model.Model {
+	rec := &clinicalencounter.MedicalHistory{
+		DoctorId:                a.agenda.StaffId,
+		DoctorNameSnapshot:      a.agenda.DoctorName,
+		DoctorSpecialtySnapshot: a.agenda.DoctorSpecialty,
+		Status:                  clinicalencounter.StatusCreated,
 	}
-	done(fmt.Errf("requirePatient: underlying presenter cannot save"))
+	if a.chosen.PatientId != "" {
+		rec.PatientId = a.chosen.PatientId
+		rec.PatientNameSnapshot = a.chosen.PatientName
+		rec.PatientRutSnapshot = a.chosen.PatientDocument
+		rec.ReservationId = a.chosen.ReservationId
+		rec.ServiceId = a.chosen.ServiceId
+	}
+	return rec
 }
 
-var _ view.Presenter = requirePatient{}
-var _ view.Saver = requirePatient{}
-
-// Screens construye las pantallas de este módulo para el menú de la aplicación.
+// Screens construye la pantalla «Ficha» para el menú: el doctor elige en el selector una reserva de su día y la lista
+// muestra las fichas de ese paciente (día, motivo y doctor). La agenda se carga al abrir la pantalla y se vuelve a
+// leer sola cuando el servidor avisa que cambió (view.BrowserDeps.Notices).
 func Screens(d view.BrowserDeps) []view.Screen {
-	caller := d.Caller
-	cfg := crudview.Config{
-		ParentID:  ID,
-		Presenter: clinicalencounter.NewView(caller),
-		IDs:       nil,
+	a := &doctorAgenda{
+		caller: d.Caller,
+		zone:   d.Zone,
+		picker: &selectsearch.SelectSearch{Placeholder: textPickPatient, Search: selectsearch.SearchNever, StartOpen: true},
+	}
+	a.picker.OnSelect = func(id, _ string) { a.choose(id) }
+	if d.Notices != nil {
+		d.Notices.Subscribe(clinicalencounter.AgendaChanged, func(events.Event) {
+			if a.opened {
+				a.loadAgenda()
+			}
+		})
+	}
+
+	v, err := crudview.New(crudview.Config{
+		ParentID:   ID,
+		Presenter:  clinicalencounter.NewView(d.Caller, view.WithFilter(a.patientFilter)),
+		IDs:        d.IDs,
+		Scope:      a.picker,
+		HideSearch: true,
 		List: func(selected *dom.SignalString, onSelect func(model.Item)) crudview.ListView {
-			return &targethour.TargetHour{Selected: selected, OnSelect: onSelect}
+			return &targetdate.TargetDate{Zone: d.Zone, Selected: selected, OnSelect: onSelect}
 		},
-	}
-
-	dateStr := ""
-	if d.Zone.Name() != "" {
-		dateStr = d.Zone.Date(time.NowUnix())
-	}
-
-	// A crud read answers a list; my_agenda_result has one row, the agenda of the caller.
-	var agendas clinicalencounter.MyAgendaResultList
-	err := blockingCall(caller, router.Operation{Module: "clinical_encounter", Entity: "my_agenda_result", Action: model.Read},
-		&crud.ReadArgs{Filter: &clinicalencounter.MyAgendaResult{Date: dateStr}}, &agendas)
+		OnAfterReload: a.opening,
+		NewRecord:     a.newRecord,
+	})
 	if err != nil {
-		return nil
+		// Error de configuración: se ve en la pantalla, nunca un menú al que le falta la ficha sin decir por qué.
+		return []view.Screen{{ID: ID, Label: Label, Icon: string(svg.Icon(ID)), Component: html.P().Text(err.Error()),
+			Permission: model.ResourceOf(&clinicalencounter.MedicalHistoryModel), Help: Label}}
 	}
-	var myAgenda clinicalencounter.MyAgendaResult
-	if len(agendas) > 0 && agendas[0] != nil {
-		myAgenda = *agendas[0]
-	}
-
-	if myAgenda.StaffId != "" {
-		agenda := make([]agendaPatient, 0, len(myAgenda.Entries))
-		for _, e := range myAgenda.Entries {
-			var history clinicalencounter.MedicalHistoryList
-			_ = blockingCall(caller, router.Operation{Module: "clinical_encounter", Entity: "medical_history", Action: model.Read},
-				&crud.ReadArgs{Search: e.PatientId}, &history)
-			items := make([]model.Item, len(history))
-			for i, h := range history {
-				items[i] = h.Item()
-			}
-
-			agenda = append(agenda, agendaPatient{
-				ID:            e.PatientId,
-				Label:         e.PatientName,
-				Sublabel:      e.PatientDocument,
-				Description:   e.TimeLabel,
-				ReservationID: e.ReservationId,
-				ServiceID:     e.ServiceId,
-				History:       items,
-			})
-		}
-
-		picker := &selectsearch.SelectSearch{Placeholder: "Select a patient from today's agenda..."}
-		opts := make([]selectsearch.SsOption, len(agenda))
-		for i, a := range agenda {
-			opts[i] = selectsearch.SsOption{ID: a.ID, Label: a.Label, Sublabel: a.Sublabel, Description: a.Description}
-		}
-		picker.Options = opts
-
-		chosen := &agendaPatient{}
-		cfg.Presenter = requirePatient{Presenter: cfg.Presenter, agenda: agenda, chosen: chosen}
-		cfg.Filter = picker
-
-		cfg.NewRecord = func() model.Model {
-			rec := &clinicalencounter.MedicalHistory{
-				TenantId:                "",
-				DoctorId:                myAgenda.StaffId,
-				DoctorNameSnapshot:      myAgenda.DoctorName,
-				DoctorSpecialtySnapshot: myAgenda.DoctorSpecialty,
-				Status:                  clinicalencounter.StatusCreated,
-			}
-			if chosen.ID != "" {
-				rec.PatientId = chosen.ID
-				rec.PatientNameSnapshot = chosen.Label
-				rec.PatientRutSnapshot = chosen.Sublabel
-				rec.ReservationId = chosen.ReservationID
-				rec.ServiceId = chosen.ServiceID
-			}
-			return rec
-		}
-	}
-
-	v, err := crudview.New(cfg)
-	if err != nil {
-		return nil
-	}
+	a.list = v
 	return []view.Screen{{
 		ID:         ID,
 		Label:      Label,

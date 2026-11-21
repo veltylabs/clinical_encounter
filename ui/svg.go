@@ -14,7 +14,7 @@ func (m *Icons) IconID() string {
 	return "clinical_encounter"
 }
 
-// Mismo glifo que el demo tinywasm/layout/platformd/modules/medicalhistory
+// Mismo glifo que el demo webtyp/layout/platformd/modules/medicalhistory
 // que este módulo lleva a producción — un portapapeles con una insignia de
 // check y dos líneas de lista.
 func (m *Icons) IconSvg() *sprite.Sprite {

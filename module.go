@@ -26,6 +26,8 @@ type Deps struct {
 	Doctors      DoctorReader
 	Agenda       AgendaReader
 	Patients     PatientReader
+	Services     ServiceReader // opcional: nil = la agenda muestra la reserva sin el nombre del servicio
+	Notices      Notifier      // opcional: nil = la agenda del profesional no se refresca sola
 }
 
 type Module struct {
@@ -43,6 +45,8 @@ type Module struct {
 	doctors      DoctorReader
 	agenda       AgendaReader
 	patients     PatientReader
+	services     ServiceReader
+	notices      Notifier
 }
 
 func New(db *orm.DB, deps Deps) (*Module, error) {
@@ -60,6 +64,8 @@ func New(db *orm.DB, deps Deps) (*Module, error) {
 		doctors:      deps.Doctors,
 		agenda:       deps.Agenda,
 		patients:     deps.Patients,
+		services:     deps.Services,
+		notices:      deps.Notices,
 	}
 
 	hasRecipes := deps.Recipes != nil
@@ -78,5 +84,17 @@ func New(db *orm.DB, deps Deps) (*Module, error) {
 		return nil, fmt.Errf("clinical_encounter: supply use requires Recipes, Rooms and Supplies together")
 	}
 
+	if deps.Notices != nil && deps.Agenda != nil && deps.Doctors != nil {
+		deps.Agenda.WatchStaffAgenda(m.notifyAgendaChanged)
+	}
 	return m, nil
+}
+
+// notifyAgendaChanged avisa al usuario del profesional que su agenda cambió.
+func (m *Module) notifyAgendaChanged(staffID string) {
+	userID, found, err := m.doctors.UserByStaff(m.tenantID, staffID)
+	if err != nil || !found {
+		return
+	}
+	m.notices.Notify(userID, AgendaChanged)
 }
